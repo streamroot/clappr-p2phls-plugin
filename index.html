@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script type="text/javascript" charset="utf-8" src="/dist/clappr.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/dist/p2phls.js"></script>
+  <title>p2phls Test Page</title>
+  <script type="text/javascript" charset="utf-8">
+window.onload = function() {
+  player = new WP3.Player({sources: ['http://www.html5rocks.com/en/tutorials/video/basics/devstories.mp4'],
+                            plugins: {playback: [P2PHLS]}
+                          });
+  player.attachTo(document.getElementById('player-wrapper'));
+}
+  </script>
+</head>
+<body>
+  <div id="player-wrapper">
+  </div>
+</body>
+</html>
+
