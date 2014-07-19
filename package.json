@@ -19,6 +19,13 @@
     "express": "^4.6.1",
     "gulp-util": "latest",
     "gulp-livereload": "^2.1.0"
+  },
+  "dependencies": {
+    "rtc-bufferedchannel": "~0.5.0",
+    "freeice": "~1.0.0",
+    "rtc-quickconnect": "~2.5.0",
+    "jquery": "2.1.1",
+    "underscore": "1.6.0"
   }
 
 }
