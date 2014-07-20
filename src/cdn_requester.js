@@ -4,27 +4,26 @@
 // license that can be found in the LICENSE file.
 
 var BaseObject = require('base_object');
-var Utils = require('./utils');
 var Storage = require('./storage')
 
 class CDNRequester extends BaseObject {
   get name() { return 'ChunksHandler'; }
   initialize() {
     this.storage = Storage.getInstance()
-    this.utils = new Utils()
+    this.utils = new Worker("asyncxhr.js")
+    this.utils.onmessage = (e) => this.resourceLoaded(e.data)
   }
 
   requestResource(resource, callback) {
     this.callback = callback
+    window.callback = this.callback
     this.resource = resource
-    this.utils.request(resource, (event) => this.resourceLoaded(event), 'arraybuffer')
+    this.utils.postMessage(resource)
   }
 
-  resourceLoaded(event) {
-    var chunk = this.utils.base64ArrayBuffer(event.currentTarget.response)
+  resourceLoaded(chunk) {
     this.storage.setItem(this.resource, chunk)
     this.callback(chunk);
-    return
   }
 }
 

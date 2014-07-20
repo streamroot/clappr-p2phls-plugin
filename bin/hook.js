@@ -31,5 +31,5 @@ fs.writeFileSync(jstFile, codeTemplate({templates: templates, styles: styles}));
 mkdirp('dist/assets/');
 
 glob('./node_modules/clappr/dist/**/*.{png,jpeg,jpg,gif,swf,eot,ttf,svg}').map(copyFiles);
-glob('public/*.{png,jpeg,jpg,gif,swf,eot,ttf,svg}').map(copyFiles);
+glob('public/*.{png,jpeg,jpg,gif,swf,eot,ttf,svg,js}').map(copyFiles);
 glob('./node_modules/clappr/dist/*.js').map(copyFiles);
