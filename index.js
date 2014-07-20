@@ -3,13 +3,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var freeice = require("freeice");
-var quickconnect = require("rtc-quickconnect");
-var bufferedchannel = require("rtc-bufferedchannel");
 var UIPlugin = require('ui_plugin');
 var JST = require('./jst');
 var Styler = require('./styler');
 var _ = require('underscore');
+
+var ChunksHandler = require('./chunks_handler.js');
 
 
 class P2PHLS extends UIPlugin {
@@ -37,6 +36,7 @@ class P2PHLS extends UIPlugin {
     }
     this.settings = _.extend({}, this.defaultSettings)
     this.addListeners()
+    this.chunksHandler = new ChunksHandler()
   }
 
   getSource(source) {
@@ -53,6 +53,11 @@ class P2PHLS extends UIPlugin {
     WP3.Mediator.on(this.uniqueId + ':timeupdate', (params) => this.updateTime(params))
     WP3.Mediator.on(this.uniqueId + ':playbackstate', (params) => this.setPlaybackState(params))
     WP3.Mediator.on(this.uniqueId + ':highdefinition', (params) => this.updateHighDefinition(params))
+    WP3.Mediator.on(this.uniqueId + ':requestresource', (params) => this.requestResource(params))
+  }
+
+  requestResource(params) {
+    this.chunksHandler.requestResource(params.url, (chunk) => this.el.resourceLoaded(chunk))
   }
 
   stopListening() {
