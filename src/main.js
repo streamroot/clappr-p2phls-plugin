@@ -32,7 +32,7 @@ class P2PHLS extends UIPlugin {
     this.defaultSettings = {
       left: ["playstop", "volume"],
       default: [],
-      right: ["fullscreen", "volume", "hd"]
+      right: ["fullscreen", "hd"]
     }
     this.settings = _.extend({}, this.defaultSettings)
     this.addListeners()
