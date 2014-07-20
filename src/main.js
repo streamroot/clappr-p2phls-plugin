@@ -29,9 +29,9 @@ class P2PHLS extends UIPlugin {
     this.setupBrowser()
     this.highDefinition = false
     this.autoPlay = options.autoPlay
-    this.settings = {
+    this.defaultSettings = {
       left: ["playstop", "volume"],
-      default: ["position", "seekbar", "duration"],
+      default: [],
       right: ["fullscreen", "volume", "hd"]
     }
     this.settings = _.extend({}, this.defaultSettings)
