@@ -28,6 +28,7 @@ class P2PHLS extends UIPlugin {
     this.swfPath = "assets/P2PHLSPlayer.swf"
     this.setupBrowser()
     this.highDefinition = false
+    this.ready = false
     this.autoPlay = options.autoPlay
     this.defaultSettings = {
       left: ["playstop", "volume"],
@@ -51,13 +52,13 @@ class P2PHLS extends UIPlugin {
   addListeners() {
     WP3.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
     WP3.Mediator.on(this.uniqueId + ':timeupdate', (params) => this.updateTime(params))
-    WP3.Mediator.on(this.uniqueId + ':playbackstate', (params) => this.setPlaybackState(params))
-    WP3.Mediator.on(this.uniqueId + ':highdefinition', (params) => this.updateHighDefinition(params))
-    WP3.Mediator.on(this.uniqueId + ':requestresource', (params) => this.requestResource(params))
+    WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
+    WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
+    WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
   }
 
-  requestResource(params) {
-    this.chunksHandler.requestResource(params.url, (chunk) => this.el.resourceLoaded(chunk))
+  requestResource(url) {
+    this.chunksHandler.requestResource(url, (chunk) => this.el.resourceLoaded(chunk))
   }
 
   stopListening() {
@@ -69,8 +70,7 @@ class P2PHLS extends UIPlugin {
   }
 
   safe(fn) {
-    if(this.el.globoGetState && this.el.globoGetDuration && this.el.globoGetPosition &&
-       this.el.globoPlayerSmoothSetLevel && this.el.globoPlayerSetflushLiveURLCache) {
+    if(this.ready) {
       return fn.apply(this)
     }
   }
@@ -97,22 +97,22 @@ class P2PHLS extends UIPlugin {
     this.el.height = "100%"
     this.trigger('playback:ready', this.name)
     this.currentState = "IDLE"
-    this.el.globoPlayerSetflushLiveURLCache(true)
     this.autoPlay && this.play()
+    this.ready = true
   }
 
-  updateHighDefinition(params) {
-    this.highDefinition = params.isHD;
+  updateHighDefinition(isHD) {
+    this.highDefinition = (isHD === "true");
     this.trigger('playback:highdefinitionupdate')
   }
 
   updateTime(params) {
+    var duration, position = params.split(",")
     return this.safe(() => {
       var previousDvrEnabled = this.dvrEnabled
-      this.dvrEnabled = (this.playbackType === 'live' && params.duration > 240)
+      this.dvrEnabled = (this.playbackType === 'live' && duration > 240)
       var duration = this.getDuration()
       if (this.playbackType === 'live') {
-        var position = this.el.globoGetPosition()
         if (position >= duration) {
           position = duration
         }
@@ -169,16 +169,16 @@ class P2PHLS extends UIPlugin {
     })
   }
 
-  setPlaybackState(params) {
-    if (params.state === "PLAYING_BUFFERING" && this.el.globoGetbufferLength() < 1 && this.currentState !== "PLAYING_BUFFERING")  {
+  setPlaybackState(state) {
+    if (state === "PLAYING_BUFFERING" && this.el.globoGetbufferLength() < 1 && this.currentState !== "PLAYING_BUFFERING")  {
       this.trigger('playback:buffering', this.name)
-    } else if (params.state === "PLAYING" && this.currentState === "PLAYING_BUFFERING") {
+    } else if (state === "PLAYING" && this.currentState === "PLAYING_BUFFERING") {
       this.trigger('playback:bufferfull', this.name)
-    } else if (params.state === "IDLE") {
+    } else if (state === "IDLE") {
       this.trigger('playback:ended', this.name)
       this.trigger('playback:timeupdate', 0, this.el.globoGetDuration(), this.name)
     }
-    this.currentState = params.state;
+    this.currentState = state;
     this.updatePlaybackType()
   }
 

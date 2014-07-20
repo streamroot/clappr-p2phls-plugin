@@ -24,6 +24,7 @@ class CDNRequester extends BaseObject {
     var chunk = this.utils.base64ArrayBuffer(event.currentTarget.response)
     this.storage.setItem(this.resource, chunk)
     this.callback(chunk);
+    return
   }
 }
 
