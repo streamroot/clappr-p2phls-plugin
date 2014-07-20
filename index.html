@@ -8,7 +8,8 @@
   <script type="text/javascript" charset="utf-8">
 window.onload = function() {
   player = new WP3.Player({sources: ['p2phttp://cdn.bem.tv/stream/soccer2sec/soccer/playlist.m3u8'],
-                            plugins: {playback: [P2PHLS]}
+                            plugins: {playback: [P2PHLS]},
+                            width: 640, height: 360
                           });
   player.attachTo(document.getElementById('player-wrapper'));
 }
