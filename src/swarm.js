@@ -12,6 +12,12 @@ var _ = require('underscore')
 class Swarm extends BaseObject {
   initialize() {
     this.peers = []
+    //TODO glue a partnership algorithm based on QoE study
+    this.partners = this.peers
+  }
+
+  size() {
+    return this.peers.length
   }
 
   addPeer(id, dataChannel) {
