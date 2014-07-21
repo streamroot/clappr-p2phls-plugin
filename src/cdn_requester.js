@@ -16,7 +16,6 @@ class CDNRequester extends BaseObject {
 
   requestResource(resource, callback) {
     this.callback = callback
-    window.callback = this.callback
     this.resource = resource
     this.utils.postMessage(resource)
   }
