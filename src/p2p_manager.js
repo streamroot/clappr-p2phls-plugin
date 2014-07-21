@@ -39,9 +39,15 @@ class P2PManager extends BaseObject {
     if (this.swarm.size() === 0) {
       callbackFail.apply(requester)
     } else {
-      //TODO add p2p game here
       callbackFail.apply(requester)
+      this.swarm.sendTo('partners', 'desire', resource)
     }
+  }
+
+  sendTo(recipients, command, resource) {
+    /* recipients: all, partners or peer ident
+       command: desire, contain, request, satisfy */
+    this.swarm.sendTo(recipients, command, resource)
   }
 }
 

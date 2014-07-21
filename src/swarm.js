@@ -21,7 +21,8 @@ class Swarm extends BaseObject {
   }
 
   addPeer(id, dataChannel) {
-    var bufferedChannel = BufferedChannel(dataChannel)
+    console.log("new peer: " + id)
+    var bufferedChannel = BufferedChannel(dataChannel, {calcCharSize: false})
     var peer = new Peer({ident: id, dataChannel: dataChannel, bufferedChannel: bufferedChannel})
     this.peers.push(peer)
   }
@@ -29,12 +30,34 @@ class Swarm extends BaseObject {
   removePeer(id) {
     var peer = this.findPeer(id)
     this.peers = _.without(this.peers, peer)
+    console.log("bye peer: " + id + ", remains: " + this.size())
   }
 
   findPeer(id) {
     return _.find(this.peers, function (peer) {
       return !!(peer.ident === id)
     }, this)
+  }
+
+  sendTo(recipients, command, resource, content = '') {
+    var message = this.mountMessage(command, resource, content)
+
+    if (recipients === 'partners') {
+      _.each(this.partners, function(peer) { peer.send(message) }, this)
+    } else if (recipients === 'all') {
+      _.each(this.peers, function(peer) { peer.send(message) }, this)
+    } else {
+      var peer = this.findPeer(recipients)
+      peer.send(message);
+    }
+  }
+
+  mountMessage(command, resource, content) {
+    var msg = command + ":" + resource
+    if (content) {
+      msg = msg + ":" + content
+    }
+    return msg
   }
 }
 

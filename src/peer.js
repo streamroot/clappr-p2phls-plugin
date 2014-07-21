@@ -8,10 +8,28 @@ var BaseObject = require('base_object');
 
 class Peer extends BaseObject {
   initialize(params) {
-    console.log('peer created: ' + params.ident)
     this.ident = params.ident
     this.dataChannel = params.dataChannel
     this.bufferedDataChannel = params.bufferedChannel
+    this.addListeners()
+  }
+
+  addListeners() {
+    this.bufferedDataChannel.on("data", (data) => this.messageReceived(data))
+    this.dataChannel.onmessage = ((evt) => this.messageReceived(evt.data))
+  }
+
+ send(message, buffered=false) {
+    console.log("send to [" + this.ident + "] " + message)
+    if (buffered) {
+      this.bufferedDataChannel.send(message)
+    } else {
+      this.dataChannel.send(message)
+    }
+  }
+
+  messageReceived(data) {
+    console.log("["+this.ident+"] sent me: " + data)
   }
 }
 
