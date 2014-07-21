@@ -49,7 +49,7 @@ class P2PHLS extends UIPlugin {
   }
 
   requestResource(url) {
-    this.chunksHandler.requestResource(url, (chunk) => this.resourceLoaded(chunk))
+    this.resourceRequester.requestResource(url, (chunk) => this.resourceLoaded(chunk))
   }
 
   resourceLoaded(chunk) {
