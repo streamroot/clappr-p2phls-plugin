@@ -6,6 +6,8 @@
 class Settings {
 }
 
-Settings.maxStorageBytes = 300000 * 3
+Settings.maxStorageBytes = 300000 * 6
+Settings.swarm = 'bemtv-swarm'
+Settings.tracker = 'http://server.bem.tv:8080'
 
 module.exports = Settings

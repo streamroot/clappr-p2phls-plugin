@@ -5,12 +5,12 @@
 
 var BaseObject = require('base_object');
 var CDNRequester = require('./cdn_requester');
-//var P2PManager = require('./p2p_manager');
+var P2PManager = require('./p2p_manager');
 
 class ResourceRequester extends BaseObject {
   initialize(params) {
     this.cdnRequester = new CDNRequester()
-//    this.p2pManager= P2PManager();
+    this.p2pManager = new P2PManager();
   }
 
   requestResource(resource, callback) {
