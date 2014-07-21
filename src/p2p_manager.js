@@ -5,28 +5,36 @@
 
 var BaseObject = require('base_object');
 
-var BufferedChannel = require('rtc-bufferedchannel');
 var Freeice = require('freeice');
 var QuickConnect = require('rtc-quickconnect');
 var Settings = require("./settings")
+
+var Swarm = require('./swarm')
 
 class P2PManager extends BaseObject {
   initialize() {
     this.connectionSettings = {'room': Settings.swarm, iceServers: Freeice(), debug: false}
     this.connection = QuickConnect(Settings.tracker, this.connectionSettings)
+    this.swarm = new Swarm()
+
     //TODO create different data channels for different protocol messages
     this.dataChannel = this.connection.createDataChannel(Settings.swarm)
-    this.setupConnectionListeners()
+    this.setupListerners()
   }
 
-  setupConnectionListeners() {
+  setupListerners() {
     this.dataChannel.on('channel:opened', (id, dataChannel) => this.onChannelOpened(id, dataChannel))
-    this.dataChannel.on('channel:closed', (id, dataChannel) => this.onChannelOpened(id, dataChannel))
+    this.dataChannel.on('channel:closed', (id, dataChannel) => this.onChannelClosed(id, dataChannel))
   }
 
   onChannelOpened(id, dataChannel) {
-    console.log("Id " + id + " has joined the transmission")
+    this.swarm.addPeer(id, dataChannel);
   }
+
+  onChannelClosed(id, dataChannel) {
+    this.swarm.removePeer(id);
+  }
+
 }
 
 module.exports = P2PManager
