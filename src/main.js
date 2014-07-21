@@ -28,7 +28,6 @@ class P2PHLS extends UIPlugin {
     this.swfPath = "assets/P2PHLSPlayer.swf"
     this.setupBrowser()
     this.highDefinition = false
-    this.ready = false
     this.autoPlay = options.autoPlay
     this.defaultSettings = {
       left: ["playstop", "volume"],
@@ -49,16 +48,21 @@ class P2PHLS extends UIPlugin {
     this.isFirefox = navigator.userAgent.match(/firefox/i)
   }
 
+  requestResource(url) {
+    this.chunksHandler.requestResource(url, (chunk) => this.resourceLoaded(chunk))
+  }
+
+  resourceLoaded(chunk) {
+    this.el.resourceLoaded(chunk)
+    return
+  }
+
   addListeners() {
     WP3.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
     WP3.Mediator.on(this.uniqueId + ':timeupdate', (params) => this.updateTime(params))
     WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
     WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
     WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
-  }
-
-  requestResource(url) {
-    this.chunksHandler.requestResource(url, (chunk) => this.el.resourceLoaded(chunk))
   }
 
   stopListening() {
@@ -69,27 +73,17 @@ class P2PHLS extends UIPlugin {
     WP3.Mediator.off(this.uniqueId + ':highdefinition')
   }
 
-  safe(fn) {
-    if(this.ready) {
-      return fn.apply(this)
-    }
-  }
-
   hiddenCallback() {
-    this.hiddenId = this.safe(() => {
-      return setTimeout(() => this.el.globoPlayerSmoothSetLevel(0), 10000)
-    })
+    this.hiddenId = setTimeout(() => this.el.globoPlayerSmoothSetLevel(0), 10000)
   }
 
   visibleCallback() {
-    this.safe(() => {
-      if (this.hiddenId) {
-        clearTimeout(this.hiddenId)
-      }
-      if (!this.el.globoGetAutoLevel()) {
-        this.el.globoPlayerSmoothSetLevel(-1)
-      }
-    })
+    if (this.hiddenId) {
+      clearTimeout(this.hiddenId)
+    }
+    if (!this.el.globoGetAutoLevel()) {
+      this.el.globoPlayerSmoothSetLevel(-1)
+    }
   }
 
   bootstrap() {
@@ -108,46 +102,38 @@ class P2PHLS extends UIPlugin {
 
   updateTime(params) {
     var duration, position = params.split(",")
-    return this.safe(() => {
-      var previousDvrEnabled = this.dvrEnabled
-      this.dvrEnabled = (this.playbackType === 'live' && duration > 240)
-      var duration = this.getDuration()
-      if (this.playbackType === 'live') {
-        if (position >= duration) {
-          position = duration
-        }
-        this.trigger('playback:timeupdate', position, duration, this.name)
-      } else {
-        this.trigger('playback:timeupdate', this.el.globoGetPosition(), duration, this.name)
+    var previousDvrEnabled = this.dvrEnabled
+    this.dvrEnabled = (this.playbackType === 'live' && duration > 240)
+    var duration = this.getDuration()
+    if (this.playbackType === 'live') {
+      if (position >= duration) {
+        position = duration
       }
-      if (this.dvrEnabled != previousDvrEnabled) {
-        this.updateSettings()
-      }
-    })
+      this.trigger('playback:timeupdate', position, duration, this.name)
+    } else {
+      this.trigger('playback:timeupdate', this.el.globoGetPosition(), duration, this.name)
+    }
+    if (this.dvrEnabled != previousDvrEnabled) {
+      this.updateSettings()
+    }
   }
 
   play() {
-    this.safe(() => {
-      if(this.el.currentState === 'PAUSED') {
-        this.el.globoPlayerResume()
-      } else {
-        this.firstPlay()
-      }
-      this.trigger('playback:play', this.name)
-    })
+    if (this.el.currentState === 'PAUSED') {
+      this.el.globoPlayerResume()
+    } else {
+      this.firstPlay()
+    }
+    this.trigger('playback:play', this.name)
   }
 
   getPlaybackType() {
-    if (this.playbackType)
-      return this.playbackType
-    return null
+    return this.playbackType? this.playbackType: null;
   }
 
   getCurrentBitrate() {
-    return this.safe(function() {
-      var currentLevel = this.getLevels()[this.el.globoGetLevel()]
-      return currentLevel.bitrate
-    })
+    var currentLevel = this.getLevels()[this.el.globoGetLevel()]
+    return currentLevel.bitrate
   }
 
   getLastProgramDate() {
@@ -161,12 +147,10 @@ class P2PHLS extends UIPlugin {
   }
 
   getLevels() {
-    return this.safe(() => {
-      if (!this.levels || this.levels.length === 0) {
-        this.levels = this.el.globoGetLevels()
-      }
-      return this.levels
-    })
+    if (!this.levels || this.levels.length === 0) {
+      this.levels = this.el.globoGetLevels()
+    }
+    return this.levels
   }
 
   setPlaybackState(state) {
@@ -183,75 +167,60 @@ class P2PHLS extends UIPlugin {
   }
 
   updatePlaybackType() {
-    this.safe(() => {
-      if (!this.playbackType) {
-        this.playbackType = this.el.globoGetType()
-        if (this.playbackType) {
-          this.playbackType = this.playbackType.toLowerCase()
-          this.updateSettings()
-        }
+    if (!this.playbackType) {
+      this.playbackType = this.el.globoGetType()
+      if (this.playbackType) {
+        this.playbackType = this.playbackType.toLowerCase()
+        this.updateSettings()
       }
-    })
+    }
   }
 
   firstPlay() {
-    this.safe(() => {
-      this.el.globoPlayerLoad(this.src)
-      this.el.globoPlayerPlay()
-    })
+    this.el.globoPlayerLoad(this.src)
+    this.el.globoPlayerPlay()
   }
 
   volume(value) {
-    this.safe(() => {
-      this.el.globoPlayerVolume(value)
-    })
+    this.el.globoPlayerVolume(value)
   }
 
   pause() {
-    this.safe(() => {
-      this.el.globoPlayerPause()
-    })
+    this.el.globoPlayerPause()
   }
 
   stop() {
-    this.safe(() => {
-      this.el.globoPlayerStop()
-      this.trigger('playback:timeupdate', 0, this.name)
-    })
+    this.el.globoPlayerStop()
+    this.trigger('playback:timeupdate', 0, this.name)
   }
 
   isPlaying() {
-    return this.safe(() => {
-      if (this.currentState)
-        return !!(this.currentState.match(/playing/i))
-      return false
-    })
+    if (this.currentState) {
+      return !!(this.currentState.match(/playing/i))
+    }
+    return false
   }
 
   getDuration() {
-    return this.safe(() => {
-      var duration = this.el.globoGetDuration()
-      if (this.playbackType === 'live') {
-        // estimate 10 seconds of buffer time for live streams for seek positions
-        duration = duration - 10
-      }
-      return duration
-    })
+    var duration = this.el.globoGetDuration()
+    if (this.playbackType === 'live') {
+      // estimate 10 seconds of buffer time for live streams for seek positions
+      duration = duration - 10
+    }
+    return duration
   }
 
   seek(time) {
-    this.safe(() => {
-      if (time < 0) {
-        this.el.globoPlayerSeek(time)
-      } else {
-        var duration = this.getDuration()
-        time = duration * time / 100
-        // seek operations to a time within 2 seconds from live stream will position playhead back to live
-        if (this.playbackType === 'live' && duration - time < 2)
-          time = -1
-        this.el.globoPlayerSeek(time)
-      }
-    })
+    if (time < 0) {
+      this.el.globoPlayerSeek(time)
+    } else {
+      var duration = this.getDuration()
+      time = duration * time / 100
+      // seek operations to a time within 2 seconds from live stream will position playhead back to live
+      if (this.playbackType === 'live' && duration - time < 2)
+        time = -1
+      this.el.globoPlayerSeek(time)
+    }
   }
 
   timeUpdate(time, duration) {
@@ -291,12 +260,8 @@ class P2PHLS extends UIPlugin {
 }
 
 P2PHLS.canPlay = function(resource) {
-  var isLegacyIE = window.ActiveXObject;
-  if (isLegacyIE) {
-    return false;
-  } else {
-    return !!resource.match("p2phttp:(.*)");
-  }
+  var isLegacyIE = window.ActiveXObject
+  return (!isLegacyIE) && !!resource.match("p2phttp:(.*)")
 }
 
 module.exports = window.P2PHLS = P2PHLS;
