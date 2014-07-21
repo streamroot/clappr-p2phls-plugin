@@ -35,6 +35,14 @@ class P2PManager extends BaseObject {
     this.swarm.removePeer(id);
   }
 
+  requestResource(requester, resource, callbackSuccess, callbackFail) {
+    if (this.swarm.size() === 0) {
+      callbackFail.apply(requester)
+    } else {
+      //TODO add p2p game here
+      callbackFail.apply(requester)
+    }
+  }
 }
 
 module.exports = P2PManager

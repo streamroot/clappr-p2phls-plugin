@@ -14,7 +14,13 @@ class ResourceRequester extends BaseObject {
   }
 
   requestResource(resource, callback) {
-    this.cdnRequester.requestResource(resource, callback)
+    this.resource = resource
+    this.callback = callback
+    this.p2pManager.requestResource(this, resource, this.callback, this.requestToCDN)
+  }
+
+  requestToCDN() {
+    this.cdnRequester.requestResource(this.resource, this.callback)
   }
 }
 
