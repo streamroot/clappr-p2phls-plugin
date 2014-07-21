@@ -5,11 +5,12 @@
 
 var BaseObject = require('base_object');
 var CDNRequester = require('./cdn_requester');
+//var P2PManager = require('./p2p_manager');
 
-class ChunksHandler extends BaseObject {
+class ResourceRequester extends BaseObject {
   initialize(params) {
     this.cdnRequester = new CDNRequester()
-//    this.p2pRequester = P2PRequester();
+//    this.p2pManager= P2PManager();
   }
 
   requestResource(resource, callback) {
@@ -17,4 +18,4 @@ class ChunksHandler extends BaseObject {
   }
 }
 
-module.exports = ChunksHandler;
+module.exports = ResourceRequester;

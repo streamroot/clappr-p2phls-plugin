@@ -7,7 +7,7 @@ var BaseObject = require('base_object');
 var Storage = require('./storage')
 
 class CDNRequester extends BaseObject {
-  get name() { return 'ChunksHandler'; }
+  get name() { return 'CDNRequester'; }
   initialize() {
     this.storage = Storage.getInstance()
     this.utils = new Worker("asyncxhr.js")

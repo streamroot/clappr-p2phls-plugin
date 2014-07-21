@@ -8,7 +8,7 @@ var JST = require('./jst');
 var Styler = require('./styler');
 var _ = require('underscore');
 
-var ChunksHandler = require('./chunks_handler.js');
+var ResourceRequester = require('./resource_requester');
 
 
 class P2PHLS extends UIPlugin {
@@ -36,7 +36,7 @@ class P2PHLS extends UIPlugin {
     }
     this.settings = _.extend({}, this.defaultSettings)
     this.addListeners()
-    this.chunksHandler = new ChunksHandler()
+    this.resourceRequester = new ResourceRequester()
   }
 
   getSource(source) {
