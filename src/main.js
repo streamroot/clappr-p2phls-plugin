@@ -40,7 +40,7 @@ class P2PHLS extends UIPlugin {
   }
 
   getSource(source) {
-    return source.replace("p2phttp", "http")
+    return source.replace("p2p+http", "http")
   }
 
   setupBrowser() {
@@ -261,7 +261,7 @@ class P2PHLS extends UIPlugin {
 
 P2PHLS.canPlay = function(resource) {
   var isLegacyIE = window.ActiveXObject
-  return (!isLegacyIE) && !!resource.match("p2phttp:(.*)")
+  return (!isLegacyIE) && !!resource.match("p2p\\+http:(.*)")
 }
 
 module.exports = window.P2PHLS = P2PHLS;
