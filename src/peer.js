@@ -20,7 +20,6 @@ class Peer extends BaseObject {
   }
 
  send(message, buffered=false) {
-    console.log("send to [" + this.ident + "] " + message)
     if (buffered) {
       this.bufferedDataChannel.send(message)
     } else {

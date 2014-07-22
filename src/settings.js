@@ -6,7 +6,7 @@
 class Settings {
 }
 
-Settings.maxStorageBytes = 300000 * 6
+Settings.maxStorageBytes = 5 * 1024 * 1024 // 5 megabytes
 Settings.swarm = 'bemtv-swarm'
 Settings.tracker = 'http://server.bem.tv:8080'
 
