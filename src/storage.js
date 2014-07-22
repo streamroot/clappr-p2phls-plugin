@@ -46,6 +46,12 @@ class Storage {
   length() {
     return this.keys.length
   }
+
+  has(key) {
+    /* considering chunks from position 1
+    to avoid race condition on signalling */
+    return this.keys.indexOf(key) > 0? true: false
+  }
 }
 
 Storage.getInstance = function() {
