@@ -35,11 +35,11 @@ class P2PManager extends BaseObject {
     this.swarm.removePeer(id);
   }
 
-  requestResource(requester, resource, callbackSuccess, callbackFail) {
+  requestResource(resource, callbackSuccess, callbackFail) {
     if (this.swarm.size() === 0) {
-      callbackFail.apply(requester)
+      callbackFail()
     } else {
-      callbackFail.apply(requester)
+      callbackFail()
       this.swarm.sendTo('partners', 'desire', resource)
     }
   }
