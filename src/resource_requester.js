@@ -11,12 +11,17 @@ class ResourceRequester extends BaseObject {
   initialize(params) {
     this.cdnRequester = new CDNRequester()
     this.p2pManager = new P2PManager();
+    this.currentState = params.currentState;
   }
 
   requestResource(resource, callback) {
     this.resource = resource
     this.callback = callback
-    this.p2pManager.requestResource(resource, this.callback.bind(this), this.requestToCDN.bind(this))
+    if (this.currentState() === "PLAYING") {
+      this.p2pManager.requestResource(resource, this.callback.bind(this), this.requestToCDN.bind(this))
+    } else {
+      this.requestToCDN()
+    }
   }
 
   requestToCDN() {

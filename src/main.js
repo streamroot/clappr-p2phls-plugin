@@ -36,7 +36,7 @@ class P2PHLS extends UIPlugin {
     }
     this.settings = _.extend({}, this.defaultSettings)
     this.addListeners()
-    this.resourceRequester = new ResourceRequester()
+    this.resourceRequester = new ResourceRequester({currentState: this.getCurrentState.bind(this)})
   }
 
   getSource(source) {
@@ -199,6 +199,10 @@ class P2PHLS extends UIPlugin {
       return !!(this.currentState.match(/playing/i))
     }
     return false
+  }
+
+  getCurrentState() {
+    return this.currentState
   }
 
   getDuration() {
