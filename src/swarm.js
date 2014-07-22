@@ -39,26 +39,19 @@ class Swarm extends BaseObject {
     }, this)
   }
 
-  sendTo(recipients, command, resource, content = '') {
-    var message = this.mountMessage(command, resource, content)
-
+  sendTo(recipients, command, resource, content='') {
+    /* recipients: all, partners or peer ident
+    command: desire, has, request, satisfy */
     if (recipients === 'partners') {
-      _.each(this.partners, function(peer) { peer.send(message) }, this)
+      _.each(this.partners, function(peer) { peer.send(command, resource, content) }, this)
     } else if (recipients === 'all') {
-      _.each(this.peers, function(peer) { peer.send(message) }, this)
+      _.each(this.peers, function(peer) { peer.send(command, resource, content) }, this)
     } else {
       var peer = this.findPeer(recipients)
-      peer.send(message);
+      peer.send(command, resource, content);
     }
   }
 
-  mountMessage(command, resource, content) {
-    var msg = command + ":" + resource
-    if (content) {
-      msg = msg + ":" + content
-    }
-    return msg
-  }
 }
 
 module.exports = Swarm

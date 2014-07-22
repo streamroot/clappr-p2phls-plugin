@@ -43,12 +43,6 @@ class P2PManager extends BaseObject {
       this.swarm.sendTo('partners', 'desire', resource)
     }
   }
-
-  sendTo(recipients, command, resource) {
-    /* recipients: all, partners or peer ident
-       command: desire, contain, request, satisfy */
-    this.swarm.sendTo(recipients, command, resource)
-  }
 }
 
 module.exports = P2PManager
