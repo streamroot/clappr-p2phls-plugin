@@ -55,9 +55,16 @@ class Swarm extends BaseObject {
   sendDesire(resource, callbackSuccess, callbackFail, timeout) {
     /* will try to download from swarm, fallbacking to callbackFail
       after timeout */
-    this.failID = setTimeout(callbackFail, timeout)
+    this.externalCallbackFail = callbackFail
+    this.desireFailID = setTimeout(this.externalCallbackFail, timeout)
     this.currentResource = resource
     this.sendTo('partners', 'desire', resource)
+  }
+
+  addCandidateForResource(peerId, resource) {
+    console.log("found candidate for" + resource + "(" + peerId + ")")
+    if (resource !== this.currentResource) return
+//    if (this.desireFailID) clearInterval(this.desireFailID)
   }
 
 }

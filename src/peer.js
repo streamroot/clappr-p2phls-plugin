@@ -40,7 +40,7 @@ class Peer extends BaseObject {
     if (command === 'desire' && this.storage.has(resource)) {
       this.send("has", resource)
     } else if (command === "has") {
-      console.log("Peer " + this.ident + " have the resource I need!")
+      this.swarm.addCandidateForResource(this.ident, resource)
     }
   }
 
