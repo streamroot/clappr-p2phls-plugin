@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file.
 
 var BaseObject = require('base_object');
+var Storage = require('./storage');
 
 
 class Peer extends BaseObject {
@@ -11,6 +12,7 @@ class Peer extends BaseObject {
     this.ident = params.ident
     this.dataChannel = params.dataChannel
     this.bufferedDataChannel = params.bufferedChannel
+    this.storage = Storage.getInstance()
     this.addListeners()
   }
 
@@ -19,7 +21,8 @@ class Peer extends BaseObject {
     this.dataChannel.onmessage = ((evt) => this.messageReceived(evt.data))
   }
 
- send(message, buffered=false) {
+ send(command, resource, content='', buffered=false) {
+    var message = this.mountMessage(command, resource, content)
     if (buffered) {
       this.bufferedDataChannel.send(message)
     } else {
@@ -28,7 +31,24 @@ class Peer extends BaseObject {
   }
 
   messageReceived(data) {
-    console.log("["+this.ident+"] sent me: " + data)
+    this.processMessage(data)
+  }
+
+  processMessage(data) {
+    var [command, resource, content] = data.split("$")
+    if (command === 'desire' && this.storage.has(resource)) {
+      this.send("has", resource)
+    } else if (command === "has") {
+      console.log("Peer " + this.ident + " have the resource I need!")
+    }
+  }
+
+  mountMessage(command, resource, content) {
+    var msg = command + "$" + resource + "$"
+    if (content) {
+      msg = msg + content
+    }
+    return msg
   }
 }
 
