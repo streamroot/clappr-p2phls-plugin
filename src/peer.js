@@ -12,6 +12,7 @@ class Peer extends BaseObject {
     this.ident = params.ident
     this.dataChannel = params.dataChannel
     this.bufferedDataChannel = params.bufferedChannel
+    this.swarm = params.swarm
     this.storage = Storage.getInstance()
     this.addListeners()
   }

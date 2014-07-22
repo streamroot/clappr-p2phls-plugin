@@ -23,7 +23,7 @@ class Swarm extends BaseObject {
   addPeer(id, dataChannel) {
     console.log("new peer: " + id)
     var bufferedChannel = BufferedChannel(dataChannel, {calcCharSize: false})
-    var peer = new Peer({ident: id, dataChannel: dataChannel, bufferedChannel: bufferedChannel})
+    var peer = new Peer({ident: id, dataChannel: dataChannel, bufferedChannel: bufferedChannel, swarm: this})
     this.peers.push(peer)
   }
 
@@ -50,6 +50,14 @@ class Swarm extends BaseObject {
       var peer = this.findPeer(recipients)
       peer.send(command, resource, content);
     }
+  }
+
+  sendDesire(resource, callbackSuccess, callbackFail, timeout) {
+    /* will try to download from swarm, fallbacking to callbackFail
+      after timeout */
+    this.failID = setTimeout(callbackFail, timeout)
+    this.currentResource = resource
+    this.sendTo('partners', 'desire', resource)
   }
 
 }
