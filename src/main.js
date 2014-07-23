@@ -8,6 +8,7 @@ var JST = require('./jst');
 var Styler = require('./styler');
 var _ = require('underscore');
 
+var Settings = ('./settings');
 var ResourceRequester = require('./resource_requester');
 
 
@@ -93,6 +94,8 @@ class P2PHLS extends UIPlugin {
     this.currentState = "IDLE"
     this.autoPlay && this.play()
     this.ready = true
+    this.el.playerSetminBufferLength(10)
+    this.el.playerSetlowBufferLength(Settings.lowBufferLength)
   }
 
   updateHighDefinition(isHD) {
