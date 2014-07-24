@@ -9,33 +9,16 @@ var Storage = require('./storage');
 
 class Peer extends BaseObject {
   initialize(params) {
-    this.ident = params.ident
-    this.dataChannel = params.dataChannel
-    this.bufferedDataChannel = params.bufferedChannel
-    this.swarm = params.swarm
     this.storage = Storage.getInstance()
-    this.addListeners()
+    this.ident = params.ident
+    this.swarm = params.swarm
+    this.dataChannel = params.dataChannel
+    this.dataChannel.on("data", (data) => this.messageReceived(data))
   }
 
-  addListeners() {
-    this.bufferedDataChannel.on("data", (data) => this.bufferedMessageReceived(data))
-    this.dataChannel.onmessage = ((evt) => this.messageReceived(evt.data))
-  }
-
- send(command, resource, content='', buffered=false) {
+ send(command, resource, content='') {
     var message = this.mountMessage(command, resource, content)
-    if (buffered) {
-      this.bufferedDataChannel.send(message)
-    } else {
-      this.dataChannel.send(message)
-    }
-  }
-
-  bufferedMessageReceived(evt) {
-    console.log('buffered stored on window.evt')
-    console.log(evt.data.length)
-    window.evt = evt
-    this.processMessage(evt.data)
+    this.dataChannel.send(message)
   }
 
   messageReceived(data) {
@@ -50,7 +33,7 @@ class Peer extends BaseObject {
       this.swarm.addSatisfyCandidate(this.ident, resource)
     } else if (command === 'request') {
       console.log('received request')
-      this.send('satisfy', resource, this.storage.getItem(resource), true)
+      this.send('satisfy', resource, this.storage.getItem(resource))
     } else if (command === 'satisfy') {
       this.swarm.resourceReceived(this.ident, content)
     }

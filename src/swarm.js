@@ -25,7 +25,7 @@ class Swarm extends BaseObject {
   addPeer(id, dataChannel) {
     console.log("=> " + id)
     var bufferedChannel = BufferedChannel(dataChannel, {calcCharSize: false})
-    var peer = new Peer({ident: id, dataChannel: dataChannel, bufferedChannel: bufferedChannel, swarm: this})
+    var peer = new Peer({ident: id, dataChannel: bufferedChannel, swarm: this})
     this.peers.push(peer)
   }
 
