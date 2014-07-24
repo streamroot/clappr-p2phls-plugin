@@ -55,8 +55,6 @@ class Swarm extends BaseObject {
   }
 
   sendDesire(resource, callbackSuccess, callbackFail) {
-    /* will try to download from swarm, fallbacking to callbackFail
-      after timeout */
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
     this.desireFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
@@ -82,7 +80,7 @@ class Swarm extends BaseObject {
   resourceReceived(peer, chunk) {
     //TODO increase peer score
     if (this.satisfyCandidate === peer) {
-      console.log("p2p! sending to player " + chunk.length)
+      console.log("P2P: " + chunk.length)
       this.externalCallbackSuccess(chunk)
     }
   }

@@ -209,12 +209,10 @@ class P2PHLS extends UIPlugin {
   }
 
   getDuration() {
-    var duration = this.el.globoGetDuration()
-    if (this.playbackType === 'live') {
-      // estimate 10 seconds of buffer time for live streams for seek positions
-      duration = duration - 10
+    if (!!this.duration) {
+      this.duration = this.el.globoGetDuration()
     }
-    return duration
+    return this.duration
   }
 
   seek(time) {
