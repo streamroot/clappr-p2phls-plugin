@@ -6,6 +6,7 @@
 var BaseObject = require('base_object');
 var BufferedChannel = require('rtc-bufferedchannel');
 var Peer = require('./peer')
+var Settings = require('./settings')
 var _ = require('underscore')
 
 
@@ -14,6 +15,7 @@ class Swarm extends BaseObject {
     this.peers = []
     //TODO glue a partnership algorithm based on QoE study
     this.partners = this.peers
+    this.satisfyCandidate = undefined
   }
 
   size() {
@@ -21,7 +23,7 @@ class Swarm extends BaseObject {
   }
 
   addPeer(id, dataChannel) {
-    console.log("new peer: " + id)
+    console.log("=> " + id)
     var bufferedChannel = BufferedChannel(dataChannel, {calcCharSize: false})
     var peer = new Peer({ident: id, dataChannel: dataChannel, bufferedChannel: bufferedChannel, swarm: this})
     this.peers.push(peer)
@@ -30,7 +32,7 @@ class Swarm extends BaseObject {
   removePeer(id) {
     var peer = this.findPeer(id)
     this.peers = _.without(this.peers, peer)
-    console.log("bye peer: " + id + ", remains: " + this.size())
+    console.log("<= " + id + ", remains: " + this.size())
   }
 
   findPeer(id) {
@@ -52,21 +54,50 @@ class Swarm extends BaseObject {
     }
   }
 
-  sendDesire(resource, callbackSuccess, callbackFail, timeout) {
+  sendDesire(resource, callbackSuccess, callbackFail) {
     /* will try to download from swarm, fallbacking to callbackFail
       after timeout */
     this.externalCallbackFail = callbackFail
-    this.desireFailID = setTimeout(this.externalCallbackFail, timeout)
+    this.externalCallbackSuccess = callbackSuccess
+    this.desireFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
     this.currentResource = resource
     this.sendTo('partners', 'desire', resource)
   }
 
-  addCandidateForResource(peerId, resource) {
-    console.log("found candidate for" + resource + "(" + peerId + ")")
+  addSatisfyCandidate(peerId, resource) {
     if (resource !== this.currentResource) return
-//    if (this.desireFailID) clearInterval(this.desireFailID)
+    if (this.desireFailID) {
+      this.clear(this.desireFailID)
+      this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
+    }
+    this.satisfyCandidate = peerId
+    this.sendRequest(peerId, resource)
   }
 
+  sendRequest(peerId, resource) {
+    this.sendTo(peerId, 'request', resource)
+    this.currentResource = undefined
+  }
+
+  resourceReceived(peer, chunk) {
+    //TODO increase peer score
+    if (this.satisfyCandidate === peer) {
+      console.log("p2p! sending to player " + chunk.length)
+      this.externalCallbackSuccess(chunk)
+    }
+  }
+
+  callbackFail() {
+    //TODO decrease peer score
+    this.clear(this.requestFailID)
+    this.clear(this.desireFailID)
+    this.externalCallbackFail()
+  }
+
+  clear(id) {
+    clearInterval(id)
+    id = 0
+  }
 }
 
 module.exports = Swarm

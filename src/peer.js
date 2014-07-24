@@ -18,7 +18,7 @@ class Peer extends BaseObject {
   }
 
   addListeners() {
-    this.bufferedDataChannel.on("data", (data) => this.messageReceived(data))
+    this.bufferedDataChannel.on("data", (data) => this.bufferedMessageReceived(data))
     this.dataChannel.onmessage = ((evt) => this.messageReceived(evt.data))
   }
 
@@ -31,6 +31,13 @@ class Peer extends BaseObject {
     }
   }
 
+  bufferedMessageReceived(evt) {
+    console.log('buffered stored on window.evt')
+    console.log(evt.data.length)
+    window.evt = evt
+    this.processMessage(evt.data)
+  }
+
   messageReceived(data) {
     this.processMessage(data)
   }
@@ -40,7 +47,12 @@ class Peer extends BaseObject {
     if (command === 'desire' && this.storage.has(resource)) {
       this.send("has", resource)
     } else if (command === "has") {
-      this.swarm.addCandidateForResource(this.ident, resource)
+      this.swarm.addSatisfyCandidate(this.ident, resource)
+    } else if (command === 'request') {
+      console.log('received request')
+      this.send('satisfy', resource, this.storage.getItem(resource), true)
+    } else if (command === 'satisfy') {
+      this.swarm.resourceReceived(this.ident, content)
     }
   }
 
