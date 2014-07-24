@@ -39,8 +39,7 @@ class P2PManager extends BaseObject {
     if (this.swarm.size() === 0) {
       callbackFail()
     } else {
-      //TODO set timeout according to chunk length in seconds
-      this.swarm.sendDesire(resource, callbackSuccess, callbackFail, Settings.timeout)
+      this.swarm.sendDesire(resource, callbackSuccess, callbackFail)
     }
   }
 }
