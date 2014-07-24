@@ -21,7 +21,7 @@ Settings.tracker = 'http://server.bem.tv:8080'
 /* timeout
 Time in seconds that the player will wait for peers to
 send chunks. */
-Settings.timeout = 2000
+Settings.timeout = 1000
 
 /* lowBufferLength
 Local buffer threshold in seconds in which the player
