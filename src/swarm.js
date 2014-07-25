@@ -43,7 +43,7 @@ class Swarm extends BaseObject {
 
   sendTo(recipients, command, resource, content='') {
     /* recipients: all, partners or peer ident
-    command: desire, has, request, satisfy */
+    command: desire, contain, request, satisfy */
     if (recipients === 'partners') {
       _.each(this.partners, function(peer) { peer.send(command, resource, content) }, this)
     } else if (recipients === 'all') {

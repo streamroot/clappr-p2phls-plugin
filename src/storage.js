@@ -47,7 +47,7 @@ class Storage {
     return this.keys.length
   }
 
-  has(key) {
+  contain(key) {
     /* considering chunks from position 1
     to avoid race condition on signalling */
     return this.keys.indexOf(key) > 0? true: false
