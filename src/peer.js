@@ -27,7 +27,7 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
-    if (command === 'desire' && this.storage.contain(resource)) {
+    if (command === 'interested' && this.storage.contain(resource)) {
       this.send("contain", resource)
     } else if (command === "contain") {
       this.swarm.addSatisfyCandidate(this.ident, resource)

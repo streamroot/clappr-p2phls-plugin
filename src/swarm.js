@@ -43,7 +43,7 @@ class Swarm extends BaseObject {
 
   sendTo(recipients, command, resource, content='') {
     /* recipients: all, partners or peer ident
-    command: desire, contain, request, satisfy */
+    command: interested, contain, request, satisfy */
     if (recipients === 'partners') {
       _.each(this.partners, function(peer) { peer.send(command, resource, content) }, this)
     } else if (recipients === 'all') {
@@ -54,18 +54,18 @@ class Swarm extends BaseObject {
     }
   }
 
-  sendDesire(resource, callbackSuccess, callbackFail) {
+  sendInterested(resource, callbackSuccess, callbackFail) {
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
-    this.desireFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
+    this.interestedFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
     this.currentResource = resource
-    this.sendTo('partners', 'desire', resource)
+    this.sendTo('partners', 'interested', resource)
   }
 
   addSatisfyCandidate(peerId, resource) {
     if (resource !== this.currentResource) return
-    if (this.desireFailID) {
-      this.clear(this.desireFailID)
+    if (this.interestedFailID) {
+      this.clear(this.interestedFailID)
       this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
     }
     this.satisfyCandidate = peerId
@@ -88,7 +88,7 @@ class Swarm extends BaseObject {
   callbackFail() {
     //TODO decrease peer score
     this.clear(this.requestFailID)
-    this.clear(this.desireFailID)
+    this.clear(this.interestedFailID)
     this.externalCallbackFail()
   }
 
