@@ -35,7 +35,7 @@ class Peer extends BaseObject {
       console.log("Sending " + resource + " to " + this.ident)
       this.send('satisfy', resource, this.storage.getItem(resource))
     } else if (command === 'satisfy') {
-      this.swarm.resourceReceived(this.ident, content)
+      this.swarm.resourceReceived(this.ident, resource, content)
     }
   }
 

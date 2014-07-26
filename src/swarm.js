@@ -8,6 +8,7 @@ var BufferedChannel = require('rtc-bufferedchannel');
 var Peer = require('./peer')
 var Settings = require('./settings')
 var _ = require('underscore')
+var Storage = require('./storage')
 
 
 class Swarm extends BaseObject {
@@ -15,6 +16,7 @@ class Swarm extends BaseObject {
     this.peers = []
     //TODO glue a partnership algorithm based on QoE study
     this.partners = this.peers
+    this.storage = Storage.getInstance()
     this.satisfyCandidate = undefined
   }
 
@@ -63,7 +65,7 @@ class Swarm extends BaseObject {
   }
 
   addSatisfyCandidate(peerId, resource) {
-    if (resource !== this.currentResource) return
+    if (this.satisfyCandidate || this.currentResource !== resource) return
     if (this.interestedFailID) {
       this.clear(this.interestedFailID)
       this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
@@ -74,13 +76,14 @@ class Swarm extends BaseObject {
 
   sendRequest(peerId, resource) {
     this.sendTo(peerId, 'request', resource)
-    this.currentResource = undefined
   }
 
-  resourceReceived(peer, chunk) {
+  resourceReceived(peer, resource, chunk) {
     //TODO increase peer score
-    if (this.satisfyCandidate === peer) {
+    if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
+      this.storage.setItem(resource, chunk)
+      this.currentResource = undefined
     }
   }
 
