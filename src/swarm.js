@@ -80,8 +80,7 @@ class Swarm extends BaseObject {
   resourceReceived(peer, chunk) {
     //TODO increase peer score
     if (this.satisfyCandidate === peer) {
-      console.log("P2P: " + chunk.length)
-      this.externalCallbackSuccess(chunk)
+      this.externalCallbackSuccess(chunk, "p2p")
     }
   }
 

@@ -50,12 +50,19 @@ class P2PHLS extends UIPlugin {
   }
 
   requestResource(url) {
-    this.resourceRequester.requestResource(url, (chunk) => this.resourceLoaded(chunk))
+    this.resourceRequester.requestResource(url, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
-  resourceLoaded(chunk) {
+  resourceLoaded(chunk, method) {
     this.el.resourceLoaded(chunk)
+    this.updateStats(method)
     return
+  }
+
+  updateStats(method) {
+    if (method == "p2p") this.recv_p2p++
+    else if (method == "cdn") this.recv_cdn++
+    this.trigger('playback:stats:add', {recv_p2p: this.recv_p2p, recv_cdn: this.recv_cdn });
   }
 
   addListeners() {
@@ -96,6 +103,9 @@ class P2PHLS extends UIPlugin {
     this.ready = true
     this.el.playerSetminBufferLength(10)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
+    this.recv_cdn = 0
+    this.recv_p2p = 0
+    this.trigger('playback:stats:add', {recv_p2p: this.recv_p2p, recv_cdn: this.recv_cdn });
   }
 
   updateHighDefinition(isHD) {

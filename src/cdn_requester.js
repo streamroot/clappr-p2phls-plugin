@@ -22,7 +22,7 @@ class CDNRequester extends BaseObject {
 
   resourceLoaded(chunk) {
     this.storage.setItem(this.resource, chunk)
-    this.callback(chunk);
+    this.callback(chunk, "cdn");
   }
 }
 
