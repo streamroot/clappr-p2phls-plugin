@@ -39,7 +39,7 @@ class P2PManager extends BaseObject {
     if (this.swarm.size() === 0) {
       callbackFail()
     } else {
-      this.swarm.sendDesire(resource, callbackSuccess, callbackFail)
+      this.swarm.sendInterested(resource, callbackSuccess, callbackFail)
     }
   }
 }
