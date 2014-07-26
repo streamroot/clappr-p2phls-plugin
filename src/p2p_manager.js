@@ -12,13 +12,13 @@ var Settings = require("./settings")
 var Swarm = require('./swarm')
 
 class P2PManager extends BaseObject {
-  initialize() {
-    this.connectionSettings = {'room': Settings.swarm, iceServers: Freeice(), debug: false}
-    this.connection = QuickConnect(Settings.tracker, this.connectionSettings)
+  initialize(params) {
+    this.connectionSettings = {'room': params.swarm, iceServers: Freeice(), debug: false}
+    var connection = QuickConnect(Settings.tracker, this.connectionSettings)
     this.swarm = new Swarm()
 
     //TODO create different data channels for different protocol messages
-    this.dataChannel = this.connection.createDataChannel(Settings.swarm)
+    this.dataChannel = connection.createDataChannel('bemtv')
     this.setupListerners()
   }
 

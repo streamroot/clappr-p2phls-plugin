@@ -28,16 +28,17 @@ class P2PHLS extends UIPlugin {
     this.src = this.getSource(options.src)
     this.swfPath = "assets/P2PHLSPlayer.swf"
     this.setupBrowser()
+    this.createResourceRequester()
     this.highDefinition = false
     this.autoPlay = options.autoPlay
-    this.defaultSettings = {
-      left: ["playstop", "volume"],
-      default: [],
-      right: ["fullscreen", "hd"]
-    }
+    this.defaultSettings = {left: ["playstop", "volume"], default: [], right: ["fullscreen", "hd"]}
     this.settings = _.extend({}, this.defaultSettings)
     this.addListeners()
-    this.resourceRequester = new ResourceRequester({currentState: this.getCurrentState.bind(this)})
+  }
+
+  createResourceRequester() {
+    var requesterOptions = {currentState: this.getCurrentState.bind(this), swarm: btoa(this.src)}
+    this.resourceRequester = new ResourceRequester(requesterOptions)
   }
 
   getSource(source) {

@@ -10,7 +10,7 @@ var P2PManager = require('./p2p_manager');
 class ResourceRequester extends BaseObject {
   initialize(params) {
     this.cdnRequester = new CDNRequester()
-    this.p2pManager = new P2PManager();
+    this.p2pManager = new P2PManager({swarm: params.swarm});
     this.currentState = params.currentState;
   }
 

@@ -10,10 +10,6 @@ class Settings {
 Maximum size of the storage in bytes. */
 Settings.maxStorageBytes = 2 * 1024 * 1024
 
-/* swarm
-Name of the swarm where peers converge. */
-Settings.swarm = 'bemtv-swarm'
-
 /* tracker
 Place where a rtc-switchboard server is running */
 Settings.tracker = 'http://server.bem.tv:8080'
@@ -26,7 +22,7 @@ Settings.timeout = 1000
 /* lowBufferLength
 Local buffer threshold in seconds in which the player
 will try to use P2P. Smaller than that, player will
-behave as a normal one. */
+request chunks only for CDN. */
 Settings.lowBufferLength = 5
 
 module.exports = Settings
