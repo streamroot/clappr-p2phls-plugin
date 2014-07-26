@@ -8,7 +8,7 @@ class Settings {
 
 /* maxStorageBytes
 Maximum size of the storage in bytes. */
-Settings.maxStorageBytes = 5 * 1024 * 1024
+Settings.maxStorageBytes = 2 * 1024 * 1024
 
 /* swarm
 Name of the swarm where peers converge. */
