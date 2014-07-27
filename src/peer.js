@@ -32,11 +32,15 @@ class Peer extends BaseObject {
     } else if (command === "contain") {
       this.swarm.addSatisfyCandidate(this.ident, resource)
     } else if (command === 'request') {
-      console.log("Sending " + resource + " to " + this.ident)
       this.send('satisfy', resource, this.storage.getItem(resource))
       this.swarm.chunksSent += 1
     } else if (command === 'satisfy') {
       this.swarm.resourceReceived(this.ident, resource, content)
+//    } else if (this.storage.keys.length > 0) {
+//      var res = resource.split("/")[6]
+//      var first = this.storage.keys[0].split("_")[3]
+//      var lastChunk = this.storage.keys[this.storage.keys.length-1].split("_")[3]
+//      console.log("discarted: ", command, res, first, lastChunk)
     }
   }
 
