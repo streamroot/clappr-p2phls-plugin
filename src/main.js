@@ -57,13 +57,14 @@ class P2PHLS extends UIPlugin {
   resourceLoaded(chunk, method) {
     this.el.resourceLoaded(chunk)
     this.updateStats(method)
-    return
   }
 
-  updateStats(method) {
+  updateStats(method=null) {
     if (method == "p2p") this.recv_p2p++
     else if (method == "cdn") this.recv_cdn++
-    this.trigger('playback:stats:add', {recv_p2p: this.recv_p2p, recv_cdn: this.recv_cdn });
+    var swarmSize = this.resourceRequester.p2pManager.swarm.size()
+    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, swarmSize: swarmSize}
+    this.triggerStats(stats)
   }
 
   addListeners() {
@@ -106,7 +107,12 @@ class P2PHLS extends UIPlugin {
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
     this.recv_cdn = 0
     this.recv_p2p = 0
-    this.trigger('playback:stats:add', {recv_p2p: this.recv_p2p, recv_cdn: this.recv_cdn });
+    this.updateStats()
+    this.triggerStats({status: "on"});
+  }
+
+  triggerStats(metrics) {
+    this.trigger('playback:p2phlsstats:add', metrics);
   }
 
   updateHighDefinition(isHD) {
@@ -177,6 +183,7 @@ class P2PHLS extends UIPlugin {
       this.trigger('playback:timeupdate', 0, this.el.globoGetDuration(), this.name)
     }
     this.currentState = state;
+    this.triggerStats({state: this.currentState, currentBitrate: this.toKB(this.getCurrentBitrate())})
     this.updatePlaybackType()
   }
 
@@ -272,6 +279,10 @@ class P2PHLS extends UIPlugin {
       this.setupFirefox()
     }
     return this
+  }
+
+  toKB(num) {
+    return Math.floor(num/1000)
   }
 }
 
