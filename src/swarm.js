@@ -16,6 +16,7 @@ class Swarm extends BaseObject {
     //TODO glue a partnership algorithm based on QoE study
     this.partners = this.peers
     this.satisfyCandidate = undefined
+    this.chunksSent = 0
   }
 
   size() {

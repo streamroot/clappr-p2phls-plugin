@@ -63,7 +63,9 @@ class P2PHLS extends UIPlugin {
     if (method == "p2p") this.recv_p2p++
     else if (method == "cdn") this.recv_cdn++
     var swarmSize = this.resourceRequester.p2pManager.swarm.size()
-    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, swarmSize: swarmSize}
+    var chunksSent = this.resourceRequester.p2pManager.swarm.chunksSent
+    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn,
+                swarmSize: swarmSize, chunksSent: chunksSent}
     this.triggerStats(stats)
   }
 
