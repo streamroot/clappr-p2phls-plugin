@@ -84,6 +84,7 @@ class Swarm extends BaseObject {
       this.externalCallbackSuccess(chunk, "p2p")
       this.storage.setItem(resource, chunk)
       this.currentResource = undefined
+      this.satisfyCandidate = undefined
     }
   }
 
