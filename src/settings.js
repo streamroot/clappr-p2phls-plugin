@@ -8,7 +8,7 @@ class Settings {
 
 /* maxStorageBytes
 Maximum size of the storage in bytes. */
-Settings.maxStorageBytes = 2 * 1024 * 1024
+Settings.maxStorageChunks = 10
 
 /* tracker
 Place where a rtc-switchboard server is running */

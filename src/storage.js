@@ -10,22 +10,24 @@ class Storage {
   constructor() {
     this.keys = []
     this.chunks = {}
-    this.totalBytes = 0
   }
 
   setItem(key, value) {
     this.keys.push(key)
     this.chunks[key] = value
-    this.totalBytes += value.length
-    if (this.totalBytes > Settings.maxStorageBytes) {
+    if (this.keys.length > Settings.maxStorageChunks) {
       this.removeOlderItem()
     }
   }
 
   removeOlderItem() {
     var key = this.keys.splice(0, 1)[0]
-    this.totalBytes -= this.chunks[key].length
     delete this.chunks[key]
+    if (!_.isEqual(this.keys,Object.keys(this.chunks))) {
+      console.log("ERROR ON STORAGE")
+      window.keys = this.keys
+      window.storage = this.chunks
+    }
   }
 
   getItem(key) {
