@@ -13,6 +13,10 @@ class Storage {
   }
 
   setItem(key, value) {
+    if (_.has(this.chunks, key)) {
+      console.log("WARN: Already have this chunk on storage: ", key);
+      return
+    }
     this.keys.push(key)
     this.chunks[key] = value
     if (this.keys.length > Settings.maxStorageChunks) {
@@ -23,11 +27,6 @@ class Storage {
   removeOlderItem() {
     var key = this.keys.splice(0, 1)[0]
     delete this.chunks[key]
-    if (!_.isEqual(this.keys,Object.keys(this.chunks))) {
-      console.log("ERROR ON STORAGE")
-      window.keys = this.keys
-      window.storage = this.chunks
-    }
   }
 
   getItem(key) {
