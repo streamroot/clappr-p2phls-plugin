@@ -66,7 +66,8 @@ class Swarm extends BaseObject {
   addSatisfyCandidate(peerId, resource) {
     if (this.satisfyCandidate || this.currentResource !== resource) return
     if (this.interestedFailID) {
-      this.clear(this.interestedFailID)
+      clearInterval(this.interestedFailID)
+      this.interestedFailID = 0
       this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
     }
     this.satisfyCandidate = peerId
@@ -83,19 +84,18 @@ class Swarm extends BaseObject {
       this.externalCallbackSuccess(chunk, "p2p")
       this.currentResource = undefined
       this.satisfyCandidate = undefined
+      setInterval(this.requestFailID)
+      this.requestFailID = 0
     }
   }
 
   callbackFail() {
     //TODO decrease peer score
-    this.clear(this.requestFailID)
-    this.clear(this.interestedFailID)
+    clearInterval(this.requestFailID)
+    clearInterval(this.interestedFailID)
+    this.requestFailID = 0
+    this.interestedFailID = 0
     this.externalCallbackFail()
-  }
-
-  clear(id) {
-    clearInterval(id)
-    id = 0
   }
 }
 
