@@ -15,7 +15,6 @@ class ResourceRequester extends BaseObject {
   }
 
   requestResource(resource, callback) {
-    console.log("Requesting " + resource)
     this.resource = resource
     this.callback = callback
     if (this.p2pmanager.swarm.size() > 0) {
