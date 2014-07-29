@@ -17,11 +17,7 @@ class ResourceRequester extends BaseObject {
   requestResource(resource, callback) {
     this.resource = resource
     this.callback = callback
-    if (this.p2pmanager.swarm.size() > 0) {
-      this.p2pManager.requestResource(resource, this.callback, this.requestToCDN.bind(this))
-    } else {
-      this.requestToCDN()
-    }
+    this.p2pManager.requestResource(resource, this.callback, this.requestToCDN.bind(this))
   }
 
   requestToCDN() {
