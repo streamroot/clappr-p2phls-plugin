@@ -51,12 +51,18 @@ class P2PHLS extends UIPlugin {
   }
 
   requestResource(url) {
+    this.currentUrl = url
     this.resourceRequester.requestResource(url, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
   resourceLoaded(chunk, method) {
-    this.el.resourceLoaded(chunk)
-    this.updateStats(method)
+    if (this.currentUrl) {
+      this.currentUrl = null
+      this.el.resourceLoaded(chunk)
+      this.updateStats(method)
+    } else {
+      console.log("It seems a deadlock happened with timers on swarm.")
+    }
   }
 
   updateStats(method=null) {
