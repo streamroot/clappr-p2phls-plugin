@@ -289,8 +289,7 @@ class P2PHLS extends UIPlugin {
 }
 
 P2PHLS.canPlay = function(resource) {
-  var isLegacyIE = window.ActiveXObject
-  return (!isLegacyIE) && !!resource.match("p2p\\+http:(.*)")
+  return !!(window.webkitRTCPeerConnection || window.mozRTCPeerConnection) && !!resource.match("p2p\\+http:(.*)")
 }
 
 module.exports = window.P2PHLS = P2PHLS;
