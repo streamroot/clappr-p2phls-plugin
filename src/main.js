@@ -77,7 +77,6 @@ class P2PHLS extends UIPlugin {
 
   addListeners() {
     WP3.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
-    WP3.Mediator.on(this.uniqueId + ':timeupdate', (params) => this.updateTime(params))
     WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
     WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
     WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
@@ -86,7 +85,6 @@ class P2PHLS extends UIPlugin {
   stopListening() {
     super()
     WP3.Mediator.off(this.uniqueId + ':flashready')
-    WP3.Mediator.off(this.uniqueId + ':timeupdate')
     WP3.Mediator.off(this.uniqueId + ':playbackstate')
     WP3.Mediator.off(this.uniqueId + ':highdefinition')
   }
@@ -131,24 +129,6 @@ class P2PHLS extends UIPlugin {
   updateHighDefinition(isHD) {
     this.highDefinition = (isHD === "true");
     this.trigger('playback:highdefinitionupdate')
-  }
-
-  updateTime(params) {
-    var duration, position = params.split(",")
-    var previousDvrEnabled = this.dvrEnabled
-    this.dvrEnabled = (this.playbackType === 'live' && duration > 240)
-    var duration = this.getDuration()
-    if (this.playbackType === 'live') {
-      if (position >= duration) {
-        position = duration
-      }
-      this.trigger('playback:timeupdate', position, duration, this.name)
-    } else {
-      this.trigger('playback:timeupdate', this.el.globoGetPosition(), duration, this.name)
-    }
-    if (this.dvrEnabled != previousDvrEnabled) {
-      this.updateSettings()
-    }
   }
 
   play() {
