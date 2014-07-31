@@ -117,6 +117,11 @@ class P2PHLS extends UIPlugin {
     this.recv_p2p = 0
     this.updateStats()
     this.triggerStats({status: "on"});
+    this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 500)
+  }
+
+  updateBufferLength() {
+    this.triggerStats({bufferLength: this.el.globoGetbufferLength()})
   }
 
   triggerStats(metrics) {
