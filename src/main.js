@@ -119,7 +119,8 @@ class P2PHLS extends UIPlugin {
   }
 
   updateBufferLength() {
-    this.triggerStats({bufferLength: this.el.globoGetbufferLength()})
+    var bufferLength = this.el.globoGetbufferLength() || 0
+    this.triggerStats({bufferLength: bufferLength})
   }
 
   triggerStats(metrics) {
