@@ -4,7 +4,13 @@
   "description": "BemTV Peer-to-Peer plugin for HTTP Live Streaming transmissions on Clappr Media Player",
   "main": "dist/p2phls.js",
   "author": "Flávio Ribeiro",
-  "keywords": ["p2p", "hls", "http live streaming", "player", "online video"],
+  "keywords": [
+    "p2p",
+    "hls",
+    "http live streaming",
+    "player",
+    "online video"
+  ],
   "homepage": "http://bem.tv",
   "bugs": {
     "url": "http://github.com/bemtv/clappr-p2phls-plugin"
@@ -18,23 +24,26 @@
     "underscore": "global:_"
   },
   "browserify": {
-    "transform": ["browserify-shim"]
+    "transform": [
+      "browserify-shim"
+    ]
   },
   "devDependencies": {
     "browserify": "^4.2.0",
+    "browserify-shim": "^3.6.0",
     "es6ify": "^1.2.0",
+    "express": "^4.6.1",
+    "glob": "^4.0.4",
     "gulp": "^3.8.6",
+    "gulp-livereload": "^2.1.0",
     "gulp-minify-css": "^0.3.6",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^0.7.2",
-    "vinyl-source-stream": "^0.1.1",
-    "yargs": "^1.2.6",
-    "glob": "^4.0.4",
+    "gulp-util": "latest",
     "mkdirp": "^0.5.0",
     "underscore": "^1.6.0",
-    "express": "^4.6.1",
-    "gulp-util": "latest",
-    "gulp-livereload": "^2.1.0"
+    "vinyl-source-stream": "^0.1.1",
+    "yargs": "^1.2.6"
   },
   "dependencies": {
     "clappr": "latest",
@@ -44,5 +53,4 @@
     "jquery": "2.1.1",
     "underscore": "1.6.0"
   }
-
 }
