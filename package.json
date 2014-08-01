@@ -13,6 +13,13 @@
     "type": "git",
     "url": "git@github.com:bemtv/clappr-p2phls-plugin.git"
   },
+  "browserify-shim": {
+    "jquery": "global:$",
+    "underscore": "global:_"
+  },
+  "browserify": {
+    "transform": ["browserify-shim"]
+  },
   "devDependencies": {
     "browserify": "^4.2.0",
     "es6ify": "^1.2.0",
