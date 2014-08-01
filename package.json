@@ -1,6 +1,18 @@
 {
   "name": "p2phls",
   "version": "0.0.1",
+  "description": "BemTV Peer-to-Peer plugin for HTTP Live Streaming transmissions on Clappr Media Player",
+  "main": "dist/p2phls.js",
+  "author": "Flávio Ribeiro",
+  "keywords": ["p2p", "hls", "http live streaming", "player", "online video"],
+  "homepage": "http://bem.tv",
+  "bugs": {
+    "url": "http://github.com/bemtv/clappr-p2phls-plugin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bemtv/clappr-p2phls-plugin.git"
+  },
   "dependencies": {
     "clappr": "latest"
   },
