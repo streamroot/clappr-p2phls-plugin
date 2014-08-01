@@ -17,6 +17,7 @@ class Swarm extends BaseObject {
     this.partners = this.peers
     this.satisfyCandidate = undefined
     this.chunksSent = 0
+    this.chokedClients = 0
   }
 
   size() {
@@ -63,11 +64,19 @@ class Swarm extends BaseObject {
     this.sendTo('partners', 'interested', resource)
   }
 
+  chokeReceived(resource) {
+    if (this.currentResource === resource) {
+      this.chokedClients += 1
+      if (this.chokedClients === this.partners.length) {
+        this.callbackFail()
+      }
+    }
+  }
+
   addSatisfyCandidate(peerId, resource) {
     if (this.satisfyCandidate || this.currentResource !== resource) return
     if (this.interestedFailID) {
-      clearInterval(this.interestedFailID)
-      this.interestedFailID = 0
+      this.clearInterestedFailInterval()
       this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
     }
     this.satisfyCandidate = peerId
@@ -84,18 +93,29 @@ class Swarm extends BaseObject {
       this.externalCallbackSuccess(chunk, "p2p")
       this.currentResource = undefined
       this.satisfyCandidate = undefined
-      setInterval(this.requestFailID)
-      this.requestFailID = 0
+      this.chokedClients = 0
+      this.clearRequestFailInterval()
     }
   }
 
   callbackFail() {
     //TODO decrease peer score
-    clearInterval(this.requestFailID)
-    clearInterval(this.interestedFailID)
-    this.requestFailID = 0
-    this.interestedFailID = 0
+    this.currentResource = undefined
+    this.satisfyCandidate = undefined
+    this.clearInterestedFailInterval()
+    this.clearRequestFailInterval()
+    this.chokedClients = 0
     this.externalCallbackFail()
+  }
+
+  clearInterestedFailInterval() {
+    clearInterval(this.interestedFailID)
+    this.interestedFailID = 0
+  }
+
+  clearRequestFailInterval() {
+    clearInterval(this.requestFailID)
+    this.requestFailID = 0
   }
 }
 

@@ -27,13 +27,19 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
-    if (command === 'interested' && this.storage.contain(resource)) {
-      this.send("contain", resource)
+    if (command === 'interested') {
+      if (this.storage.contain(resource)) {
+        this.send("contain", resource)
+      } else {
+        this.send("choke", resource)
+      }
     } else if (command === "contain") {
       this.swarm.addSatisfyCandidate(this.ident, resource)
     } else if (command === 'request') {
       this.send('satisfy', resource, this.storage.getItem(resource))
       this.swarm.chunksSent += 1
+    } else if (command === 'choke') {
+      this.swarm.chokeReceived(resource)
     } else if (command === 'satisfy') {
       this.swarm.resourceReceived(this.ident, resource, content)
 //    } else if (this.storage.keys.length > 0) {
