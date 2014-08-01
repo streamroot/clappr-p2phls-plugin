@@ -31,6 +31,8 @@ gulp.task('build', ['pre-build'], function(b) {
     .external('ui_plugin')
     .external('ui_object')
     .external('base_object')
+    .external('jquery')
+    .external('underscore')
     .bundle()
     .pipe(source('main.js'))
     .pipe(rename( 'p2phls' + (isProd ? '.min.js' : '.js')));
