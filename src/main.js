@@ -150,12 +150,6 @@ class P2PHLS extends UIPlugin {
     return currentLevel.bitrate
   }
 
-  getLastProgramDate() {
-    var programDate = this.el.globoGetLastProgramDate()
-    // normalizing for BRT
-    return programDate - 1.08e+7
-  }
-
   isHighDefinition() {
     return this.highDefinition
   }
