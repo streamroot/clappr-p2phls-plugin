@@ -36,6 +36,18 @@ class P2PHLS extends UIPlugin {
     this.addListeners()
   }
 
+  addListeners() {
+    WP3.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
+    WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
+    WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
+    WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
+    this.listenTo(this.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", this.updateSwarmSize)
+  }
+
+  updateSwarmSize(event) {
+    this.triggerStats(event)
+  }
+
   createResourceRequester() {
     var requesterOptions = {currentState: this.getCurrentState.bind(this), swarm: btoa(this.src)}
     this.resourceRequester = new ResourceRequester(requesterOptions)
@@ -68,18 +80,9 @@ class P2PHLS extends UIPlugin {
   updateStats(method=null) {
     if (method == "p2p") this.recv_p2p++
     else if (method == "cdn") this.recv_cdn++
-    var swarmSize = this.resourceRequester.p2pManager.swarm.size()
     var chunksSent = this.resourceRequester.p2pManager.swarm.chunksSent
-    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn,
-                swarmSize: swarmSize, chunksSent: chunksSent}
+    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, chunksSent: chunksSent}
     this.triggerStats(stats)
-  }
-
-  addListeners() {
-    WP3.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
-    WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
-    WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
-    WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
   }
 
   stopListening() {

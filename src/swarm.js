@@ -27,12 +27,14 @@ class Swarm extends BaseObject {
     var bufferedChannel = BufferedChannel(dataChannel, {calcCharSize: false})
     var peer = new Peer({ident: id, dataChannel: bufferedChannel, swarm: this})
     this.peers.push(peer)
+    this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
   removePeer(id) {
     var peer = this.findPeer(id)
     this.peers = _.without(this.peers, peer)
     console.log("<= " + id + ", remains: " + this.size())
+    this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
   findPeer(id) {
