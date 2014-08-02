@@ -13,8 +13,6 @@ var _ = require('underscore')
 class Swarm extends BaseObject {
   initialize() {
     this.peers = []
-    //TODO glue a partnership algorithm based on QoE study
-    this.partners = this.peers
     this.satisfyCandidate = undefined
     this.chunksSent = 0
     this.chokedClients = 0
@@ -41,6 +39,15 @@ class Swarm extends BaseObject {
     return _.find(this.peers, function (peer) {
       return !!(peer.ident === id)
     }, this)
+  }
+
+  get partners() {
+    var orderedPeers = _.sortBy(this.peers, function (p) { return p.score }).reverse()
+    if (this.peers.length > Settings.maxPartners) {
+      return orderedPeers.slice(0, Settings.maxPartners)
+    } else {
+      return orderedPeers
+    }
   }
 
   sendTo(recipients, command, resource, content='') {
@@ -91,21 +98,32 @@ class Swarm extends BaseObject {
     //TODO increase peer score
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
-      this.currentResource = undefined
-      this.satisfyCandidate = undefined
-      this.chokedClients = 0
+      this.updatePartnerScore(Settings.points)
+      this.rebootRoundVars()
       this.clearRequestFailInterval()
     }
   }
 
   callbackFail() {
     //TODO decrease peer score
-    this.currentResource = undefined
-    this.satisfyCandidate = undefined
+    this.updatePartnerScore(Settings.points * -1)
+    this.rebootRoundVars()
     this.clearInterestedFailInterval()
     this.clearRequestFailInterval()
-    this.chokedClients = 0
     this.externalCallbackFail()
+  }
+
+  updatePartnerScore(points) {
+    if (this.satisfyCandidate) {
+      var peer = this.findPeer(this.satisfyCandidate)
+      peer.score += points
+    }
+  }
+
+  rebootRoundVars(roundSuccess) {
+    this.currentResource = undefined
+    this.satisfyCandidate = undefined
+    this.chokedClients = 0
   }
 
   clearInterestedFailInterval() {

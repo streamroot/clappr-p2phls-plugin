@@ -14,6 +14,7 @@ class Peer extends BaseObject {
     this.swarm = params.swarm
     this.dataChannel = params.dataChannel
     this.dataChannel.on("data", (data) => this.messageReceived(data))
+    this.score = 1000
   }
 
  send(command, resource, content='') {
