@@ -119,8 +119,13 @@ class P2PHLS extends UIPlugin {
   }
 
   updateBufferLength() {
-    var bufferLength = this.el.globoGetbufferLength() || 0
-    this.triggerStats({bufferLength: bufferLength})
+    this.bufferLength = this.el.globoGetbufferLength() || 0
+    this.triggerStats({bufferLength: this.bufferLength})
+    if (this.bufferLength < 1 && this.currentState == 'PLAYING') {
+      this.setPlaybackState('PLAYING_BUFFERING')
+    } else if (this.currentState == "PLAYING_BUFFERING") {
+      this.setPlaybackState('PLAYING')
+    }
   }
 
   triggerStats(metrics) {
@@ -162,7 +167,7 @@ class P2PHLS extends UIPlugin {
   }
 
   setPlaybackState(state) {
-    if (state === "PLAYING_BUFFERING" && this.el.globoGetbufferLength() < 1 && this.currentState !== "PLAYING_BUFFERING")  {
+    if (state === "PLAYING_BUFFERING" && this.bufferLength < 1)  {
       this.trigger('playback:buffering', this.name)
     } else if (state === "PLAYING" && this.currentState === "PLAYING_BUFFERING") {
       this.trigger('playback:bufferfull', this.name)
