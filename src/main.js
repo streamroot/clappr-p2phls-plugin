@@ -52,7 +52,7 @@ class P2PHLS extends UIPlugin {
 
   requestResource(url) {
     this.currentUrl = url
-    this.resourceRequester.requestResource(url, (chunk, method) => this.resourceLoaded(chunk, method))
+    this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
   resourceLoaded(chunk, method) {
@@ -123,7 +123,7 @@ class P2PHLS extends UIPlugin {
     this.triggerStats({bufferLength: this.bufferLength})
     if (this.bufferLength < 1 && this.currentState == 'PLAYING') {
       this.setPlaybackState('PLAYING_BUFFERING')
-    } else if (this.currentState == "PLAYING_BUFFERING") {
+    } else if (this.bufferLength > 1 && this.currentState == "PLAYING_BUFFERING") {
       this.setPlaybackState('PLAYING')
     }
   }
