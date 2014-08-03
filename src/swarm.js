@@ -44,7 +44,8 @@ class Swarm extends BaseObject {
   }
 
   get partners() {
-    var orderedPeers = _.sortBy(this.peers, function (p) { return p.score }).reverse()
+    var activePeers = _.filter(this.peers, function (p) { return p.active })
+    var orderedPeers = _.sortBy(activePeers, function (p) { return p.score }).reverse()
     if (this.peers.length > Settings.maxPartners) {
       return orderedPeers.slice(0, Settings.maxPartners)
     } else {
