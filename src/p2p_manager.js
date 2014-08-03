@@ -13,7 +13,7 @@ var Swarm = require('./swarm')
 
 class P2PManager extends BaseObject {
   initialize(params) {
-    this.connectionSettings = {'room': params.swarm, iceServers: Freeice(), debug: false}
+    this.connectionSettings = {'room': params.swarm, iceServers: Freeice({stun:4}), debug: false}
     var connection = QuickConnect(Settings.tracker, this.connectionSettings)
     this.swarm = new Swarm()
 
