@@ -174,6 +174,9 @@ class P2PHLS extends UIPlugin {
       this.trigger('playback:buffering', this.name)
     } else if (state === "PLAYING" && this.currentState === "PLAYING_BUFFERING") {
       this.trigger('playback:bufferfull', this.name)
+      if (this.resourceRequester.isInitialBuffer) {
+        this.resourceRequester.isInitialBuffer = false
+      }
     } else if (state === "IDLE") {
       this.trigger('playback:ended', this.name)
       this.trigger('playback:timeupdate', 0, this.el.globoGetDuration(), this.name)

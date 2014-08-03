@@ -13,12 +13,13 @@ class ResourceRequester extends BaseObject {
     this.cdnRequester = new CDNRequester()
     this.p2pManager = new P2PManager({swarm: params.swarm});
     this.currentState = params.currentState;
+    this.isInitialBuffer = true
   }
 
   requestResource(resource, bufferLength, callback) {
     this.resource = resource
     this.callback = callback
-    if (bufferLength < Settings.lowBufferLength) {
+    if (bufferLength < Settings.lowBufferLength && !this.isInitialBuffer) {
       this.requestToCDN()
     } else {
       this.p2pManager.requestResource(resource, this.callback, this.requestToCDN.bind(this))
