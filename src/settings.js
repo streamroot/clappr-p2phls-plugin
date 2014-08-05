@@ -37,4 +37,16 @@ or not. This serves to reorganize peers and promoting or
 demoting then. */
 Settings.points = 10
 
+/* stunServers
+STUN servers used to match peers. */
+Settings.stunServers = [
+  {"url": "stun:stun.bem.tv:3478"},
+  {"url": "stun:stun.l.google.com:19302"},
+  {"url": "stun:stun1.l.google.com:19302"},
+  {"url": "stun:stun2.l.google.com:19302"},
+  {"url": "stun:stun3.l.google.com:19302"},
+  {"url": "stun:stun4.l.google.com:19302"},
+  {"url": "stun:stun.stunprotocol.org:3478"},
+]
+
 module.exports = Settings

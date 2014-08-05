@@ -5,15 +5,13 @@
 
 var BaseObject = require('base_object');
 
-var Freeice = require('freeice');
 var QuickConnect = require('rtc-quickconnect');
 var Settings = require("./settings")
-
 var Swarm = require('./swarm')
 
 class P2PManager extends BaseObject {
   initialize(params) {
-    this.connectionSettings = {'room': params.swarm, iceServers: Freeice({stun:4}), debug: false}
+    this.connectionSettings = {'room': params.swarm, iceServers: Settings.stunServers, debug: false}
     var connection = QuickConnect(Settings.tracker, this.connectionSettings)
     this.swarm = new Swarm()
 
