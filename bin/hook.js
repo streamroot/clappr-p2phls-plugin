@@ -1,5 +1,5 @@
 // Copyright 2014 Globo.com Clappr authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
+// Use of this source code is governed by a Apache
 // license that can be found in the LICENSE file.
 
 var glob = require('glob').sync;
