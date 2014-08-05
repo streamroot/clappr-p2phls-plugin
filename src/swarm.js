@@ -98,7 +98,6 @@ class Swarm extends BaseObject {
   }
 
   resourceReceived(peer, resource, chunk) {
-    //TODO increase peer score
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       this.updatePartnerScore(Settings.points)
@@ -108,7 +107,6 @@ class Swarm extends BaseObject {
   }
 
   callbackFail() {
-    //TODO decrease peer score
     this.updatePartnerScore(Settings.points * -1)
     this.rebootRoundVars()
     this.clearInterestedFailInterval()
