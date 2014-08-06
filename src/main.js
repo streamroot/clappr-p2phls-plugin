@@ -286,7 +286,7 @@ class P2PHLS extends UIPlugin {
 }
 
 P2PHLS.canPlay = function(resource) {
-  return !!(window.webkitRTCPeerConnection || window.mozRTCPeerConnection) && !!resource.match("p2p\\+http:(.*)")
+  return !!(window.webkitRTCPeerConnection || window.mozRTCPeerConnection) && !!resource.match(/^http(.*).m3u8/)
 }
 
 module.exports = window.P2PHLS = P2PHLS;

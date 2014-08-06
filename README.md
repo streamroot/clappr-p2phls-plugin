@@ -20,7 +20,7 @@ Visit [BemTV](http://bem.tv) with a [modern browser](http://caniuse.com/#search=
     <script>
       var playerElement = document.getElementById("player-wrapper");
       var player = new WP3.Player({
-				sources: ['p2p+http://cdn.bem.tv/stream/soccer2sec/playlist.m3u8'],
+				sources: ['http://cdn.bem.tv/stream/soccer2sec/playlist.m3u8'],
 				plugins: {
 						playback: [P2PHLS],
 						container: [P2PHLSStats]
