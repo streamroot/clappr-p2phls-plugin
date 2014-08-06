@@ -5,7 +5,7 @@
 
 var BaseObject = require('base_object');
 var Storage = require('./storage');
-
+var UploadHandler = require('./upload_handler')
 
 class Peer extends BaseObject {
   initialize(params) {
@@ -14,6 +14,7 @@ class Peer extends BaseObject {
     this.swarm = params.swarm
     this.dataChannel = params.dataChannel
     this.dataChannel.on("data", (data) => this.messageReceived(data))
+    this.uploadHandler = new UploadHandler()
     this.active = true
     this.score = 1000
     this.sendPing()
@@ -38,6 +39,21 @@ class Peer extends BaseObject {
     this.dataChannel.send(message)
   }
 
+  sendSatisfy(resource) {
+    if (this.uploadHandler.getSlot(this.ident)) {
+      this.send('satisfy', resource, this.storage.getItem(resource))
+      this.swarm.chunksSent += 1
+    }
+  }
+
+  interestedReceived(resource) {
+    if (this.storage.contain(resource) && this.uploadHandler.getSlot(this.ident)) {
+      this.send("contain", resource)
+    } else {
+      this.send("choke", resource)
+    }
+  }
+
   messageReceived(data) {
     this.processMessage(data)
   }
@@ -45,16 +61,11 @@ class Peer extends BaseObject {
   processMessage(data) {
     var [command, resource, content] = data.split("$")
     if (command === 'interested') {
-      if (this.storage.contain(resource)) {
-        this.send("contain", resource)
-      } else {
-        this.send("choke", resource)
-      }
+      this.interestedReceived(resource)
     } else if (command === "contain") {
       this.swarm.addSatisfyCandidate(this.ident, resource)
     } else if (command === 'request') {
-      this.send('satisfy', resource, this.storage.getItem(resource))
-      this.swarm.chunksSent += 1
+      this.sendSatisfy(resource)
     } else if (command === 'choke') {
       this.swarm.chokeReceived(resource)
     } else if (command === 'ping') {
