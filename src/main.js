@@ -112,7 +112,7 @@ class P2PHLS extends UIPlugin {
     this.currentState = "IDLE"
     this.autoPlay && this.play()
     this.ready = true
-    this.el.playerSetminBufferLength(3)
+    this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
     this.recv_cdn = 0
     this.recv_p2p = 0
