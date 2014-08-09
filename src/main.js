@@ -158,6 +158,10 @@ class P2PHLS extends UIPlugin {
     return currentLevel.bitrate
   }
 
+  getAverageSegmentSize() {
+    return Math.round(this.levels[0].averageduration) || 0
+  }
+
   isHighDefinition() {
     return this.highDefinition
   }
