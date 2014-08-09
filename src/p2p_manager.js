@@ -14,8 +14,6 @@ class P2PManager extends BaseObject {
     this.connectionSettings = {'room': params.swarm, iceServers: Settings.stunServers, debug: false}
     var connection = QuickConnect(Settings.tracker, this.connectionSettings)
     this.swarm = new Swarm()
-
-    //TODO create different data channels for different protocol messages
     this.dataChannel = connection.createDataChannel('bemtv')
     this.setupListerners()
   }
