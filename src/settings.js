@@ -6,6 +6,10 @@
 class Settings {
 }
 
+/* logging
+Turn on/off logging on browser's console. */
+Settings.logging = true
+
 /* maxStorageBytes
 Maximum size of the storage in bytes. */
 Settings.maxStorageChunks = 10
@@ -21,7 +25,7 @@ Settings.maxUploadSlots = 4
 
 /* uploadSlotTimeout
 Time in milliseconds that a upload slot will be expired.
-If a given downloader stops to request segments for 
+If a given downloader stops to request segments for
 uploadSlotTimeout seconds, this slot will be emptied. */
 Settings.uploadSlotTimeout = 20000
 
@@ -32,7 +36,7 @@ Settings.tracker = 'http://server.bem.tv:8080'
 /* timeout
 Time in seconds that the player will wait for peers to
 send chunks. It should be a quarter of a segment size. */
-Settings.timeout = 500 
+Settings.timeout = 800
 
 /* lowBufferLength
 Local buffer threshold in seconds in which the player

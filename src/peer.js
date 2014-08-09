@@ -6,6 +6,7 @@
 var BaseObject = require('base_object');
 var Storage = require('./storage');
 var UploadHandler = require('./upload_handler')
+var log = require('./log');
 
 class Peer extends BaseObject {
   initialize(params) {
@@ -31,7 +32,7 @@ class Peer extends BaseObject {
 
   calculateRTT(command) {
     this.rtt = Date.now() - this.pingSentTime
-    console.log(this.ident + ': ping?pong! rtt: ' + this.rtt)
+    log.debug(this.ident + ': ping?pong! rtt: ' + this.rtt)
   }
 
   send(command, resource, content='') {
@@ -60,6 +61,7 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
+    log.debug("_"+command +"_ received from " + this.ident)
     if (command === 'interested') {
       this.interestedReceived(resource)
     } else if (command === "contain") {

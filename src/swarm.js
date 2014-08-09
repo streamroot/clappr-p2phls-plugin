@@ -8,6 +8,7 @@ var BufferedChannel = require('rtc-bufferedchannel');
 var Peer = require('./peer')
 var Settings = require('./settings')
 var _ = require('underscore')
+var log = require('./log');
 
 
 class Swarm extends BaseObject {
@@ -23,7 +24,7 @@ class Swarm extends BaseObject {
   }
 
   addPeer(id, dataChannel) {
-    console.log("=> " + id)
+    log.info("join: " + id)
     var bufferedChannel = BufferedChannel(dataChannel, {calcCharSize: false})
     var peer = new Peer({ident: id, dataChannel: bufferedChannel, swarm: this})
     this.peers.push(peer)
@@ -33,7 +34,7 @@ class Swarm extends BaseObject {
   removePeer(id) {
     var peer = this.findPeer(id)
     this.peers = _.without(this.peers, peer)
-    console.log("<= " + id + ", remains: " + this.size())
+    log.info("quit: " + id + "(remains: " + this.size() + ")")
     this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
@@ -47,6 +48,7 @@ class Swarm extends BaseObject {
     var activePeers = _.filter(this.peers, function (p) { return p.active })
     var orderedPeers = _.sortBy(activePeers, function (p) { return p.score }).reverse()
     if (this.peers.length > Settings.maxPartners) {
+      log.warn("swarm is bigger than maxPartners")
       return orderedPeers.slice(0, Settings.maxPartners)
     } else {
       return orderedPeers
@@ -56,6 +58,7 @@ class Swarm extends BaseObject {
   sendTo(recipients, command, resource, content='') {
     /* recipients: all, partners or peer ident
     command: interested, contain, request, satisfy */
+    log.debug("sending _" + command + "_ to " + recipients)
     if (recipients === 'partners') {
       _.each(this.partners, function(peer) { peer.send(command, resource, content) }, this)
     } else if (recipients === 'all') {
@@ -78,13 +81,18 @@ class Swarm extends BaseObject {
     if (this.currentResource === resource) {
       this.chokedClients += 1
       if (this.chokedClients === this.partners.length) {
+        log.warn("all partners choked, getting from cdn")
         this.callbackFail()
       }
     }
   }
 
   addSatisfyCandidate(peerId, resource) {
-    if (this.satisfyCandidate || this.currentResource !== resource) return
+    if (this.satisfyCandidate || this.currentResource !== resource) {
+      log.debug("already have satisfyCandidate or resources mismatch (" +
+          this.satisfyCandidate + " || " + this.currentResource + "!=" + resource + ")")
+      return
+    }
     if (this.interestedFailID) {
       this.clearInterestedFailInterval()
       this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
@@ -94,6 +102,7 @@ class Swarm extends BaseObject {
   }
 
   sendRequest(peerId, resource) {
+    log.info("sending request for " + resource)
     this.sendTo(peerId, 'request', resource)
   }
 
@@ -117,6 +126,7 @@ class Swarm extends BaseObject {
   updatePartnerScore(points) {
     if (this.satisfyCandidate) {
       var peer = this.findPeer(this.satisfyCandidate)
+      log.debug("updating score for " + this.satisfyCandidate + " in " + points)
       peer.score += points
     }
   }
