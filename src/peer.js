@@ -61,6 +61,7 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
+    log.debug('received _' + command + '_')
     if (command === 'interested') {
       this.interestedReceived(resource)
     } else if (command === "contain") {
