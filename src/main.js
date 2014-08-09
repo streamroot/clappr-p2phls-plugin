@@ -8,6 +8,7 @@ var JST = require('./jst');
 var Styler = require('./styler');
 var _ = require('underscore');
 
+var log = require('./log');
 var Settings = ('./settings');
 var ResourceRequester = require('./resource_requester');
 
@@ -60,6 +61,7 @@ class P2PHLS extends UIPlugin {
 
   requestResource(url) {
     this.currentUrl = url
+    this.resourceRequester.p2pManager.swarm.avgSegmentSize = this.getAverageSegmentSize()
     this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
@@ -69,7 +71,7 @@ class P2PHLS extends UIPlugin {
       this.el.resourceLoaded(chunk)
       this.updateStats(method)
     } else {
-      console.log("It seems a deadlock happened with timers on swarm.")
+      log.debug("It seems a deadlock happened with timers on swarm.")
     }
   }
 
@@ -155,7 +157,10 @@ class P2PHLS extends UIPlugin {
   }
 
   getAverageSegmentSize() {
-    return Math.round(this.levels[0].averageduration) || 0
+    if (!this.avgSegmentSize || this.avgSegmentSize === 0 && this.getLevels().length > 0) {
+      this.avgSegmentSize = Math.round(this.getLevels()[0].averageduration) || 0
+    }
+    return this.avgSegmentSize || 0
   }
 
   isHighDefinition() {
