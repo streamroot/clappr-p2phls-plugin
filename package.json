@@ -50,6 +50,7 @@
     "rtc-bufferedchannel": "~0.5.0",
     "rtc-quickconnect": "~2.6.0",
     "jquery": "2.1.1",
-    "underscore": "1.6.0"
+    "underscore": "1.6.0",
+    "log-with-style": "0.1.5"
   }
 }
