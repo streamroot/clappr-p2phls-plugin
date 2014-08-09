@@ -1,6 +1,6 @@
 // Copyright 2014 Flávio Ribeiro <flavio@bem.tv>.
 // All rights reserved.
-// Use of this source code is governed by Apache 
+// Use of this source code is governed by Apache
 // license that can be found in the LICENSE file.
 
 var UIPlugin = require('ui_plugin');
@@ -41,11 +41,7 @@ class P2PHLS extends UIPlugin {
     WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
     WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
     WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
-    this.listenTo(this.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", this.updateSwarmSize)
-  }
-
-  updateSwarmSize(event) {
-    this.triggerStats(event)
+    this.listenTo(this.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.triggerStats(event))
   }
 
   createResourceRequester() {
