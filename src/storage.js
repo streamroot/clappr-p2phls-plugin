@@ -5,6 +5,7 @@
 
 var Settings = require("./settings")
 var _ = require("underscore")
+var log = require('./log');
 
 class Storage {
   constructor() {
@@ -14,7 +15,7 @@ class Storage {
 
   setItem(key, value) {
     if (_.has(this.chunks, key)) {
-      console.log("WARN: Already have this chunk on storage: ", key);
+      log.warn("already have this chunk on storage: " + key)
       return
     }
     this.keys.push(key)
