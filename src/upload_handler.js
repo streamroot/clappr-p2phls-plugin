@@ -5,6 +5,7 @@
 
 var Settings = require("./settings")
 var _ = require("underscore")
+var log = require('./log');
 
 class UploadHandler {
   constructor() {
@@ -18,6 +19,7 @@ class UploadHandler {
       this.slots[peerId] = Date.now()
       return true
     } else {
+      log.warn("doesn't have free upload slots")
       return false
     }
   }
@@ -26,6 +28,7 @@ class UploadHandler {
     var now = Date.now() - Settings.uploadSlotTimeout
     _.each(this.slots, function (timestamp, peerId) {
       if (timestamp <= now) {
+        log.warn("freeing upload slot")
         delete this.slots[peerId]
       }
     }, this)

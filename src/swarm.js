@@ -48,7 +48,6 @@ class Swarm extends BaseObject {
     var activePeers = _.filter(this.peers, function (p) { return p.active })
     var orderedPeers = _.sortBy(activePeers, function (p) { return p.score }).reverse()
     if (this.peers.length > Settings.maxPartners) {
-      log.warn("swarm is bigger than maxPartners")
       return orderedPeers.slice(0, Settings.maxPartners)
     } else {
       return orderedPeers
@@ -102,7 +101,6 @@ class Swarm extends BaseObject {
   }
 
   sendRequest(peerId, resource) {
-    log.info("sending request for " + resource)
     this.sendTo(peerId, 'request', resource)
   }
 
@@ -126,7 +124,7 @@ class Swarm extends BaseObject {
   updatePartnerScore(points) {
     if (this.satisfyCandidate) {
       var peer = this.findPeer(this.satisfyCandidate)
-      log.debug("updating score for " + this.satisfyCandidate + " in " + points)
+      log.info("updating score for " + this.satisfyCandidate + " in " + points)
       peer.score += points
     }
   }

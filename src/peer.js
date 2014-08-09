@@ -61,12 +61,13 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
-    log.debug("_"+command +"_ received from " + this.ident)
     if (command === 'interested') {
       this.interestedReceived(resource)
     } else if (command === "contain") {
+      log.debug("_contain_ received from " + this.ident)
       this.swarm.addSatisfyCandidate(this.ident, resource)
     } else if (command === 'request') {
+      log.debug("_request_ received from " + this.ident)
       this.sendSatisfy(resource)
     } else if (command === 'choke') {
       this.swarm.chokeReceived(resource)
@@ -75,6 +76,7 @@ class Peer extends BaseObject {
     } else if (command === 'pong') {
       this.calculateRTT()
     } else if (command === 'satisfy') {
+      log.debug("_satisfy_ received from " + this.ident)
       this.swarm.resourceReceived(this.ident, resource, content)
     }
   }
