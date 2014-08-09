@@ -30,13 +30,8 @@ uploadSlotTimeout seconds, this slot will be emptied. */
 Settings.uploadSlotTimeout = 20000
 
 /* tracker
-Place where a rtc-switchboard server is running */
+Place where your rtc-switchboard server is running */
 Settings.tracker = 'http://server.bem.tv:8080'
-
-/* timeout
-Time in seconds that the player will wait for peers to
-send chunks. It should be a quarter of a segment size. */
-Settings.timeout = 800
 
 /* lowBufferLength
 Local buffer threshold in seconds in which the player

@@ -17,6 +17,7 @@ class Swarm extends BaseObject {
     this.satisfyCandidate = undefined
     this.chunksSent = 0
     this.chokedClients = 0
+    this.avgSegmentSize = 0
   }
 
   size() {
@@ -71,7 +72,7 @@ class Swarm extends BaseObject {
   sendInterested(resource, callbackSuccess, callbackFail) {
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
-    this.interestedFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
+    this.interestedFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('interested'))
     this.currentResource = resource
     this.sendTo('partners', 'interested', resource)
   }
@@ -94,10 +95,22 @@ class Swarm extends BaseObject {
     }
     if (this.interestedFailID) {
       this.clearInterestedFailInterval()
-      this.requestFailID = setTimeout(this.callbackFail.bind(this), Settings.timeout)
+      this.requestFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('request'))
     }
     this.satisfyCandidate = peerId
     this.sendRequest(peerId, resource)
+  }
+
+  getTimeoutFor(command) {
+    var segmentSize = this.avgSegmentSize * 1000
+    if (command === 'interested') {
+      log.debug("timeout for interested: " + (segmentSize/4))
+      return (segmentSize / 4)
+    } else if (command === 'request') {
+      /* this timeout is longer due to the sending of the entire chunk */
+      log.debug("timeout for request: " + (segmentSize/2))
+      return (segmentSize / 2)
+    }
   }
 
   sendRequest(peerId, resource) {
