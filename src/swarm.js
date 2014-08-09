@@ -104,11 +104,8 @@ class Swarm extends BaseObject {
   getTimeoutFor(command) {
     var segmentSize = this.avgSegmentSize * 1000
     if (command === 'interested') {
-      log.debug("timeout for interested: " + (segmentSize/4))
       return (segmentSize / 4)
     } else if (command === 'request') {
-      /* this timeout is longer due to the sending of the entire chunk */
-      log.debug("timeout for request: " + (segmentSize/2))
       return (segmentSize / 2)
     }
   }
