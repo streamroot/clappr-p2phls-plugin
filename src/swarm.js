@@ -98,7 +98,7 @@ class Swarm extends BaseObject {
       this.requestFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('request'))
     }
     this.satisfyCandidate = peerId
-    this.sendRequest(peerId, resource)
+    this.sendTo(this.satisfyCandidate, 'request', resource)
   }
 
   getTimeoutFor(command) {
@@ -108,10 +108,6 @@ class Swarm extends BaseObject {
     } else if (command === 'request') {
       return (segmentSize / 2)
     }
-  }
-
-  sendRequest(peerId, resource) {
-    this.sendTo(peerId, 'request', resource)
   }
 
   resourceReceived(peer, resource, chunk) {
