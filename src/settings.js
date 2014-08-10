@@ -10,8 +10,8 @@ class Settings {
 Turn on/off logging on browser's console. */
 Settings.logging = true
 
-/* maxStorageBytes
-Maximum size of the storage in bytes. */
+/* maxStorageChunks
+Maximum size of the storage in number of chunks. */
 Settings.maxStorageChunks = 10
 
 /* maxPartners

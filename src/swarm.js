@@ -117,26 +117,20 @@ class Swarm extends BaseObject {
   resourceReceived(peer, resource, chunk) {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
-      this.updatePartnerScore(Settings.points)
+      if (this.satisfyCandidate) {
+        this.findPeer(this.satisfyCandidate).score += Settings.points
+      }
       this.rebootRoundVars()
       this.clearRequestFailInterval()
     }
   }
 
   callbackFail() {
-    this.updatePartnerScore(Settings.points * -1)
+    _.each(this.partners, function(peer) { peer.score -= Settings.points }, this)
     this.rebootRoundVars()
     this.clearInterestedFailInterval()
     this.clearRequestFailInterval()
     this.externalCallbackFail()
-  }
-
-  updatePartnerScore(points) {
-    if (this.satisfyCandidate) {
-      var peer = this.findPeer(this.satisfyCandidate)
-      log.info("updating score for " + this.satisfyCandidate + " in " + points)
-      peer.score += points
-    }
   }
 
   rebootRoundVars(roundSuccess) {
