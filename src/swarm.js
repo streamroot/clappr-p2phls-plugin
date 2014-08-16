@@ -88,11 +88,7 @@ class Swarm extends BaseObject {
   }
 
   addSatisfyCandidate(peerId, resource) {
-    if (this.satisfyCandidate || this.currentResource !== resource) {
-      log.debug("already have satisfyCandidate or resources mismatch (" +
-          this.satisfyCandidate + " || " + this.currentResource + "!=" + resource + ")")
-      return
-    }
+    if (this.satisfyCandidate || this.currentResource !== resource) return //TODO count missed chunks?
     if (this.interestedFailID) {
       this.clearInterestedFailInterval()
       this.requestFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('request'))
