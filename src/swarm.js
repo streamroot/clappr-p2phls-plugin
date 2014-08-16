@@ -9,7 +9,6 @@ var Peer = require('./peer')
 var Settings = require('./settings')
 var _ = require('underscore')
 var log = require('./log');
-var PlaybackInfo = require('./playback_info');
 
 
 class Swarm extends BaseObject {
@@ -18,7 +17,7 @@ class Swarm extends BaseObject {
     this.satisfyCandidate = undefined
     this.chunksSent = 0
     this.chokedClients = 0
-    this.playbackInfo = PlaybackInfo.getInstance()
+    this.avgSegmentSize = 0
   }
 
   size() {
@@ -59,7 +58,7 @@ class Swarm extends BaseObject {
   sendTo(recipients, command, resource, content='') {
     /* recipients: all, partners or peer ident
     command: interested, contain, request, satisfy */
-    log.debug("sending _" + command + "_ to " + recipients + " for " + resource)
+    log.debug("sending _" + command + "_ to " + recipients)
     if (recipients === 'partners') {
       _.each(this.partners, function(peer) { peer.send(command, resource, content) }, this)
     } else if (recipients === 'all') {
@@ -90,6 +89,8 @@ class Swarm extends BaseObject {
 
   addSatisfyCandidate(peerId, resource) {
     if (this.satisfyCandidate || this.currentResource !== resource) {
+      log.debug("already have satisfyCandidate or resources mismatch (" +
+          this.satisfyCandidate + " || " + this.currentResource + "!=" + resource + ")")
       return
     }
     if (this.interestedFailID) {
@@ -101,7 +102,7 @@ class Swarm extends BaseObject {
   }
 
   getTimeoutFor(command) {
-    var segmentSize = this.playbackInfo.get('avgSegmentSize')
+    var segmentSize = this.avgSegmentSize * 1000
     if (command === 'interested') {
       return (segmentSize / 4)
     } else if (command === 'request') {

@@ -61,7 +61,7 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
-    log.debug('received _' + command + '_ for ' + resource)
+    log.debug('received _' + command + '_')
     switch (command) {
       case 'interested':
         this.interestedReceived(resource)
