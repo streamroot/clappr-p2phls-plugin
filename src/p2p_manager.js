@@ -24,7 +24,9 @@ class P2PManager extends BaseObject {
   }
 
   onChannelOpened(id, dataChannel) {
-    this.swarm.addPeer(id, dataChannel);
+    if (this.swarm.size <= Settings.maxSwarmSize) {
+      this.swarm.addPeer(id, dataChannel);
+    }
   }
 
   onChannelClosed(id, dataChannel) {

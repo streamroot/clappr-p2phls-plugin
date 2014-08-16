@@ -19,6 +19,11 @@ The maximum number of partners one peer can handle.
 Partners are used to be requested for video segments. */
 Settings.maxPartners = 4
 
+/* maxSwarmSize
+Maximum number of peers on the swarm. When reach this
+number, P2PManager will ignore new peers. */
+Settings.maxSwarmSize = 50
+
 /* maxUploadSlots
 Maximum number of peers one can serve. */
 Settings.maxUploadSlots = 4
