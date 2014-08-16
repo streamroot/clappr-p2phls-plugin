@@ -4,12 +4,13 @@
 // license that can be found in the LICENSE file.
 
 var UIPlugin = require('ui_plugin');
+var Browser = require('browser');
 var JST = require('./jst');
 var Styler = require('./styler');
 var _ = require('underscore');
 
 var log = require('./log');
-var Settings = ('./settings');
+var Settings = require('./settings');
 var ResourceRequester = require('./resource_requester');
 
 
@@ -28,7 +29,6 @@ class P2PHLS extends UIPlugin {
     super(options)
     this.src = this.getSource(options.src)
     this.swfPath = "assets/P2PHLSPlayer.swf"
-    this.setupBrowser()
     this.createResourceRequester()
     this.highDefinition = false
     this.autoPlay = options.autoPlay
@@ -52,11 +52,6 @@ class P2PHLS extends UIPlugin {
 
   getSource(source) {
     return source.replace("p2p+http", "http")
-  }
-
-  setupBrowser() {
-    this.isChrome = navigator.userAgent.match(/chrome/i)
-    this.isFirefox = navigator.userAgent.match(/firefox/i)
   }
 
   requestResource(url) {
@@ -106,17 +101,17 @@ class P2PHLS extends UIPlugin {
   bootstrap() {
     this.el.width = "100%"
     this.el.height = "100%"
-    this.trigger('playback:ready', this.name)
     this.currentState = "IDLE"
-    this.autoPlay && this.play()
-    this.ready = true
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
     this.recv_cdn = 0
     this.recv_p2p = 0
     this.updateStats()
-    this.triggerStats({status: "on"});
+    this.triggerStats({status: "on"})
+    this.autoPlay && this.play()
+    this.ready = true
     this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 500)
+    this.trigger('playback:ready', this.name)
   }
 
   updateBufferLength() {
@@ -279,7 +274,7 @@ class P2PHLS extends UIPlugin {
     this.$el.html(this.template({cid: this.cid, swfPath: this.swfPath, playbackId: this.uniqueId}))
     this.$el.append(style)
     this.el.id = this.cid
-    if(this.isFirefox) { //FIXME remove it from here
+    if (Browser.isFirefox) {
       this.setupFirefox()
     }
     return this

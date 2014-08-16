@@ -31,6 +31,7 @@ gulp.task('build', ['pre-build'], function(b) {
     .external('ui_plugin')
     .external('ui_object')
     .external('base_object')
+    .external('browser')
     .external('jquery')
     .external('underscore')
     .bundle()
