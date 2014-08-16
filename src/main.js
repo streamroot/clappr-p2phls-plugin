@@ -9,7 +9,8 @@ var Styler = require('./styler');
 var _ = require('underscore');
 
 var log = require('./log');
-var Settings = ('./settings');
+var Settings = require('./settings');
+var PlaybackInfo = require('./playback_info');
 var ResourceRequester = require('./resource_requester');
 
 
@@ -28,6 +29,7 @@ class P2PHLS extends UIPlugin {
     super(options)
     this.src = this.getSource(options.src)
     this.swfPath = "assets/P2PHLSPlayer.swf"
+    this.playbackInfo = PlaybackInfo.getInstance()
     this.setupBrowser()
     this.createResourceRequester()
     this.highDefinition = false
@@ -61,7 +63,7 @@ class P2PHLS extends UIPlugin {
 
   requestResource(url) {
     this.currentUrl = url
-    this.resourceRequester.p2pManager.swarm.avgSegmentSize = this.getAverageSegmentSize()
+    this.playbackInfo.add('avgSegmentSize', this.getAverageSegmentSize())
     this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
@@ -104,6 +106,7 @@ class P2PHLS extends UIPlugin {
   }
 
   bootstrap() {
+    this.playbackInfo.add('entropy', this.el.getEntropy())
     this.el.width = "100%"
     this.el.height = "100%"
     this.trigger('playback:ready', this.name)
