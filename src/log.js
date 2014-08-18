@@ -17,6 +17,8 @@ Log.active = Settings.logging
 
 Log.onOff = function() {
   Log.active = !Log.active
+  if (Log.active) Logger('[c="color: red"][WARNING][c] log enabled')
+  else Logger('[c="color: red"][WARNING][c] log disabled')
 }
 
 Log.log = function(level, message) {
