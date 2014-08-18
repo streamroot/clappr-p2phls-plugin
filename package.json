@@ -51,6 +51,7 @@
     "rtc-quickconnect": "~2.6.0",
     "jquery": "2.1.1",
     "underscore": "1.6.0",
-    "log-with-style": "0.1.5"
+    "log-with-style": "0.1.5",
+    "mousetrap": "0.0.1"
   }
 }

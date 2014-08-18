@@ -3,8 +3,9 @@
 // Use of this source code is governed by a Apache
 // license that can be found in the LICENSE file.
 
-var Settings = require("./settings")
-var Logger = require('log-with-style')
+var Settings = require('./settings');
+var Logger = require('log-with-style');
+var Mousetrap = require('mousetrap');
 
 class Log {}
 
@@ -12,8 +13,14 @@ Log.info = function(message) {Log.log('info', message)}
 Log.warn = function(message) {Log.log('warn', message)}
 Log.debug = function(message) {Log.log('debug', message)}
 
+Log.active = Settings.logging
+
+Log.onOff = function() {
+  Log.active = !Log.active
+}
+
 Log.log = function(level, message) {
-  if (!Settings.logging) return
+  if (!Log.active) return
   if (level === 'warn') {
     Logger('[c="color: red"][WARNING][c] ' + message)
   } else if (level === 'info') {
@@ -22,5 +29,7 @@ Log.log = function(level, message) {
     Logger('[c="color: blue"][DEBUG] [c] ' + message)
   }
 }
+
+Mousetrap.bind(['command+shift+a', 'ctrl+shift+a'], () => Log.onOff())
 
 module.exports = Log
