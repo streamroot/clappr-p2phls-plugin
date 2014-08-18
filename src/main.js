@@ -67,8 +67,8 @@ class P2PHLS extends UIPlugin {
   }
 
   updateStats(method=null) {
-    if (method == "p2p") this.recv_p2p++
-    else if (method == "cdn") this.recv_cdn++
+    if (method === "p2p") this.recv_p2p++
+    else if (method === "cdn") this.recv_cdn++
     var chunksSent = this.resourceRequester.p2pManager.swarm.chunksSent
     var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, chunksSent: chunksSent}
     this.triggerStats(stats)
@@ -113,9 +113,9 @@ class P2PHLS extends UIPlugin {
   updateBufferLength() {
     this.bufferLength = this.el.globoGetbufferLength() || 0
     this.triggerStats({bufferLength: this.bufferLength})
-    if (this.bufferLength < 1 && this.currentState == 'PLAYING') {
+    if (this.bufferLength < 1 && this.currentState === 'PLAYING') {
       this.setPlaybackState('PLAYING_BUFFERING')
-    } else if (this.bufferLength > 1 && this.currentState == "PLAYING_BUFFERING") {
+    } else if (this.bufferLength > 1 && this.currentState === "PLAYING_BUFFERING") {
       this.setPlaybackState('PLAYING')
     }
   }

@@ -30,7 +30,7 @@ class Peer extends BaseObject {
     this.dataChannel.send("pong$$")
   }
 
-  calculateRTT(command) {
+  calculateRTT() {
     this.rtt = Date.now() - this.pingSentTime
     log.debug(this.ident + ': ping?pong! rtt: ' + this.rtt)
   }

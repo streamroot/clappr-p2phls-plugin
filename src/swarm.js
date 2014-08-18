@@ -41,7 +41,7 @@ class Swarm extends BaseObject {
 
   findPeer(id) {
     return _.find(this.peers, function (peer) {
-      return !!(peer.ident === id)
+      return (peer.ident === id)
     }, this)
   }
 
@@ -125,7 +125,7 @@ class Swarm extends BaseObject {
     this.externalCallbackFail()
   }
 
-  rebootRoundVars(roundSuccess) {
+  rebootRoundVars() {
     this.currentResource = undefined
     this.satisfyCandidate = undefined
     this.chokedClients = 0

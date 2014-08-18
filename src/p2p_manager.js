@@ -20,7 +20,7 @@ class P2PManager extends BaseObject {
 
   setupListerners() {
     this.dataChannel.on('channel:opened', (id, dataChannel) => this.onChannelOpened(id, dataChannel))
-    this.dataChannel.on('channel:closed', (id, dataChannel) => this.onChannelClosed(id, dataChannel))
+    this.dataChannel.on('channel:closed', (id, dataChannel) => this.onChannelClosed(id))
   }
 
   onChannelOpened(id, dataChannel) {
@@ -29,7 +29,7 @@ class P2PManager extends BaseObject {
     }
   }
 
-  onChannelClosed(id, dataChannel) {
+  onChannelClosed(id) {
     this.swarm.removePeer(id);
   }
 
