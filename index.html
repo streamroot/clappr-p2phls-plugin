@@ -12,7 +12,8 @@ window.onload = function() {
   player = new WP3.Player({sources: ['http://cdn.bem.tv/stream/soccer2sec/playlist.m3u8'],
                             plugins: {playback: [P2PHLS]},
                             width: 640, height: 360,
-                            poster: "http://www.bem.tv/poster.png"
+                            poster: "http://www.bem.tv/assets/poster.png",
+                            watermark: "http://bem.tv/assets/watermark3.png"
                           });
   player.attachTo(document.getElementById('player-wrapper'));
 }
