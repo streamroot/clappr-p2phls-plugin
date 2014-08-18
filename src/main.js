@@ -27,7 +27,7 @@ class P2PHLS extends UIPlugin {
 
   initialize(options) {
     super(options)
-    this.src = this.getSource(options.src)
+    this.src = options.src
     this.swfPath = "assets/P2PHLSPlayer.swf"
     this.createResourceRequester()
     this.highDefinition = false
