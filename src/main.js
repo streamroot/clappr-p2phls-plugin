@@ -27,6 +27,7 @@ class P2PHLS extends UIPlugin {
 
   initialize(options) {
     super(options)
+    this.options = options
     this.src = options.src
     this.swfPath = "assets/P2PHLSPlayer.swf"
     this.createResourceRequester()
@@ -46,7 +47,11 @@ class P2PHLS extends UIPlugin {
   }
 
   createResourceRequester() {
-    var requesterOptions = {currentState: this.getCurrentState.bind(this), swarm: btoa(this.src)}
+    var requesterOptions = {
+      currentState: this.getCurrentState.bind(this),
+      swarm: btoa(this.src),
+      tracker: this.options.bemtvTracker
+    }
     this.resourceRequester = new ResourceRequester(requesterOptions)
   }
 

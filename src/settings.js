@@ -8,7 +8,7 @@ class Settings {
 
 /* logging
 Turn on/off logging on browser's console. */
-Settings.logging = false
+Settings.logging = true
 
 /* maxStorageChunks
 Maximum size of the storage in number of chunks. */

@@ -8,11 +8,14 @@ var BaseObject = require('base_object');
 var QuickConnect = require('rtc-quickconnect');
 var Settings = require("./settings")
 var Swarm = require('./swarm')
+var log = require('./log');
 
 class P2PManager extends BaseObject {
   initialize(params) {
     this.connectionSettings = {'room': params.swarm, iceServers: Settings.stunServers, debug: false}
-    var connection = QuickConnect(Settings.tracker, this.connectionSettings)
+    var tracker = params.tracker || Settings.tracker
+    log.info("Initializing P2PManager with " + tracker)
+    var connection = QuickConnect(tracker, this.connectionSettings)
     this.swarm = new Swarm()
     this.dataChannel = connection.createDataChannel('bemtv')
     this.setupListerners()

@@ -11,7 +11,7 @@ var Settings = require('./settings')
 class ResourceRequester extends BaseObject {
   initialize(params) {
     this.cdnRequester = new CDNRequester()
-    this.p2pManager = new P2PManager({swarm: params.swarm});
+    this.p2pManager = new P2PManager(params);
     this.currentState = params.currentState;
     this.isInitialBuffer = true
   }
