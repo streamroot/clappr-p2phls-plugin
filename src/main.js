@@ -50,10 +50,6 @@ class P2PHLS extends UIPlugin {
     this.resourceRequester = new ResourceRequester(requesterOptions)
   }
 
-  getSource(source) {
-    return source.replace("p2p+http", "http")
-  }
-
   requestResource(url) {
     this.currentUrl = url
     this.resourceRequester.p2pManager.swarm.avgSegmentSize = this.getAverageSegmentSize()
