@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/bemtv/clappr-p2phls-plugin.png?label=ready&title=Ready)](https://waffle.io/bemtv/clappr-p2phls-plugin)
 # BemTV Plugin for Clappr Media Player
 
 This plugin adds peer-to-peer powers for HTTP Live Streaming (HLS) transmissions on [Clappr Player](http://clappr.io).
