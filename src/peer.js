@@ -15,7 +15,7 @@ class Peer extends BaseObject {
     this.swarm = params.swarm
     this.dataChannel = params.dataChannel
     this.dataChannel.on("data", (data) => this.messageReceived(data))
-    this.uploadHandler = new UploadHandler()
+    this.uploadHandler = UploadHandler.getInstance()
     this.active = true
     this.score = 1000
     this.sendPing()
