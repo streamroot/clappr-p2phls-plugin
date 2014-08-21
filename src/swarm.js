@@ -35,7 +35,7 @@ class Swarm extends BaseObject {
   removePeer(id) {
     var peer = this.findPeer(id)
     this.peers = _.without(this.peers, peer)
-    log.info("quit: " + id + "(remains: " + this.size() + ")")
+    log.info("quit: " + id + " (remains: " + this.size() + ")")
     this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
