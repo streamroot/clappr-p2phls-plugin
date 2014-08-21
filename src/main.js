@@ -12,6 +12,7 @@ var _ = require('underscore');
 var log = require('./log');
 var Settings = require('./settings');
 var ResourceRequester = require('./resource_requester');
+var UploadHandler = require('./upload_handler');
 
 
 class P2PHLS extends UIPlugin {
@@ -35,6 +36,7 @@ class P2PHLS extends UIPlugin {
     this.autoPlay = options.autoPlay
     this.defaultSettings = {left: ["playstop", "volume"], default: [], right: ["fullscreen", "hd"]}
     this.settings = _.extend({}, this.defaultSettings)
+    this.uploadHandler = UploadHandler.getInstance()
     this.addListeners()
   }
 
@@ -44,6 +46,7 @@ class P2PHLS extends UIPlugin {
     WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
     WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
     this.listenTo(this.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.triggerStats(event))
+    this.listenTo(this.uploadHandler, 'uploadhandler:update', (event) => this.triggerStats(event))
   }
 
   createResourceRequester() {
