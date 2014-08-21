@@ -98,7 +98,7 @@ class Swarm extends BaseObject {
   }
 
   getTimeoutFor(command) {
-    var segmentSize = this.avgSegmentSize * 1000
+    var segmentSize = this.avgSegmentSize > 0? this.avgSegmentSize * 1000: 1000
     if (command === 'interested') {
       return (segmentSize / 4)
     } else if (command === 'request') {
@@ -110,7 +110,9 @@ class Swarm extends BaseObject {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       if (this.satisfyCandidate) {
-        this.findPeer(this.satisfyCandidate).score += Settings.points
+        var successPeer = this.findPeer(this.satisfyCandidate)
+        successPeer.score += Settings.points
+        log.warn("Adding " + Settings.points + " to " + successPeer.ident + ". Current score: " + successPeer.score)
       }
       this.rebootRoundVars()
       this.clearRequestFailInterval()
@@ -118,7 +120,10 @@ class Swarm extends BaseObject {
   }
 
   callbackFail() {
-    _.each(this.partners, function(peer) { peer.score -= Settings.points }, this)
+    _.each(this.partners, function(peer) {
+      peer.score -= Settings.points
+      log.warn("Removing " + Settings.points + " from " + peer.ident + ". Current score: " + peer.score)
+    }, this)
     this.rebootRoundVars()
     this.clearInterestedFailInterval()
     this.clearRequestFailInterval()
