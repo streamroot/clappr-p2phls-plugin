@@ -67,7 +67,7 @@ class Peer extends BaseObject {
         this.interestedReceived(resource)
         break
       case 'contain':
-        this.swarm.addSatisfyCandidate(this.ident, resource)
+        this.swarm.containReceived(this.ident, resource)
         break
       case 'request':
         this.sendSatisfy(resource)
