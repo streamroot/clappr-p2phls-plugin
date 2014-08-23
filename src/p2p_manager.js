@@ -28,14 +28,14 @@ class P2PManager extends BaseObject {
 
   onChannelOpened(id, dataChannel) {
     if (this.swarm.size() <= Settings.maxSwarmSize) {
-      this.swarm.addPeer(id, dataChannel);
+      this.swarm.addPeer(id, dataChannel)
     } else {
       log.warn("ignoring new peer, maxSwarmSize reached.")
     }
   }
 
   onChannelClosed(id) {
-    this.swarm.removePeer(id);
+    this.swarm.removePeer(id)
   }
 
   requestResource(resource, callbackSuccess, callbackFail) {
