@@ -7,7 +7,9 @@ class Settings {
 }
 
 /* logging
-Turn on/off logging on browser's console. */
+Turn on/off logging on browser's console on
+initialization. You can always turn on/off
+by pressing ctrl+shift+a on your browser tab. */
 Settings.logging = true
 
 /* maxStorageChunks
@@ -47,7 +49,7 @@ Settings.lowBufferLength = 5
 /* points
 How many points a partner win/loss when send a segment
 or not. This serves to reorganize peers and promoting or
-demoting then. */
+demoting then as partners. */
 Settings.points = 10
 
 /* stunServers
