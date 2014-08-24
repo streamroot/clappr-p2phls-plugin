@@ -12,6 +12,7 @@ class UploadHandler extends BaseObject {
   constructor() {
     this.maxUploadSlots = Settings.maxUploadSlots
     this.slots = {}
+    setInterval(this.checkAndFreeSlots.bind(this), 5000)
   }
 
   getSlot(peerId) {
