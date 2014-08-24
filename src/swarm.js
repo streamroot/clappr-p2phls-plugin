@@ -99,7 +99,7 @@ class Swarm extends BaseObject {
     if (this.currentResource !== resource) return
     if (this.satisfyCandidate) {
       log.warn("contain received but already have satisfy candidate")
-      this.partnersContainsResource.push(this.findPeer(this.peerId))
+      this.partnersContainsResource.push(this.findPeer(peerId))
     } else {
       this.satisfyCandidate = peerId
     }
