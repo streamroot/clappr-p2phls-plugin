@@ -40,10 +40,9 @@ class UploadHandler extends BaseObject {
 
 UploadHandler.getInstance = function() {
   if (this._instance === undefined) {
-    this._instance = new this();
+    this._instance = new this()
   }
-  this._instance.trigger('uploadhandler:update', {totalSlots: this._instance.maxUploadSlots})
-  return this._instance;
+  return this._instance
 }
 
 module.exports = UploadHandler

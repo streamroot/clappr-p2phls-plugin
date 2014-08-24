@@ -114,7 +114,6 @@ class P2PHLS extends UIPlugin {
     this.triggerStats({status: "on"})
     this.autoPlay && this.play()
     this.ready = true
-    this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 500)
     this.trigger('playback:ready', this.name)
   }
 
@@ -142,6 +141,7 @@ class P2PHLS extends UIPlugin {
       this.el.globoPlayerResume()
     } else {
       this.firstPlay()
+      this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 500)
     }
     this.trigger('playback:play', this.name)
   }
@@ -285,7 +285,8 @@ class P2PHLS extends UIPlugin {
   }
 
   toKB(num) {
-    return Math.floor(num/1000)
+    var bitrate = Math.floor(num/1000)
+    return !_.isNaN(bitrate)?bitrate:"UNKNOWN"
   }
 }
 
