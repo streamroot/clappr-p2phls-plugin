@@ -18,6 +18,7 @@ class Swarm extends BaseObject {
     this.chunksSent = 0
     this.chokedClients = 0
     this.avgSegmentSize = 0
+    this.partnersContainsResource = []
   }
 
   size() {
@@ -42,6 +43,13 @@ class Swarm extends BaseObject {
   findPeer(id) {
     return _.find(this.peers, function (peer) {
       return (peer.ident === id)
+    }, this)
+  }
+
+  changeScore(peers, points) {
+    _.each(peers, function(peer) {
+      log.warn("Changing " + peer.ident + " score: " + peer.score + " -> " + (peer.score + points))
+      peer.score += points
     }, this)
   }
 
@@ -88,33 +96,32 @@ class Swarm extends BaseObject {
   }
 
   containReceived(peerId, resource) {
-    if (this.satisfyCandidate || this.currentResource !== resource) return //TODO #46
+    if (this.currentResource !== resource) return
+    if (this.satisfyCandidate) {
+      log.warn("contain received but already have satisfy candidate")
+      this.partnersContainsResource.push(this.findPeer(this.peerId))
+    } else {
+      this.satisfyCandidate = peerId
+    }
     if (this.interestedFailID) {
       this.clearInterestedFailInterval()
       this.requestFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('request'))
     }
-    this.satisfyCandidate = peerId
     this.sendTo(this.satisfyCandidate, 'request', resource)
   }
 
   resourceReceived(peer, resource, chunk) {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
-      if (this.satisfyCandidate) {
-        var successPeer = this.findPeer(this.satisfyCandidate)
-        successPeer.score += Settings.points
-        log.warn("Adding " + Settings.points + " to " + successPeer.ident + ". Current score: " + successPeer.score)
-      }
+      var successPeer = this.findPeer(this.satisfyCandidate)
+      this.changeScore(_.union([successPeer], this.partnersContainsResource), Settings.points)
       this.rebootRoundVars()
       this.clearRequestFailInterval()
     }
   }
 
   callbackFail() {
-    _.each(this.partners, function(peer) {
-      peer.score -= Settings.points
-      log.warn("Removing " + Settings.points + " from " + peer.ident + ". Current score: " + peer.score)
-    }, this)
+    this.changeScore(this.partners, Settings.points * -1)
     this.rebootRoundVars()
     this.clearInterestedFailInterval()
     this.clearRequestFailInterval()
@@ -134,6 +141,7 @@ class Swarm extends BaseObject {
     this.currentResource = undefined
     this.satisfyCandidate = undefined
     this.chokedClients = 0
+    this.partnersContainsResource = []
   }
 
   clearInterestedFailInterval() {
