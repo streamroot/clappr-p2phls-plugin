@@ -18,7 +18,7 @@ class Swarm extends BaseObject {
     this.chunksSent = 0
     this.chokedClients = 0
     this.avgSegmentSize = 0
-    this.partnersContainsResource = []
+    this.peersContainsResource = []
   }
 
   size() {
@@ -53,22 +53,22 @@ class Swarm extends BaseObject {
     }, this)
   }
 
-  get partners() {
+  get contributors() {
     var activePeers = _.filter(this.peers, function (p) { return p.active })
     var orderedPeers = _.sortBy(activePeers, function (p) { return p.score }).reverse()
     if (this.peers.length > Settings.maxPartners) {
-      return orderedPeers.slice(0, Settings.maxPartners)
+      return orderedPeers.slice(0, Settings.maxContributors)
     } else {
       return orderedPeers
     }
   }
 
   sendTo(recipients, command, resource, content='') {
-    /* recipients: all, partners or peer ident
+    /* recipients: all, contributors or peer ident
     command: interested, contain, request, satisfy */
     log.debug("sending _" + command + "_ to " + recipients)
-    if (recipients === 'partners') {
-      _.each(this.partners, function(peer) { peer.send(command, resource, content) }, this)
+    if (recipients === 'contributors') {
+      _.each(this.contributors, function(peer) { peer.send(command, resource, content) }, this)
     } else if (recipients === 'all') {
       _.each(this.peers, function(peer) { peer.send(command, resource, content) }, this)
     } else {
@@ -82,14 +82,14 @@ class Swarm extends BaseObject {
     this.externalCallbackSuccess = callbackSuccess
     this.interestedFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('interested'))
     this.currentResource = resource
-    this.sendTo('partners', 'interested', resource)
+    this.sendTo('contributors', 'interested', resource)
   }
 
   chokeReceived(resource) {
     if (this.currentResource === resource) {
       this.chokedClients += 1
-      if (this.chokedClients === this.partners.length) {
-        log.warn("all partners choked, getting from cdn")
+      if (this.chokedClients === this.contributors.length) {
+        log.warn("all contributors choked, getting from cdn")
         this.callbackFail()
       }
     }
@@ -99,7 +99,7 @@ class Swarm extends BaseObject {
     if (this.currentResource !== resource) return
     if (this.satisfyCandidate) {
       log.warn("contain received but already have satisfy candidate")
-      this.partnersContainsResource.push(this.findPeer(peerId))
+      this.peersContainsResource.push(this.findPeer(peerId))
     } else {
       this.satisfyCandidate = peerId
     }
@@ -114,14 +114,14 @@ class Swarm extends BaseObject {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       var successPeer = this.findPeer(this.satisfyCandidate)
-      this.changeScore(_.union([successPeer], this.partnersContainsResource), Settings.points)
+      this.changeScore(_.union([successPeer], this.peersContainsResource), Settings.points)
       this.rebootRoundVars()
       this.clearRequestFailInterval()
     }
   }
 
   callbackFail() {
-    this.changeScore(this.partners, Settings.points * -1)
+    this.changeScore(this.contributors, Settings.points * -1)
     this.rebootRoundVars()
     this.clearInterestedFailInterval()
     this.clearRequestFailInterval()
@@ -141,7 +141,7 @@ class Swarm extends BaseObject {
     this.currentResource = undefined
     this.satisfyCandidate = undefined
     this.chokedClients = 0
-    this.partnersContainsResource = []
+    this.peersContainsResource = []
   }
 
   clearInterestedFailInterval() {

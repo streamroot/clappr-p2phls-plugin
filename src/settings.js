@@ -16,10 +16,10 @@ Settings.logging = true
 Maximum size of the storage in number of chunks. */
 Settings.maxStorageChunks = 10
 
-/* maxPartners
-The maximum number of partners one peer can handle.
-Partners are used to be requested for video segments. */
-Settings.maxPartners = 4
+/* maxContributors
+The maximum number of contributors one peer can handle.
+Contributors are used to be requested for video segments. */
+Settings.maxContributors = 4
 
 /* maxSwarmSize
 Maximum number of peers on the swarm. When reach this
@@ -47,9 +47,9 @@ request chunks only for CDN. */
 Settings.lowBufferLength = 5
 
 /* points
-How many points a partner win/loss when send a segment
+How many points a contributor win/loss when send a segment
 or not. This serves to reorganize peers and promoting or
-demoting then as partners. */
+demoting then as contributors. */
 Settings.points = 10
 
 /* stunServers
