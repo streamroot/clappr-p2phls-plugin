@@ -47,8 +47,8 @@
   },
   "dependencies": {
     "clappr": "latest",
-    "rtc-bufferedchannel": "~0.5.0",
-    "rtc-quickconnect": "~2.6.0",
+    "rtc-bufferedchannel": "latest",
+    "rtc-quickconnect": "latest",
     "jquery": "2.1.1",
     "underscore": "1.6.0",
     "log-with-style": "0.1.5",
