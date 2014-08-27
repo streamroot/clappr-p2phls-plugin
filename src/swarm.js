@@ -46,6 +46,14 @@ class Swarm extends BaseObject {
     }, this)
   }
 
+  incrementScore(peers) {
+    this.changeScore(peers, Settings.points)
+  }
+
+  decrementScore(peers) {
+    this.changeScore(peers, Settings.points * -1)
+  }
+
   changeScore(peers, points) {
     _.each(peers, function(peer) {
       log.warn("Changing " + peer.ident + " score: " + peer.score + " -> " + (peer.score + points))
@@ -54,8 +62,7 @@ class Swarm extends BaseObject {
   }
 
   get contributors() {
-    var activePeers = _.filter(this.peers, function (p) { return p.active })
-    var orderedPeers = _.sortBy(activePeers, function (p) { return p.score }).reverse()
+    var orderedPeers = _.sortBy(this.peers, function (p) { return p.score }).reverse()
     if (this.peers.length > Settings.maxPartners) {
       return orderedPeers.slice(0, Settings.maxContributors)
     } else {
@@ -64,13 +71,9 @@ class Swarm extends BaseObject {
   }
 
   sendTo(recipients, command, resource, content='') {
-    /* recipients: all, contributors or peer ident
-    command: interested, contain, request, satisfy */
     log.debug("sending _" + command + "_ to " + recipients)
     if (recipients === 'contributors') {
       _.each(this.contributors, function(peer) { peer.send(command, resource, content) }, this)
-    } else if (recipients === 'all') {
-      _.each(this.peers, function(peer) { peer.send(command, resource, content) }, this)
     } else {
       var peer = this.findPeer(recipients)
       peer.send(command, resource, content);
@@ -80,18 +83,19 @@ class Swarm extends BaseObject {
   sendInterested(resource, callbackSuccess, callbackFail) {
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
-    this.interestedFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('interested'))
     this.currentResource = resource
     this.sendTo('contributors', 'interested', resource)
+    var timeout = this.getTimeoutFor('interested')
+    this.interestedFailID = setTimeout(this.callbackFail.bind(this), timeout)
   }
 
   chokeReceived(resource) {
     if (this.currentResource === resource) {
       this.chokedClients += 1
-      if (this.chokedClients === this.contributors.length) {
-        log.warn("all contributors choked, getting from cdn")
-        this.callbackFail()
-      }
+    }
+    if (this.chokedClients === this.contributors.length) {
+      log.warn("all contributors choked, getting from cdn")
+      this.callbackFail()
     }
   }
 
@@ -102,29 +106,26 @@ class Swarm extends BaseObject {
       this.peersContainsResource.push(this.findPeer(peerId))
     } else {
       this.satisfyCandidate = peerId
-    }
-    if (this.interestedFailID) {
       this.clearInterestedFailInterval()
       this.requestFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('request'))
+      this.sendTo(this.satisfyCandidate, 'request', resource)
     }
-    this.sendTo(this.satisfyCandidate, 'request', resource)
   }
 
-  resourceReceived(peer, resource, chunk) {
+  satisfyReceived(peer, resource, chunk) {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       var successPeer = this.findPeer(this.satisfyCandidate)
-      this.changeScore(_.union([successPeer], this.peersContainsResource), Settings.points)
+      this.incrementScore(_.union([successPeer], this.peersContainsResource))
       this.rebootRoundVars()
-      this.clearRequestFailInterval()
+    } else {
+      log.warn("satisfy received for a wrong resource or satisfyCandidate")
     }
   }
 
   callbackFail() {
-    this.changeScore(this.contributors, Settings.points * -1)
+    this.decrementScore(this.contributors)
     this.rebootRoundVars()
-    this.clearInterestedFailInterval()
-    this.clearRequestFailInterval()
     this.externalCallbackFail()
   }
 
@@ -143,6 +144,8 @@ class Swarm extends BaseObject {
     this.satisfyCandidate = undefined
     this.chokedClients = 0
     this.peersContainsResource = []
+    this.clearRequestFailInterval()
+    this.clearInterestedFailInterval()
   }
 
   clearInterestedFailInterval() {

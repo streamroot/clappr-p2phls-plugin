@@ -7,6 +7,7 @@ var BaseObject = require('base_object');
 var CDNRequester = require('./cdn_requester');
 var P2PManager = require('./p2p_manager');
 var Settings = require('./settings')
+var log = require('./log');
 
 class ResourceRequester extends BaseObject {
   initialize(params) {
@@ -20,6 +21,7 @@ class ResourceRequester extends BaseObject {
     this.resource = resource
     this.callback = callback
     if (bufferLength < Settings.lowBufferLength && !this.isInitialBuffer) {
+      log.warn("getting directly to CDN")
       this.requestToCDN()
     } else {
       this.p2pManager.requestResource(resource, this.callback, this.requestToCDN.bind(this))

@@ -16,7 +16,6 @@ class Peer extends BaseObject {
     this.dataChannel = params.dataChannel
     this.dataChannel.on("data", (data) => this.messageReceived(data))
     this.uploadHandler = UploadHandler.getInstance()
-    this.active = true
     this.score = 1000
     this.sendPing()
   }
@@ -82,7 +81,7 @@ class Peer extends BaseObject {
         this.calculateRTT()
         break
       case 'satisfy':
-        this.swarm.resourceReceived(this.ident, resource, content)
+        this.swarm.satisfyReceived(this.ident, resource, content)
         break
     }
   }
