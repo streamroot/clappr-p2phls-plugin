@@ -116,7 +116,10 @@ class Swarm extends BaseObject {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       var successPeer = this.findPeer(this.satisfyCandidate)
-      this.incrementScore(_.union([successPeer], this.peersContainsResource))
+      var goodPeers = _.union([successPeer], this.peersContainsResource)
+      var badPeers = _.difference(this.contributors, goodPeers)
+      this.incrementScore(goodPeers)
+      this.decrementScore(badPeers)
       this.rebootRoundVars()
     } else {
       log.warn("satisfy received for a wrong resource or satisfyCandidate")
