@@ -28,13 +28,13 @@ Settings.maxSwarmSize = 50
 
 /* maxUploadSlots
 Maximum number of peers one can serve. */
-Settings.maxUploadSlots = 4
+Settings.maxUploadSlots = 6
 
 /* uploadSlotTimeout
 Time in milliseconds that a upload slot will be expired.
 If a given downloader stops to request segments for
 uploadSlotTimeout seconds, this slot will be emptied. */
-Settings.uploadSlotTimeout = 20000
+Settings.uploadSlotTimeout = 8000
 
 /* tracker
 Place where your rtc-switchboard server is running */
