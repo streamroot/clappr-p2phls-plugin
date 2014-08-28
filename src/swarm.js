@@ -22,7 +22,7 @@ class Swarm extends BaseObject {
   }
 
   size() {
-    return this.peers.length
+    return _.size(this.peers)
   }
 
   addPeer(id, dataChannel) {
@@ -63,8 +63,9 @@ class Swarm extends BaseObject {
 
   get contributors() {
     var orderedPeers = _.sortBy(this.peers, function (p) { return p.score }).reverse()
-    if (this.peers.length > Settings.maxPartners) {
-      return orderedPeers.slice(0, Settings.maxContributors)
+    if (_.size(this.peers) > Settings.maxContributors) {
+      var slice = orderedPeers.slice(0, Settings.maxContributors)
+      return slice
     } else {
       return orderedPeers
     }
@@ -93,7 +94,7 @@ class Swarm extends BaseObject {
     if (this.currentResource === resource) {
       this.chokedClients += 1
     }
-    if (this.chokedClients === this.contributors.length) {
+    if (this.chokedClients === _.size(this.contributors)) {
       log.warn("all contributors choked, getting from cdn")
       this.callbackFail()
     }
@@ -118,6 +119,7 @@ class Swarm extends BaseObject {
       var successPeer = this.findPeer(this.satisfyCandidate)
       var goodPeers = _.union([successPeer], this.peersContainsResource)
       var badPeers = _.difference(this.contributors, goodPeers)
+      log.info("contributors: " + _.size(this.contributors) + ", good peers: " + goodPeers.length)
       this.incrementScore(goodPeers)
       this.decrementScore(badPeers)
       this.rebootRoundVars()
