@@ -46,6 +46,15 @@ class Swarm extends BaseObject {
     }, this)
   }
 
+  updatePeersScore() {
+    var successPeer = this.findPeer(this.satisfyCandidate)
+    var goodPeers = _.union([successPeer], this.peersContainsResource)
+    var badPeers = _.difference(this.contributors, goodPeers)
+    log.info("contributors: " + _.size(this.contributors) + ", good peers: " + goodPeers.length)
+    this.incrementScore(goodPeers)
+    this.decrementScore(badPeers)
+  }
+
   incrementScore(peers) {
     this.changeScore(peers, Settings.points)
   }
@@ -116,12 +125,7 @@ class Swarm extends BaseObject {
   satisfyReceived(peer, resource, chunk) {
     if (this.satisfyCandidate === peer && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
-      var successPeer = this.findPeer(this.satisfyCandidate)
-      var goodPeers = _.union([successPeer], this.peersContainsResource)
-      var badPeers = _.difference(this.contributors, goodPeers)
-      log.info("contributors: " + _.size(this.contributors) + ", good peers: " + goodPeers.length)
-      this.incrementScore(goodPeers)
-      this.decrementScore(badPeers)
+      this.updatePeersScore()
       this.rebootRoundVars()
     } else {
       log.warn("satisfy received for a wrong resource or satisfyCandidate")
