@@ -130,6 +130,7 @@ class P2PHLS extends UIPlugin {
 
   triggerStats(metrics) {
     this.trigger('playback:p2phlsstats:add', metrics);
+    this.trigger('playback:stats:add', metrics);
   }
 
   updateHighDefinition(isHD) {
