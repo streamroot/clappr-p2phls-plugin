@@ -43,6 +43,8 @@ class Peer extends BaseObject {
     if (this.uploadHandler.getSlot(this.ident)) {
       this.send('satisfy', resource, this.storage.getItem(resource))
       this.swarm.chunksSent += 1
+    } else {
+      log.warn("cannot send satisfy, no upload slot available")
     }
   }
 
@@ -60,7 +62,6 @@ class Peer extends BaseObject {
 
   processMessage(data) {
     var [command, resource, content] = data.split("$")
-    log.debug('received _' + command + '_')
     switch (command) {
       case 'interested':
         this.interestedReceived(resource)
@@ -81,6 +82,7 @@ class Peer extends BaseObject {
         this.calculateRTT()
         break
       case 'satisfy':
+        log.debug('received _satisfy_')
         this.swarm.satisfyReceived(this.ident, resource, content)
         break
     }

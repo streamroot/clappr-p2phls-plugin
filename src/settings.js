@@ -10,7 +10,7 @@ class Settings {
 Turn on/off logging on browser's console on
 initialization. You can always turn on/off
 by pressing ctrl+shift+a on your browser tab. */
-Settings.logging = true
+Settings.logging = false
 
 /* maxStorageChunks
 Maximum size of the storage in number of chunks. */
@@ -22,13 +22,13 @@ Contributors are used to be requested for video segments. */
 Settings.maxContributors = 4
 
 /* maxSwarmSize
-Maximum number of peers on the swarm. When reach this
-number, P2PManager will ignore new peers. */
+Maximum number of peers on our particular swarm view.
+When reach this number, P2PManager will ignore new peers. */
 Settings.maxSwarmSize = 50
 
 /* maxUploadSlots
 Maximum number of peers one can serve. */
-Settings.maxUploadSlots = 6
+Settings.maxUploadSlots = 10
 
 /* uploadSlotTimeout
 Time in milliseconds that a upload slot will be expired.
