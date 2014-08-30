@@ -77,6 +77,10 @@ class Swarm extends BaseObject {
     }
   }
 
+  getLowestScorePeer() {
+    return _.first(_.sortBy(this.peers, function(p) { return p.score }))
+  }
+
   sendTo(recipients, command, resource, content='') {
     log.debug("sending _" + command + "_ to " + recipients)
     if (recipients === 'contributors') {
@@ -127,6 +131,12 @@ class Swarm extends BaseObject {
     } else {
       log.warn("satisfy received for a wrong resource or satisfyCandidate")
     }
+  }
+
+  busyReceived(peer) {
+    var lowerScore = this.getLowestScorePeer().score
+    log.warn("busy received, changing " + peer.ident + " score: " + peer.score + " -> " + lowerScore - Settings.points)
+    peer.score = lowerScore - Settings.points
   }
 
   callbackFail() {

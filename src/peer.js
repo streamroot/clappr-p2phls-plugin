@@ -45,6 +45,7 @@ class Peer extends BaseObject {
       this.swarm.chunksSent += 1
     } else {
       log.warn("cannot send satisfy, no upload slot available")
+      this.send("busy", resource)
     }
   }
 
@@ -52,7 +53,7 @@ class Peer extends BaseObject {
     if (this.storage.contain(resource) && this.uploadHandler.getSlot(this.ident)) {
       this.send("contain", resource)
     } else {
-      this.send("choke", resource)
+      this.send("busy", resource)
     }
   }
 
@@ -79,6 +80,8 @@ class Peer extends BaseObject {
         log.debug('received _satisfy_')
         this.swarm.satisfyReceived(this, resource, content)
         break
+      case 'busy':
+        this.swarm.busyReceived(this)
       case 'ping':
         this.sendPong()
         break
