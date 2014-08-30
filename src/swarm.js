@@ -50,7 +50,7 @@ class Swarm extends BaseObject {
     var successPeer = this.findPeer(this.satisfyCandidate)
     var goodPeers = _.union([successPeer], this.peersContainsResource)
     var badPeers = _.difference(this.contributors, goodPeers)
-    log.info("contributors: " + _.size(this.contributors) + ", good peers: " + goodPeers.length)
+    log.info("contributors good: " + goodPeers.length)
     this.incrementScore(goodPeers)
     this.decrementScore(badPeers)
   }
@@ -64,10 +64,7 @@ class Swarm extends BaseObject {
   }
 
   changeScore(peers, points) {
-    _.each(peers, function(peer) {
-      log.warn("Changing " + peer.ident + " score: " + peer.score + " -> " + (peer.score + points))
-      peer.score += points
-    }, this)
+    _.each(peers, function(peer) { peer.score += points }, this)
   }
 
   get contributors() {
