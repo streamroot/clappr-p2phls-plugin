@@ -67,7 +67,7 @@ class Peer extends BaseObject {
         this.interestedReceived(resource)
         break
       case 'contain':
-        this.swarm.containReceived(this.ident, resource)
+        this.swarm.containReceived(this, resource)
         break
       case 'request':
         this.sendSatisfy(resource)
@@ -75,15 +75,15 @@ class Peer extends BaseObject {
       case 'choke':
         this.swarm.chokeReceived(resource)
         break
+      case 'satisfy':
+        log.debug('received _satisfy_')
+        this.swarm.satisfyReceived(this, resource, content)
+        break
       case 'ping':
         this.sendPong()
         break
       case 'pong':
         this.calculateRTT()
-        break
-      case 'satisfy':
-        log.debug('received _satisfy_')
-        this.swarm.satisfyReceived(this.ident, resource, content)
         break
     }
   }

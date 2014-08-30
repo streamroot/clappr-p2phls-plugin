@@ -106,13 +106,13 @@ class Swarm extends BaseObject {
     }
   }
 
-  containReceived(peerId, resource) {
+  containReceived(peer, resource) {
     if (this.currentResource !== resource) return
     if (this.satisfyCandidate) {
       log.warn("contain received but already have satisfy candidate")
-      this.peersContainsResource.push(this.findPeer(peerId))
+      this.peersContainsResource.push(peer)
     } else {
-      this.satisfyCandidate = peerId
+      this.satisfyCandidate = peer.ident
       this.clearInterestedFailInterval()
       this.requestFailID = setTimeout(this.callbackFail.bind(this), this.getTimeoutFor('request'))
       this.sendTo(this.satisfyCandidate, 'request', resource)
@@ -120,7 +120,7 @@ class Swarm extends BaseObject {
   }
 
   satisfyReceived(peer, resource, chunk) {
-    if (this.satisfyCandidate === peer && this.currentResource === resource) {
+    if (this.satisfyCandidate === peer.ident && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       this.updatePeersScore()
       this.rebootRoundVars()
