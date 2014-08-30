@@ -50,7 +50,7 @@ Settings.lowBufferLength = 5
 How many points a contributor win/loss when send a segment
 or not. This serves to reorganize peers and promoting or
 demoting then as contributors. */
-Settings.points = 10
+Settings.points = 1
 
 /* stunServers
 STUN servers used to match peers. */
