@@ -9,7 +9,7 @@ class Settings {
 /* logging
 Turn on/off logging on browser's console on
 initialization. You can always turn on/off
-by pressing ctrl+shift+a on your browser tab. */
+by pressing ctrl+shift+l on your browser tab. */
 Settings.logging = false
 
 /* maxStorageChunks

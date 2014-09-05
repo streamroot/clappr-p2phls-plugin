@@ -32,6 +32,6 @@ Log.log = function(level, message) {
   }
 }
 
-Mousetrap.bind(['command+shift+a', 'ctrl+shift+a'], () => Log.onOff())
+Mousetrap.bind(['command+shift+l', 'ctrl+shift+l'], () => Log.onOff())
 
 module.exports = Log
