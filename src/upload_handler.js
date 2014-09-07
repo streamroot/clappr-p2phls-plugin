@@ -17,7 +17,7 @@ class UploadHandler extends BaseObject {
 
   getSlot(peerId) {
     this.checkAndFreeSlots()
-    if (_.contains(this.slots.keys, peerId) || (_.size(this.slots) < this.maxUploadSlots)) {
+    if (_.contains(this.slots.keys, peerId) || this.hasFreeSlots()) {
       this.slots[peerId] = Date.now()
       this.trigger('uploadhandler:update', {occupiedSlots: _.size(this.slots), totalSlots: this.maxUploadSlots})
       return true
@@ -36,6 +36,11 @@ class UploadHandler extends BaseObject {
         this.trigger('uploadhandler:update', {occupiedSlots: _.size(this.slots), totalSlots: this.maxUploadSlots})
       }
     }, this)
+  }
+
+  hasFreeSlots() {
+    log.info("has free slots?" +  (_.size(this.slots) < this.maxUploadSlots))
+    return (_.size(this.slots) < this.maxUploadSlots)
   }
 }
 
