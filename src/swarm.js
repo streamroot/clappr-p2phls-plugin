@@ -12,7 +12,7 @@ var log = require('./log');
 
 
 class Swarm extends BaseObject {
-  initialize() {
+  constructor() {
     this.peers = []
     this.satisfyCandidate = undefined
     this.chunksSent = 0

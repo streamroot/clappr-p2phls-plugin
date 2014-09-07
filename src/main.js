@@ -26,8 +26,9 @@ class P2PHLS extends UIPlugin {
     }
   }
 
-  initialize(options) {
+  constructor(options) {
     super(options)
+    window.WP3 = window.Clappr
     this.options = options
     this.src = options.src
     this.swfPath = "assets/P2PHLSPlayer.swf"
@@ -41,10 +42,10 @@ class P2PHLS extends UIPlugin {
   }
 
   addListeners() {
-    WP3.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
-    WP3.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
-    WP3.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
-    WP3.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
+    Clappr.Mediator.on(this.uniqueId + ':flashready', () => this.bootstrap())
+    Clappr.Mediator.on(this.uniqueId + ':playbackstate', (state) => this.setPlaybackState(state))
+    Clappr.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
+    Clappr.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
     this.listenTo(this.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.triggerStats(event))
     this.listenTo(this.uploadHandler, 'uploadhandler:update', (event) => this.triggerStats(event))
   }
@@ -84,9 +85,9 @@ class P2PHLS extends UIPlugin {
 
   stopListening() {
     super()
-    WP3.Mediator.off(this.uniqueId + ':flashready')
-    WP3.Mediator.off(this.uniqueId + ':playbackstate')
-    WP3.Mediator.off(this.uniqueId + ':highdefinition')
+    Clappr.Mediator.off(this.uniqueId + ':flashready')
+    Clappr.Mediator.off(this.uniqueId + ':playbackstate')
+    Clappr.Mediator.off(this.uniqueId + ':highdefinition')
   }
 
   hiddenCallback() {
@@ -164,7 +165,7 @@ class P2PHLS extends UIPlugin {
     return this.avgSegmentSize || 0
   }
 
-  isHighDefinition() {
+  isHighDefinitionInUse() {
     return this.highDefinition
   }
 

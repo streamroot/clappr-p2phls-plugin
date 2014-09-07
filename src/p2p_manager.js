@@ -11,7 +11,7 @@ var Swarm = require('./swarm')
 var log = require('./log');
 
 class P2PManager extends BaseObject {
-  initialize(params) {
+  constructor(params) {
     this.connectionSettings = {'room': params.swarm, iceServers: Settings.stunServers, debug: false}
     var tracker = params.tracker || Settings.tracker
     log.info("Initializing P2PManager with " + tracker)

@@ -9,7 +9,7 @@ var UploadHandler = require('./upload_handler')
 var log = require('./log');
 
 class Peer extends BaseObject {
-  initialize(params) {
+  constructor(params) {
     this.storage = Storage.getInstance()
     this.ident = params.ident
     this.swarm = params.swarm

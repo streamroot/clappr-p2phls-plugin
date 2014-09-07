@@ -10,7 +10,7 @@ var Settings = require('./settings')
 var log = require('./log');
 
 class ResourceRequester extends BaseObject {
-  initialize(params) {
+  constructor(params) {
     this.cdnRequester = new CDNRequester()
     this.p2pManager = new P2PManager(params)
     this.currentState = params.currentState

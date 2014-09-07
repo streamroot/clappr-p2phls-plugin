@@ -8,7 +8,7 @@ var Storage = require('./storage')
 
 class CDNRequester extends BaseObject {
   get name() { return 'CDNRequester'; }
-  initialize() {
+  constructor() {
     this.storage = Storage.getInstance()
     this.utils = new Worker(this.getWorkerURL())
     this.utils.onmessage = (e) => this.resourceLoaded(e.data)
