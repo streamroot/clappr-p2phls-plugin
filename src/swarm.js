@@ -135,7 +135,7 @@ class Swarm extends BaseObject {
 
   busyReceived(peer) {
     var lowerScore = this.getLowestScorePeer().score
-    log.warn("busy received, changing " + peer.ident + " score: " + peer.score + " -> " + lowerScore - Settings.points)
+    log.warn("busy received, changing " + peer.ident + " score: " + peer.score + " => " + (lowerScore - Settings.points))
     peer.score = lowerScore - Settings.points
   }
 
