@@ -50,10 +50,14 @@ class Peer extends BaseObject {
   }
 
   interestedReceived(resource) {
-    if (this.storage.contain(resource) && this.uploadHandler.getSlot(this.ident)) {
-      this.send("contain", resource)
+    if (this.storage.contain(resource)) {
+      if (this.uploadHandler.getSlot(this.ident)) {
+        this.send('contain', resource)
+      } else {
+        this.send('busy', resource)
+      }
     } else {
-      this.send("busy", resource)
+      this.send("choke", resource)
     }
   }
 
@@ -82,6 +86,7 @@ class Peer extends BaseObject {
         break
       case 'busy':
         this.swarm.busyReceived(this)
+        break
       case 'ping':
         this.sendPong()
         break
