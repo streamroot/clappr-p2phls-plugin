@@ -28,7 +28,6 @@ class P2PHLS extends UIPlugin {
 
   constructor(options) {
     super(options)
-    window.WP3 = window.Clappr
     this.options = options
     this.src = options.src
     this.swfPath = "assets/P2PHLSPlayer.swf"
