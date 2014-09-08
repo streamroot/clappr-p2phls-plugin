@@ -20,8 +20,7 @@ class ResourceRequester extends BaseObject {
   requestResource(resource, bufferLength, callback) {
     this.resource = resource
     this.callback = callback
-    if (bufferLength < Settings.lowBufferLength && !this.isInitialBuffer) {
-      log.warn("getting directly to CDN")
+    if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || this.p2pManager.swarm.size() === 0) {
       this.requestToCDN()
     } else {
       this.p2pManager.requestResource(resource, this.callback, this.requestToCDN.bind(this))
