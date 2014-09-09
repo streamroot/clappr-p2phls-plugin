@@ -82,7 +82,6 @@ class Swarm extends BaseObject {
   }
 
   sendTo(recipients, command, resource, content='') {
-    log.debug("sending _" + command + "_ to " + recipients)
     if (recipients === 'contributors') {
       _.each(this.contributors, function(peer) { peer.send(command, resource, content) }, this)
     } else {
@@ -135,8 +134,12 @@ class Swarm extends BaseObject {
 
   busyReceived(peer) {
     var lowerScore = this.getLowestScorePeer().score
-    log.warn("busy received, changing " + peer.ident + " score: " + peer.score + " => " + (lowerScore - Settings.points))
-    peer.score = lowerScore - Settings.points
+    if (lowerScore < 0) {
+      peer.score = lowerScore - Settings.points
+    } else {
+      peer.score = 0
+    }
+    log.warn("busy received, changing " + peer.ident + " score to: " + peer.score)
   }
 
   callbackFail() {
