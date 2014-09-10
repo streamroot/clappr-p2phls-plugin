@@ -19,7 +19,7 @@ Settings.maxStorageChunks = 10
 /* maxContributors
 The maximum number of contributors one peer can handle.
 Contributors are used to be requested for video segments. */
-Settings.maxContributors = 4
+Settings.maxContributors = 5
 
 /* maxSwarmSize
 Maximum number of peers on our particular swarm view.
