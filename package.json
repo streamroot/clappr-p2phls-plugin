@@ -31,6 +31,7 @@
     ]
   },
   "devDependencies": {
+    "s3": "^4.1.1",
     "browserify": "^4.2.0",
     "browserify-shim": "^3.6.0",
     "es6ify": "^1.2.0",

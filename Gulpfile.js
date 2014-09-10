@@ -12,6 +12,8 @@ var args = require('yargs').argv;
 var express = require('express');
 var util = require('gulp-util');
 var livereload = require('gulp-livereload');
+var s3 = require('s3');
+var fs = require('fs');
 
 var files = {
   css:  'public/*.css',
@@ -92,4 +94,14 @@ gulp.task('watch', function() {
   util.log(util.colors.bgGreen('Watching for changes...'));
 });
 
+
+gulp.task('upload', function(b) {
+  var awsOptions = JSON.parse(fs.readFileSync('./aws.json'));
+  var client = s3.createClient({s3Options: awsOptions});
+  var params = {localDir: "./dist/", deleteRemoved: true, s3Params: {Bucket: "cdn.clappr.io", Prefix: "bemtv/latest/"}};
+  var uploader = client.uploadDir(params);
+  uploader.on('error', function(err) { console.error("unable to sync:", err.stack); });
+  uploader.on('end', function() { console.log("done uploading"); });
+  return;
+});
 
