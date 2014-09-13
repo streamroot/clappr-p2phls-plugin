@@ -30,7 +30,7 @@ class P2PHLS extends UIPlugin {
     super(options)
     this.options = options
     this.src = options.src
-    this.swfPath = "assets/P2PHLSPlayer.swf"
+    this.swfPath = "http://cdn.clappr.io/bemtv/latest/assets/P2PHLSPlayer.swf"
     this.createResourceRequester()
     this.highDefinition = false
     this.autoPlay = options.autoPlay
