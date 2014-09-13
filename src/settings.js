@@ -31,7 +31,7 @@ Maximum number of peers one can serve. */
 Settings.maxUploadSlots = 10
 
 /* uploadSlotTimeout
-Time in milliseconds that a upload slot will be expired.
+Time in milliseconds in which an upload slot will be expired.
 If a given downloader stops to request segments for
 uploadSlotTimeout seconds, this slot will be emptied. */
 Settings.uploadSlotTimeout = 8000
@@ -42,7 +42,7 @@ Settings.tracker = 'http://server.bem.tv:8080'
 
 /* lowBufferLength
 Local buffer threshold in seconds in which the player
-will try to use P2P. Smaller than that, player will
+will try to use P2P. Smaller than lowBufferLength, player will
 request chunks only for CDN. */
 Settings.lowBufferLength = 5
 
