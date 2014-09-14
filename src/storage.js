@@ -42,7 +42,7 @@ class Storage {
   }
 
   normalizeKey(key) {
-    return key.match('.*/(.*/.*.ts)')[1]
+    return key
   }
 }
 
