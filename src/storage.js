@@ -14,7 +14,6 @@ class Storage {
   }
 
   setItem(key, value) {
-    key = this.normalizeKey(key)
     if (_.has(this.chunks, key)) {
       log.warn("already have this chunk on storage: " + key)
       return
@@ -32,17 +31,11 @@ class Storage {
   }
 
   getItem(key) {
-    key = this.normalizeKey(key)
     return this.chunks[key];
   }
 
   contain(key) {
-    key = this.normalizeKey(key)
     return _.contains(this.keys, key)
-  }
-
-  normalizeKey(key) {
-    return key
   }
 }
 
