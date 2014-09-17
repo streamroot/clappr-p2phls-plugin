@@ -3,6 +3,7 @@
 // Use of this source code is governed by a Apache
 // license that can be found in the LICENSE file.
 
+var BaseObject = require('base_object')
 var _ = require('underscore')
 var Settings = require('./settings')
 var log = require('./log')

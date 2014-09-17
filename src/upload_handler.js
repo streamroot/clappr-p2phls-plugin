@@ -39,7 +39,6 @@ class UploadHandler extends BaseObject {
   }
 
   hasFreeSlots() {
-    log.info("has free slots?" +  (_.size(this.slots) < this.maxUploadSlots))
     return (_.size(this.slots) < this.maxUploadSlots)
   }
 }

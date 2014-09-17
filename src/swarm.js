@@ -78,7 +78,7 @@ class Swarm extends BaseObject {
     } else {
       this.satisfyCandidate = peer.ident
       this.clearInterestedFailInterval()
-      this.requestFailID = setTimeout(this.callbackFail.bind(this), this.timeoutFor('request'))
+      this.requestFailID = setTimeout(this.callbackFail.bind(this), this.utils.timeoutFor('request'))
       this.sendTo(this.satisfyCandidate, 'request', resource)
     }
   }
@@ -104,7 +104,7 @@ class Swarm extends BaseObject {
   }
 
   callbackFail() {
-    this.decrementScore(this.utils.contributors)
+    this.utils.decrementScore(this.utils.contributors)
     this.rebootRoundVars()
     this.externalCallbackFail()
   }
