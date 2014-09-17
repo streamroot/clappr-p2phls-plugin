@@ -7,7 +7,6 @@ var BaseObject = require('base_object')
 var CDNRequester = require('./cdn_requester')
 var P2PManager = require('./p2p_manager')
 var Settings = require('./settings')
-var log = require('./log')
 
 class ResourceRequester extends BaseObject {
   constructor(params) {
