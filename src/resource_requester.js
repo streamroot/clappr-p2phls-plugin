@@ -3,11 +3,11 @@
 // Use of this source code is governed by a Apache
 // license that can be found in the LICENSE file.
 
-var BaseObject = require('base_object');
-var CDNRequester = require('./cdn_requester');
-var P2PManager = require('./p2p_manager');
+var BaseObject = require('base_object')
+var CDNRequester = require('./cdn_requester')
+var P2PManager = require('./p2p_manager')
 var Settings = require('./settings')
-var log = require('./log');
+var log = require('./log')
 
 class ResourceRequester extends BaseObject {
   constructor(params) {
@@ -23,12 +23,16 @@ class ResourceRequester extends BaseObject {
     if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || this.p2pManager.swarm.size() === 0) {
       this.requestToCDN()
     } else {
-      this.p2pManager.requestResource(resource, this.callback, this.requestToCDN.bind(this))
+      this.requestToP2P()
     }
   }
 
   requestToCDN() {
     this.cdnRequester.requestResource(this.resource, this.callback)
+  }
+
+  requestToP2P() {
+    this.p2pManager.requestResource(this.resource, this.callback, this.requestToCDN.bind(this))
   }
 }
 

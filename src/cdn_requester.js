@@ -3,11 +3,11 @@
 // Use of this source code is governed by Apache
 // license that can be found in the LICENSE file.
 
-var BaseObject = require('base_object');
+var BaseObject = require('base_object')
 var Storage = require('./storage')
 
 class CDNRequester extends BaseObject {
-  get name() { return 'CDNRequester'; }
+  get name() { return 'CDNRequester' }
   constructor() {
     this.storage = Storage.getInstance()
     this.utils = new Worker(this.getWorkerURL())
