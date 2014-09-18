@@ -34,11 +34,6 @@ class Peer extends BaseObject {
     log.debug(this.ident + ': ping?pong! rtt: ' + this.rtt)
   }
 
-  send(command, resource, content='') {
-    var message = this.mountMessage(command, resource, content)
-    this.dataChannel.send(message)
-  }
-
   sendSatisfy(resource) {
     if (this.uploadHandler.getSlot(this.ident)) {
       this.send('satisfy', resource, this.storage.getItem(resource))
@@ -62,10 +57,6 @@ class Peer extends BaseObject {
   }
 
   messageReceived(data) {
-    this.processMessage(data)
-  }
-
-  processMessage(data) {
     var [command, resource, content] = data.split("$")
     switch (command) {
       case 'interested':
@@ -94,6 +85,11 @@ class Peer extends BaseObject {
         this.calculateRTT()
         break
     }
+  }
+
+  send(command, resource, content='') {
+    var message = this.mountMessage(command, resource, content)
+    this.dataChannel.send(message)
   }
 
   mountMessage(command, resource, content) {
