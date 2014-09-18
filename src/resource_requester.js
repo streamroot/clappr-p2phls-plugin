@@ -19,6 +19,7 @@ class ResourceRequester extends BaseObject {
   requestResource(resource, bufferLength, callback) {
     this.resource = resource
     this.callback = callback
+    //TODO when we have Statistics component, we can check if (this.isInitialBuffer && Stats.chunksFromP2P == 0)
     if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || this.p2pManager.swarm.size() === 0) {
       this.requestToCDN()
     } else {
