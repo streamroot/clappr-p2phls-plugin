@@ -47,8 +47,8 @@ class Swarm extends BaseObject {
     var goodPeers = _.union([successPeer], this.peersContainsResource)
     var badPeers = _.difference(this.contributors, goodPeers)
     log.info("contributors good: " + goodPeers.length)
-    this.incrementScore(goodPeers)
-    this.decrementScore(badPeers)
+    this.utils.incrementScore(goodPeers)
+    this.utils.decrementScore(badPeers)
   }
 
 
