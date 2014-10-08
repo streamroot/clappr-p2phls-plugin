@@ -20,15 +20,6 @@ class SwarmUtils extends BaseObject {
     }, this)
   }
 
-  updatePeersScore() {
-    var successPeer = this.findPeer(this.utils.satisfyCandidate)
-    var goodPeers = _.union([successPeer], this.utils.peersContainsResource)
-    var badPeers = _.difference(this.contributors, goodPeers)
-    log.info("contributors good: " + goodPeers.length)
-    this.incrementScore(goodPeers)
-    this.decrementScore(badPeers)
-  }
-
   incrementScore(peers) {
     this.changeScore(peers, Settings.points)
   }

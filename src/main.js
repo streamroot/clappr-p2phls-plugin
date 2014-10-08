@@ -114,7 +114,7 @@ class P2PHLS extends UIPlugin {
     this.updateStats()
     this.triggerStats({status: "on"})
     this.autoPlay && this.play()
-    this.ready = true
+    this.isReady = true
     this.trigger('playback:ready', this.name)
   }
 
@@ -208,7 +208,11 @@ class P2PHLS extends UIPlugin {
   }
 
   volume(value) {
-    this.el.globoPlayerVolume(value)
+    if (this.isReady) {
+      this.el.globoPlayerVolume(value)
+    } else {
+      this.listenToOnce(this, 'playback:bufferfull', () => this.volume(value))
+    }
   }
 
   pause() {

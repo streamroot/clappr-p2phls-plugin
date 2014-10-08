@@ -42,6 +42,17 @@ class Swarm extends BaseObject {
     this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
+  updatePeersScore() {
+    var successPeer = this.utils.findPeer(this.satisfyCandidate)
+    var goodPeers = _.union([successPeer], this.peersContainsResource)
+    var badPeers = _.difference(this.contributors, goodPeers)
+    log.info("contributors good: " + goodPeers.length)
+    this.incrementScore(goodPeers)
+    this.decrementScore(badPeers)
+  }
+
+
+
   sendTo(recipients, command, resource, content='') {
     if (recipients === 'contributors') {
       _.each(this.utils.contributors, function(peer) { peer.send(command, resource, content) }, this)
