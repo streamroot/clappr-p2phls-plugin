@@ -3,7 +3,7 @@
 // Use of this source code is governed by Apache
 // license that can be found in the LICENSE file.
 
-var UIPlugin = require('ui_plugin')
+var Playback = require('playback')
 var Browser = require('browser')
 var JST = require('./jst')
 var Styler = require('./styler')
@@ -15,7 +15,7 @@ var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
 
 
-class P2PHLS extends UIPlugin {
+class P2PHLS extends Playback {
   get name() { return 'p2phls' }
   get tagName() { return 'object' }
   get template() { return JST.p2phls }
