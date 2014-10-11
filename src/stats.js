@@ -5,6 +5,7 @@
 
 var BaseObject = require('base_object');
 var _ = require('underscore')
+var Settings = require('./settings')
 
 class Stats extends BaseObject {
   constructor() {
@@ -15,10 +16,12 @@ class Stats extends BaseObject {
 
   setEmitter(main) {
     this.main = main
-    this.addEventListeners()
-    this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
-    this.updateStats()
-    this.triggerStats({status: "on"})
+    if (Settings.statsReport) {
+      this.addEventListeners()
+      this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
+      this.updateStats()
+      this.triggerStats({status: "on"})
+    }
   }
 
   addEventListeners() {
