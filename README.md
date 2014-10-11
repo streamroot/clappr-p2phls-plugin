@@ -1,6 +1,6 @@
 # BemTV Plugin for Clappr Media Player
 
-This plugin adds peer-to-peer powers for HTTP Live Streaming (HLS) transmissions on [Clappr Player](http://clappr.io).
+This plugin adds peer-to-peer powers for HTTP Live Streaming (HLS) transmissions on [Clappr Player](http://github.com/globocom/clappr).
 
 ![BemTV P2PHLS](http://bem.tv/static/bemtv_live_preview.png)
 
@@ -19,7 +19,7 @@ Visit [BemTV](http://bem.tv) with a [modern browser](http://caniuse.com/#search=
     <div id="player-wrapper"></div>
     <script>
       var playerElement = document.getElementById("player-wrapper");
-      var player = new WP3.Player({
+      var player = new Clappr.Player({
 				sources: ['http://cdn.bem.tv/stream/soccer2sec/playlist.m3u8'],
 				plugins: {
 						playback: [P2PHLS],
