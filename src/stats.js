@@ -11,6 +11,7 @@ class Stats extends BaseObject {
   constructor() {
     this.recv_cdn = 0
     this.recv_p2p = 0
+    this.sent_p2p = 0
     this.bufferLength = 0
   }
 
@@ -19,7 +20,6 @@ class Stats extends BaseObject {
     if (Settings.statsReport) {
       this.addEventListeners()
       this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
-      this.updateStats()
       this.triggerStats({status: "on"})
     }
   }
@@ -44,8 +44,8 @@ class Stats extends BaseObject {
   updateStats(method=null) {
     if (method === "p2p") this.recv_p2p++
     else if (method === "cdn") this.recv_cdn++
-    var chunksSent = this.main.resourceRequester.p2pManager.swarm.chunksSent
-    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, chunksSent: chunksSent}
+    else if (method === "p2psent") this.sent_p2p++
+    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, chunksSent: this.sent_p2p}
     this.triggerStats(stats)
   }
 

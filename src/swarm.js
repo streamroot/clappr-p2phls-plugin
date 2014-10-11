@@ -17,7 +17,6 @@ class Swarm extends BaseObject {
     this.utils = new SwarmUtils(this)
     this.peers = []
     this.satisfyCandidate = undefined
-    this.chunksSent = 0
     this.chokedClients = 0
     this.avgSegmentSize = 0
     this.peersContainsResource = []
@@ -50,8 +49,6 @@ class Swarm extends BaseObject {
     this.utils.incrementScore(goodPeers)
     this.utils.decrementScore(badPeers)
   }
-
-
 
   sendTo(recipients, command, resource, content='') {
     if (recipients === 'contributors') {
