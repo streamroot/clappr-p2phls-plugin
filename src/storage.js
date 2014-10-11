@@ -6,8 +6,9 @@
 var Settings = require("./settings")
 var _ = require("underscore")
 var log = require('./log');
+var BaseObject = require('base_object')
 
-class Storage {
+class Storage extends BaseObject {
   constructor() {
     this.keys = []
     this.chunks = {}
@@ -16,10 +17,15 @@ class Storage {
   setItem(key, value) {
     if (_.has(this.chunks, key)) {
       log.warn("already have this chunk on storage: " + key)
-      return
+    } else {
+      this.keys.push(key)
+      this.chunks[key] = value
+      this.updateSize()
+      this.trigger('storage:newitem', key)
     }
-    this.keys.push(key)
-    this.chunks[key] = value
+  }
+
+  updateSize() {
     if (this.keys.length > Settings.maxStorageChunks) {
       this.removeOlderItem()
     }
