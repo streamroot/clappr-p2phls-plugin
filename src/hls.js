@@ -26,7 +26,6 @@ class HLS extends Playback {
     super(options)
     this.src = options.src
     this.swfPath = options.swfPath || "assets/HLSPlayer.swf"
-    console.log("-> swf path: ", this.swfPath)
     this.highDefinition = false
     this.autoPlay = options.autoPlay
     this.defaultSettings = {

@@ -7,6 +7,7 @@ var log = require('./log')
 var Settings = require('./settings')
 var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
+var Stats = require('./stats')
 
 var JST = require('./jst')
 var HLS = require('./hls')
@@ -24,8 +25,9 @@ class P2PHLS extends HLS {
 
   constructor(options) {
     options.swfPath = "assets/P2PHLSPlayer.swf"
-    this.createResourceRequester(options.bemtvTracker)
+    this.resourceRequester = new ResourceRequester({swarm: btoa(options.src), tracker: options.tracker})
     this.uploadHandler = UploadHandler.getInstance()
+    this.stats = Stats.getInstance()
     super(options)
   }
 
@@ -36,8 +38,6 @@ class P2PHLS extends HLS {
     Clappr.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
     Clappr.Mediator.on(this.uniqueId + ':playbackerror', () => this.flashPlaybackError())
     Clappr.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
-    this.listenTo(this.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.triggerStats(event))
-    this.listenTo(this.uploadHandler, 'uploadhandler:update', (event) => this.triggerStats(event))
   }
 
   stopListening() {
@@ -50,13 +50,9 @@ class P2PHLS extends HLS {
 
   bootstrap() {
     super()
+    this.stats.setEmitter(this)
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
-    this.recv_cdn = 0
-    this.recv_p2p = 0
-    this.bufferLength = 0
-    this.updateStats()
-    this.triggerStats({status: "on"})
   }
 
   setPlaybackState(state) {
@@ -64,15 +60,9 @@ class P2PHLS extends HLS {
       this.resourceRequester.isInitialBuffer = false
     }
     super(state)
-    this.triggerStats({state: this.currentState, currentBitrate: this.toKB(this.getCurrentBitrate())})
-  }
-
-  createResourceRequester(tracker) {
-    var requesterOptions = {
-      swarm: btoa(this.src),
-      tracker: tracker
-    }
-    this.resourceRequester = new ResourceRequester(requesterOptions)
+    var bitrate = this.toKB(this.getCurrentBitrate())
+    var stats = {state: this.currentState, currentBitrate: bitrate}
+    this.stats.triggerStats(stats)
   }
 
   requestResource(url) {
@@ -85,40 +75,15 @@ class P2PHLS extends HLS {
     if (this.currentUrl) {
       this.currentUrl = null
       this.el.resourceLoaded(chunk)
-      this.updateStats(method)
+      this.stats.updateStats(method)
     } else {
       log.debug("It seems a deadlock happened with timers on swarm.")
     }
   }
 
-  updateStats(method=null) {
-    if (method === "p2p") this.recv_p2p++
-    else if (method === "cdn") this.recv_cdn++
-    var chunksSent = this.resourceRequester.p2pManager.swarm.chunksSent
-    var stats = {chunksFromP2P: this.recv_p2p, chunksFromCDN: this.recv_cdn, chunksSent: chunksSent}
-    this.triggerStats(stats)
-  }
-
-  triggerStats(metrics) {
-    this.trigger('playback:p2phlsstats:add', metrics);
-    this.trigger('playback:stats:add', metrics);
-  }
-
   updateHighDefinition(isHD) {
     this.highDefinition = (isHD === "true");
     this.trigger('playback:highdefinitionupdate')
-  }
-
-  play() {
-    super()
-    if (!this.bufferLengthTimer) {
-      this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
-    }
-  }
-
-  updateBufferLength() {
-    this.bufferLength = this.el.globoGetbufferLength() || 0
-    this.triggerStats({bufferLength: this.bufferLength})
   }
 
   getAverageSegmentSize() {
