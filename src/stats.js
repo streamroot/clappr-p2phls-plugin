@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file.
 
 var BaseObject = require('base_object');
+var _ = require('underscore')
 
 class Stats extends BaseObject {
   constructor() {
@@ -14,12 +15,22 @@ class Stats extends BaseObject {
 
   setEmitter(main) {
     this.main = main
-    window.main = main
-    this.listenTo(this.main.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.triggerStats(event))
-    this.listenTo(this.main.uploadHandler, 'uploadhandler:update', (event) => this.triggerStats(event))
+    this.addEventListeners()
     this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
     this.updateStats()
     this.triggerStats({status: "on"})
+  }
+
+  addEventListeners() {
+    this.listenTo(this.main.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.triggerStats(event))
+    this.listenTo(this.main.uploadHandler, 'uploadhandler:update', (event) => this.triggerStats(event))
+    Clappr.Mediator.on(this.main.uniqueId + ':fragmentloaded', () => this.onFragmentLoaded())
+  }
+
+  onFragmentLoaded() {
+    var bitrate = Math.floor(this.main.getCurrentBitrate() / 1000)
+    bitrate =  !_.isNaN(bitrate) ? bitrate : 'UNKNOWN'
+    this.triggerStats({state: this.main.currentState, currentBitrate: bitrate})
   }
 
   updateBufferLength() {

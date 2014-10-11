@@ -60,9 +60,6 @@ class P2PHLS extends HLS {
       this.resourceRequester.isInitialBuffer = false
     }
     super(state)
-    var bitrate = this.toKB(this.getCurrentBitrate())
-    var stats = {state: this.currentState, currentBitrate: bitrate}
-    this.stats.triggerStats(stats)
   }
 
   requestResource(url) {
@@ -81,21 +78,11 @@ class P2PHLS extends HLS {
     }
   }
 
-  updateHighDefinition(isHD) {
-    this.highDefinition = (isHD === "true");
-    this.trigger('playback:highdefinitionupdate')
-  }
-
   getAverageSegmentSize() {
     if (!this.avgSegmentSize || this.avgSegmentSize === 0 && this.getLevels().length > 0) {
       this.avgSegmentSize = Math.round(this.getLevels()[0].averageduration) || 0
     }
     return this.avgSegmentSize
-  }
-
-  toKB(num) {
-    var bitrate = Math.floor(num/1000)
-    return !_.isNaN(bitrate)?bitrate:"UNKNOWN"
   }
 }
 
