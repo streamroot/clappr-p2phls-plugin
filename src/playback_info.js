@@ -9,20 +9,21 @@ var _ = require('underscore')
 class PlaybackInfo extends BaseObject {
   constructor() {
     this.data = {
-      'chunks': { 'recvCDN': 0, 'recvP2P': 0, 'sentP2P': 0 },
+      'chunks': {chunksFromCDN: 0, chunksFromP2P: 0, chunksSent: 0},
       'bufferLength': 0
     }
   }
 
   setMain(main) {
     this.main = main
+    this.triggerStats({status: "on"})
+    this.updateData({delay: this.main.el.getDelay()})
     this.data.delay = this.main.el.getDelay()
     this.addEventListeners()
-    this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
-    this.triggerStats({status: "on"})
   }
 
   updateData(metrics) {
+    this.triggerStats(metrics)
     this.data = _.extend(this.data, metrics)
     console.log(this.data)
   }
@@ -38,42 +39,25 @@ class PlaybackInfo extends BaseObject {
   }
 
   addEventListeners() {
-    this.listenTo(this.main.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.updateSwarmSize(event))
+    this.listenTo(this.main.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.updateData(event))
     this.listenTo(this.main.uploadHandler, 'uploadhandler:update', (event) => this.updateUploadSlots(event))
     Clappr.Mediator.on(this.main.uniqueId + ':fragmentloaded', () => this.onFragmentLoaded())
   }
 
   onFragmentLoaded() {
     var bitrate = Math.floor(this.main.getCurrentBitrate() / 1000)
+    var bufferLength = this.main.el.globoGetbufferLength()
     bitrate =  !_.isNaN(bitrate) ? bitrate : 'UNKNOWN'
-    var data = {state: this.main.currentState, currentBitrate: bitrate}
+    bufferLength = !_.isNaN(bufferLength) ? bufferLength: 0
+    var data = {state: this.main.currentState, currentBitrate: bitrate, bufferLength: bufferLength}
     this.updateData(data)
-    this.triggerStats(data)
-  }
-
-  updateSwarmSize(data) {
-    this.triggerStats(data)
-    this.updateData(data)
-  }
-
-  updateBufferLength() {
-    this.bufferLength = this.main.el.globoGetbufferLength() || 0
-    var data = {bufferLength: this.bufferLength}
-    this.updateData(data)
-    this.triggerStats(data)
   }
 
   updateChunkStats(method=null) {
-    console.log("update chunk stats", method)
-    if (method === "p2p") this.data.chunks.recvP2P++
-    else if (method === "cdn") this.data.chunks.recvCDN++
-    else if (method === "p2psent") this.data.chunks.sentP2P++
-    var stats = {
-      chunksFromP2P: this.data.chunks.recvP2P,
-      chunksFromCDN: this.data.chunks.recvCDN,
-      chunksSent: this.data.chunks.sentP2P
-    }
-    this.triggerStats(stats)
+    if (method === "p2p") this.data.chunks.chunksFromP2P++
+    else if (method === "cdn") this.data.chunks.chunksFromCDN++
+    else if (method === "p2psent") this.data.chunks.chunksSent++
+    this.triggerStats(this.data.chunks)
   }
 
   updateUploadSlots(metrics) {
