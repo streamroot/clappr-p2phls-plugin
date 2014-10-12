@@ -25,7 +25,6 @@ class PlaybackInfo extends BaseObject {
   updateData(metrics) {
     this.triggerStats(metrics)
     this.data = _.extend(this.data, metrics)
-    console.log(this.data)
   }
 
   timeoutFor(command) {
