@@ -28,11 +28,12 @@ class Peer extends BaseObject {
   }
 
   sendPong() {
-    this.dataChannel.send("pong$$")
+    this.dataChannel.send("pong$$" + JSON.stringify(this.playbackInfo.data))
   }
 
-  calculateRTT() {
+  pongReceived(content) {
     this.rtt = Date.now() - this.pingSentTime
+    this.data = content? JSON.parse(content) : {}
     log.debug(this.ident + ': ping?pong! rtt: ' + this.rtt)
   }
 
@@ -84,7 +85,7 @@ class Peer extends BaseObject {
         this.sendPong()
         break
       case 'pong':
-        this.calculateRTT()
+        this.pongReceived(content)
         break
     }
   }
