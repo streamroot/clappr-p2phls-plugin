@@ -68,7 +68,6 @@ class P2PHLS extends HLS {
   requestResource(url) {
     this.currentUrl = url
     this.playbackInfo.addData({'segmentSize': this.getAverageSegmentSize()})
-    this.resourceRequester.p2pManager.swarm.avgSegmentSize = this.getAverageSegmentSize()
     this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 

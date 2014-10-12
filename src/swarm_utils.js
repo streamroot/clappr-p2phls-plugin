@@ -43,16 +43,6 @@ class SwarmUtils extends BaseObject {
   getLowestScorePeer() {
     return _.first(_.sortBy(this.swarm.peers, function(p) { return p.score }))
   }
-
-  timeoutFor(command) {
-    var segmentSize = this.swarm.avgSegmentSize > 0? this.swarm.avgSegmentSize * 1000: 1000
-    if (command === 'interested') {
-      var timeout = segmentSize / 3
-      return timeout > 2000? 2000: timeout
-    } else if (command === 'request') {
-      return segmentSize * 0.6
-    }
-  }
 }
 
 module.exports = SwarmUtils

@@ -19,6 +19,16 @@ class PlaybackInfo extends BaseObject {
   addData(metrics) {
     this.data = _.extend(this.data, metrics)
   }
+
+  timeoutFor(command) {
+    var segmentSize = this.data.segmentSize? this.data.segmentSize * 1000: 2000
+    if (command === 'interested') {
+      var timeout = segmentSize / 3
+      return timeout > 2000? 2000: timeout
+    } else if (command === 'request') {
+      return segmentSize * 0.6
+    }
+  }
 }
 
 PlaybackInfo.getInstance = function() {

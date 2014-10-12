@@ -10,15 +10,15 @@ var Settings = require('./settings')
 var _ = require('underscore')
 var log = require('./log')
 var SwarmUtils = require('./swarm_utils')
-
+var PlaybackInfo = require('./playback_info')
 
 class Swarm extends BaseObject {
   constructor() {
+    this.playbackInfo = PlaybackInfo.getInstance()
     this.utils = new SwarmUtils(this)
     this.peers = []
     this.satisfyCandidate = undefined
     this.chokedClients = 0
-    this.avgSegmentSize = 0
     this.peersContainsResource = []
   }
 
@@ -64,7 +64,7 @@ class Swarm extends BaseObject {
     this.externalCallbackSuccess = callbackSuccess
     this.currentResource = resource
     this.sendTo('contributors', 'interested', resource)
-    var timeout = this.utils.timeoutFor('interested')
+    var timeout = this.playbackInfo.timeoutFor('interested')
     this.interestedFailID = setTimeout(this.callbackFail.bind(this), timeout)
   }
 
@@ -86,7 +86,8 @@ class Swarm extends BaseObject {
     } else {
       this.satisfyCandidate = peer.ident
       this.clearInterestedFailInterval()
-      this.requestFailID = setTimeout(this.callbackFail.bind(this), this.utils.timeoutFor('request'))
+      var timeout = this.playbackInfo.timeoutFor('request')
+      this.requestFailID = setTimeout(this.callbackFail.bind(this), timeout)
       this.sendTo(this.satisfyCandidate, 'request', resource)
     }
   }
