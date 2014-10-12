@@ -3,10 +3,10 @@
 // Use of this source code is governed by a Apache
 // license that can be found in the LICENSE file.
 
-var BaseObject = require('base_object');
+var BaseObject = require('base_object')
 var Settings = require("./settings")
 var _ = require("underscore")
-var log = require('./log');
+var log = require('./log')
 
 class UploadHandler extends BaseObject {
   constructor() {
@@ -16,7 +16,7 @@ class UploadHandler extends BaseObject {
   }
 
   getSlot(peerId) {
-    if (_.contains(this.slots.keys, peerId) || this.hasFreeSlots()) {
+    if (_.contains(_.keys(this.slots), peerId) || this.hasFreeSlots()) {
       this.slots[peerId] = Date.now()
       this.updateSlotsCount()
       return true
