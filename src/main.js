@@ -56,6 +56,7 @@ class P2PHLS extends HLS {
     this.playbackInfo.setMain(this)
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
+    this.el.globoPlayerSetLevel(0)
   }
 
   setPlaybackState(state) {
@@ -67,7 +68,10 @@ class P2PHLS extends HLS {
 
   requestResource(url) {
     this.currentUrl = url
-    this.playbackInfo.addData({'segmentSize': this.getAverageSegmentSize()})
+    this.playbackInfo.addData({
+      'segmentSize': this.getAverageSegmentSize(),
+      'levels': this.getLevels(),
+    })
     this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
