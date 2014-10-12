@@ -13,6 +13,7 @@ class PlaybackInfo extends BaseObject {
 
   setMain(main) {
     this.main = main
+    this.data.delay = this.main.el.getDelay()
     this.listenTo(this.main, 'playback:stats:add', (metrics) => this.addData(metrics))
   }
 
