@@ -8,6 +8,7 @@ var Settings = require('./settings')
 var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
 var Stats = require('./stats')
+var PlaybackInfo = require('./playback_info')
 
 var JST = require('./jst')
 var HLS = require('./hls')
@@ -24,10 +25,11 @@ class P2PHLS extends HLS {
   }
 
   constructor(options) {
-    options.swfPath = "http://cdn.clappr.io/bemtv/latest/assets/P2PHLSPlayer.swf"
+    options.swfPath = "assets/P2PHLSPlayer.swf"
     this.resourceRequester = new ResourceRequester({swarm: btoa(options.src), tracker: options.tracker})
     this.uploadHandler = UploadHandler.getInstance()
     this.stats = Stats.getInstance()
+    this.playbackInfo = PlaybackInfo.getInstance()
     super(options)
   }
 
@@ -51,6 +53,7 @@ class P2PHLS extends HLS {
   bootstrap() {
     super()
     this.stats.setEmitter(this)
+    this.playbackInfo.setMain(this)
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
   }
@@ -64,6 +67,7 @@ class P2PHLS extends HLS {
 
   requestResource(url) {
     this.currentUrl = url
+    this.playbackInfo.addData({'segmentSize': this.getAverageSegmentSize()})
     this.resourceRequester.p2pManager.swarm.avgSegmentSize = this.getAverageSegmentSize()
     this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
   }

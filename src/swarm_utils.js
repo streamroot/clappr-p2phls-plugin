@@ -6,8 +6,6 @@
 var BaseObject = require('base_object')
 var _ = require('underscore')
 var Settings = require('./settings')
-var log = require('./log')
-
 
 class SwarmUtils extends BaseObject {
   constructor(swarm) {

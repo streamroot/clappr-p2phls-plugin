@@ -10,7 +10,7 @@ class Settings {
 Turn on/off statistics report for P2PHLSStats and
 built-in Clappr stats module. If you're not using
 P2PHLSStats, doesn't make sense to turn it on. */
-Settings.statsReport = false
+Settings.statsReport = true
 
 /* logging
 Turn on/off logging on browser's console on
