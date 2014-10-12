@@ -8,17 +8,23 @@ var _ = require('underscore')
 
 class PlaybackInfo extends BaseObject {
   constructor() {
-    this.data = {}
+    this.data = {
+      'chunks': { 'recvCDN': 0, 'recvP2P': 0, 'sentP2P': 0 },
+      'bufferLength': 0
+    }
   }
 
   setMain(main) {
     this.main = main
     this.data.delay = this.main.el.getDelay()
-    this.listenTo(this.main, 'playback:stats:add', (metrics) => this.addData(metrics))
+    this.addEventListeners()
+    this.bufferLengthTimer = setInterval(() => this.updateBufferLength(), 1000)
+    this.triggerStats({status: "on"})
   }
 
-  addData(metrics) {
+  updateData(metrics) {
     this.data = _.extend(this.data, metrics)
+    console.log(this.data)
   }
 
   timeoutFor(command) {
@@ -29,6 +35,55 @@ class PlaybackInfo extends BaseObject {
     } else if (command === 'request') {
       return segmentSize * 0.6
     }
+  }
+
+  addEventListeners() {
+    this.listenTo(this.main.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.updateSwarmSize(event))
+    this.listenTo(this.main.uploadHandler, 'uploadhandler:update', (event) => this.updateUploadSlots(event))
+    Clappr.Mediator.on(this.main.uniqueId + ':fragmentloaded', () => this.onFragmentLoaded())
+  }
+
+  onFragmentLoaded() {
+    var bitrate = Math.floor(this.main.getCurrentBitrate() / 1000)
+    bitrate =  !_.isNaN(bitrate) ? bitrate : 'UNKNOWN'
+    var data = {state: this.main.currentState, currentBitrate: bitrate}
+    this.updateData(data)
+    this.triggerStats(data)
+  }
+
+  updateSwarmSize(data) {
+    this.triggerStats(data)
+    this.updateData(data)
+  }
+
+  updateBufferLength() {
+    this.bufferLength = this.main.el.globoGetbufferLength() || 0
+    var data = {bufferLength: this.bufferLength}
+    this.updateData(data)
+    this.triggerStats(data)
+  }
+
+  updateChunkStats(method=null) {
+    console.log("update chunk stats", method)
+    if (method === "p2p") this.data.chunks.recvP2P++
+    else if (method === "cdn") this.data.chunks.recvCDN++
+    else if (method === "p2psent") this.data.chunks.sentP2P++
+    var stats = {
+      chunksFromP2P: this.data.chunks.recvP2P,
+      chunksFromCDN: this.data.chunks.recvCDN,
+      chunksSent: this.data.chunks.sentP2P
+    }
+    this.triggerStats(stats)
+  }
+
+  updateUploadSlots(metrics) {
+    this.data.uploadSlots = metrics
+    this.triggerStats(metrics)
+  }
+
+  triggerStats(metrics) {
+    this.main.trigger('playback:p2phlsstats:add', metrics)
+    this.main.trigger('playback:stats:add', metrics)
   }
 }
 

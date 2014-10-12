@@ -7,7 +7,6 @@ var log = require('./log')
 var Settings = require('./settings')
 var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
-var Stats = require('./stats')
 var PlaybackInfo = require('./playback_info')
 
 var JST = require('./jst')
@@ -28,7 +27,6 @@ class P2PHLS extends HLS {
     options.swfPath = "assets/P2PHLSPlayer.swf"
     this.resourceRequester = new ResourceRequester({swarm: btoa(options.src), tracker: options.tracker})
     this.uploadHandler = UploadHandler.getInstance()
-    this.stats = Stats.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     super(options)
   }
@@ -52,7 +50,6 @@ class P2PHLS extends HLS {
 
   bootstrap() {
     super()
-    this.stats.setEmitter(this)
     this.playbackInfo.setMain(this)
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
@@ -68,7 +65,7 @@ class P2PHLS extends HLS {
 
   requestResource(url) {
     this.currentUrl = url
-    this.playbackInfo.addData({
+    this.playbackInfo.updateData({
       'segmentSize': this.getAverageSegmentSize(),
       'levels': this.getLevels(),
     })
@@ -79,7 +76,7 @@ class P2PHLS extends HLS {
     if (this.currentUrl) {
       this.currentUrl = null
       this.el.resourceLoaded(chunk)
-      this.stats.updateStats(method)
+      this.playbackInfo.updateChunkStats(method)
     } else {
       log.debug("It seems a deadlock happened with timers on swarm.")
     }

@@ -6,7 +6,7 @@
 var BaseObject = require('base_object');
 var Storage = require('./storage');
 var UploadHandler = require('./upload_handler')
-var Stats = require('./stats')
+var PlaybackInfo = require('./playback_info')
 var log = require('./log');
 
 class Peer extends BaseObject {
@@ -17,7 +17,7 @@ class Peer extends BaseObject {
     this.dataChannel = params.dataChannel
     this.dataChannel.on("data", (data) => this.messageReceived(data))
     this.uploadHandler = UploadHandler.getInstance()
-    this.stats = Stats.getInstance()
+    this.playbackInfo = PlaybackInfo.getInstance()
     this.score = 1000
     this.sendPing()
   }
@@ -39,7 +39,7 @@ class Peer extends BaseObject {
   sendSatisfy(resource) {
     if (this.uploadHandler.getSlot(this.ident)) {
       this.send('satisfy', resource, this.storage.getItem(resource))
-      this.stats.updateStats('p2psent')
+      this.playbackInfo.updateChunkStats('p2psent')
     } else {
       log.warn("cannot send satisfy, no upload slot available")
       this.send("busy", resource)
