@@ -39,7 +39,7 @@ class CDNRequester extends BaseObject {
   resourceLoaded(chunk) {
     this.storage.setItem(this.resource, chunk)
     var downloadTime = Date.now() - this.startRequest
-    this.trigger('cdnrequester:downloadtime', {resource: this.resource, downloadTime: downloadTime, type: 'cdn'})
+    this.trigger('cdnrequester:downloadtime', {downloadTime: downloadTime, type: 'cdn'})
     this.callback(chunk, "cdn");
   }
 }

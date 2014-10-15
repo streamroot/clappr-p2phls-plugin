@@ -40,8 +40,14 @@ class PlaybackInfo extends BaseObject {
 
   addEventListeners() {
     this.listenTo(this.main.resourceRequester.p2pManager.swarm, "swarm:sizeupdate", (event) => this.updateData(event))
+    this.listenTo(this.main.resourceRequester.cdnRequester, 'cdnrequester:downloadtime', (event) => this.updateBandwidth(event))
     this.listenTo(this.main.uploadHandler, 'uploadhandler:update', (event) => this.updateUploadSlots(event))
     Clappr.Mediator.on(this.main.uniqueId + ':fragmentloaded', () => this.onFragmentLoaded())
+  }
+
+  updateBandwidth(event) {
+    var currentBw = this.data.currentBitrate * this.data.segmentSize / (event.downloadTime/1000)
+    this.info.bandwidth = this.info.bandwidth? (this.info.bandwidth + currentBw) / 2: currentBw
   }
 
   onFragmentLoaded() {
