@@ -8,6 +8,7 @@ var Settings = require('./settings')
 var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
 var PlaybackInfo = require('./playback_info')
+var AdaptiveStreaming = require('./adaptive_streaming')
 
 var JST = require('./jst')
 var HLS = require('./hls')
@@ -51,9 +52,9 @@ class P2PHLS extends HLS {
   bootstrap() {
     super()
     this.playbackInfo.setMain(this)
+    this.adaptiveStreaming = new AdaptiveStreaming(this)
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
-    this.el.globoPlayerSetLevel(0)
   }
 
   setPlaybackState(state) {

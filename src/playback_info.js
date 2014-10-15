@@ -61,9 +61,15 @@ class PlaybackInfo extends BaseObject {
   }
 
   updateChunkStats(method=null) {
-    if (method === "p2p") this.data.chunks.chunksFromP2P++
-    else if (method === "cdn") this.data.chunks.chunksFromCDN++
-    else if (method === "p2psent") this.data.chunks.chunksSent++
+    if (method === "p2p") {
+      this.data.chunks.chunksFromP2P++
+      this.data.lastDownloadType = "p2p"
+    } else if (method === "cdn") {
+      this.data.chunks.chunksFromCDN++
+      this.data.lastDownloadType = "cdn"
+    } else if (method === "p2psent") {
+      this.data.chunks.chunksSent++
+    }
     this.triggerStats(this.data.chunks)
   }
 
