@@ -11,7 +11,8 @@ class PlaybackInfo extends BaseObject {
   constructor() {
     this.data = {
       'chunks': {chunksFromCDN: 0, chunksFromP2P: 0, chunksSent: 0},
-      'bufferLength': 0
+      'bufferLength': 0,
+      'bandwidth': 0,
     }
   }
 
@@ -47,7 +48,7 @@ class PlaybackInfo extends BaseObject {
 
   updateBandwidth(event) {
     var currentBw = this.data.currentBitrate * this.data.segmentSize / (event.downloadTime/1000)
-    this.info.bandwidth = this.info.bandwidth? (this.info.bandwidth + currentBw) / 2: currentBw
+    this.data.bandwidth = this.data.bandwidth? (this.data.bandwidth + currentBw) / 2: currentBw
   }
 
   onFragmentLoaded() {
