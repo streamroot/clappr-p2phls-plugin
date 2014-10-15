@@ -30,6 +30,10 @@ class SwarmUtils extends BaseObject {
     _.each(peers, function(peer) { peer.score += points }, this)
   }
 
+  electSender(candidates) {
+    return _.first(_.sortBy(candidates, function (p) { return p.score }).reverse())
+  }
+
   get contributors() {
     var orderedPeers = _.sortBy(this.swarm.peers, function (p) { return p.score }).reverse()
     if (_.size(this.swarm.peers) > Settings.maxContributors) {

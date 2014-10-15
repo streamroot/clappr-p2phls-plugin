@@ -17,9 +17,9 @@ class Swarm extends BaseObject {
     this.playbackInfo = PlaybackInfo.getInstance()
     this.utils = new SwarmUtils(this)
     this.peers = []
-    this.satisfyCandidate = undefined
+    this.satisfyElected = undefined
+    this.satisfyCandidates = []
     this.chokedClients = 0
-    this.peersContainsResource = []
   }
 
   size() {
@@ -42,11 +42,12 @@ class Swarm extends BaseObject {
   }
 
   updatePeersScore() {
-    var successPeer = this.utils.findPeer(this.satisfyCandidate)
-    var goodPeers = _.union([successPeer], this.peersContainsResource)
+    var successPeer = this.utils.findPeer(this.satisfyElected)
+    var goodPeers = _.union([successPeer], this.satisfyCandidates)
     var badPeers = _.difference(this.contributors, goodPeers)
     log.info("contributors good: " + goodPeers.length)
     this.utils.incrementScore(goodPeers)
+    this.utils.incrementScore([successPeer]) //double satisfyElected score gain :)
     this.utils.decrementScore(badPeers)
   }
 
@@ -65,7 +66,20 @@ class Swarm extends BaseObject {
     this.currentResource = resource
     this.sendTo('contributors', 'interested', resource)
     var timeout = this.playbackInfo.timeoutFor('interested')
-    this.interestedFailID = setTimeout(this.callbackFail.bind(this), timeout)
+    this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
+  }
+
+  interestedFinished() {
+    if (_.size(this.satisfyCandidates) > 0) {
+      this.satisfyElected = this.utils.electSender(this.satisfyCandidates).ident
+      log.info("round finished, candidates: " + _.size(this.satisfyCandidates) + ', selected: ' + this.satisfyElected)
+      var timeout = this.playbackInfo.timeoutFor('request')
+      this.requestFailID = setTimeout(this.callbackFail.bind(this), timeout)
+      this.sendTo(this.satisfyElected, 'request', this.currentResource)
+    } else {
+      log.info("round finished, no candidates.")
+      this.callbackFail()
+    }
   }
 
   chokeReceived(resource) {
@@ -74,26 +88,19 @@ class Swarm extends BaseObject {
     }
     if (this.chokedClients === _.size(this.utils.contributors)) {
       log.warn("all contributors choked, getting from cdn")
+      clearInterval(this.interestedTimeoutID)
       this.callbackFail()
     }
   }
 
   containReceived(peer, resource) {
-    if (this.currentResource !== resource) return
-    if (this.satisfyCandidate) {
-      log.warn("contain received but already have satisfy candidate")
-      this.peersContainsResource.push(peer)
-    } else {
-      this.satisfyCandidate = peer.ident
-      this.clearInterestedFailInterval()
-      var timeout = this.playbackInfo.timeoutFor('request')
-      this.requestFailID = setTimeout(this.callbackFail.bind(this), timeout)
-      this.sendTo(this.satisfyCandidate, 'request', resource)
+    if (this.currentResource === resource) {
+      this.satisfyCandidates.push(peer)
     }
   }
 
   satisfyReceived(peer, resource, chunk) {
-    if (this.satisfyCandidate === peer.ident && this.currentResource === resource) {
+    if (this.satisfyElected === peer.ident && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       this.updatePeersScore()
       this.rebootRoundVars()
@@ -120,16 +127,10 @@ class Swarm extends BaseObject {
 
   rebootRoundVars() {
     this.currentResource = undefined
-    this.satisfyCandidate = undefined
+    this.satisfyElected = undefined
     this.chokedClients = 0
-    this.peersContainsResource = []
+    this.satisfyCandidates = []
     this.clearRequestFailInterval()
-    this.clearInterestedFailInterval()
-  }
-
-  clearInterestedFailInterval() {
-    clearInterval(this.interestedFailID)
-    this.interestedFailID = 0
   }
 
   clearRequestFailInterval() {
