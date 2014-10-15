@@ -105,18 +105,17 @@ class Swarm extends BaseObject {
       this.updatePeersScore()
       this.rebootRoundVars()
     } else {
-      log.warn("satisfy received for a wrong resource or satisfyCandidate")
+      // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
+      // and generated unnecessary traffic. Putting peer on the end of the swarm.
+      log.warn("satisfy error for ", peer.ident)
+      this.busyReceived(peer)
     }
   }
 
   busyReceived(peer) {
     var lowerScore = this.utils.getLowestScorePeer().score
-    if (lowerScore < 0) {
-      peer.score = lowerScore - Settings.points
-    } else {
-      peer.score = 0
-    }
-    log.warn("busy received. " + peer.ident + " score is now: " + peer.score)
+    peer.score = lowerScore - Settings.points
+    log.warn(peer.ident + " score is now: " + peer.score)
   }
 
   callbackFail() {
