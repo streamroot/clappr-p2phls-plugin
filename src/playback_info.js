@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file.
 
 var BaseObject = require('base_object')
+var Settings = require('./settings')
 var _ = require('underscore')
 
 class PlaybackInfo extends BaseObject {
@@ -16,7 +17,7 @@ class PlaybackInfo extends BaseObject {
 
   setMain(main) {
     this.main = main
-    this.triggerStats({status: "on"})
+    this.triggerStats({status: "on", occupiedSlots: 0, totalSlots: Settings.maxUploadSlots})
     this.updateData({delay: this.main.el.getDelay()})
     this.data.delay = this.main.el.getDelay()
     this.addEventListeners()
@@ -48,7 +49,7 @@ class PlaybackInfo extends BaseObject {
     var bufferLength = this.main.el.globoGetbufferLength()
     bitrate =  !_.isNaN(bitrate) ? bitrate : 'UNKNOWN'
     bufferLength = !_.isNaN(bufferLength) ? bufferLength: 0
-    var data = {state: this.main.currentState, currentBitrate: bitrate, bufferLength: bufferLength}
+    var data = {state: this.main.currentState, currentBitrate: bitrate, bufferLength: bufferLength.toFixed(2)}
     this.updateData(data)
   }
 
