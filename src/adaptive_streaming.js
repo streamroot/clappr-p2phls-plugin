@@ -12,27 +12,29 @@ class AdaptiveStreaming extends BaseObject {
     this.main = main
     this.info = this.main.playbackInfo.data
     this.currentLevel = 0
+    this.threshold = 1.3
   }
 
   onFragmentLoaded() {
     this.maxLevel = this.info.levels.length - 1
-    if (this.currentBitrate < this.maxLevel) {
-      this.adjustLevel()
-    }
+    this.adjustLevel()
   }
 
   adjustLevel() {
-    var currentBwNeeded = this.info.currentBitrate * this.info.segmentSize * 0.3
-    var nextBwNeeded = this.info.levels[this.currentLevel+1].bitrate * this.info.segmentSize * 0.3
+    var currentBwNeeded = this.info.currentBitrate * this.threshold / 1000
+    var nextBwNeeded = this.info.levels[this.currentLevel+1].bitrate * this.threshold / 1000
 
-    if (this.info.bandwidth > nextBwNeeded && this.info.lastDownloadType === 'cdn') {
-      log.info("[mbr] increasing level")
+    if (this.info.bandwidth > nextBwNeeded && this.info.lastDownloadType === 'cdn' && this.currentLevel < this.maxLevel) {
+      log.info("increasing level")
       this.currentLevel = this.currentLevel + 1
+      this.changeLevel(this.currentLevel)
     } else if (this.info.bandwidth < currentBwNeeded) {
-      log.info("[mbr] decreasing level")
+      log.info("decreasing level")
       this.currentLevel = this.currentLevel - 1
+      this.changeLevel(this.currentLevel)
+    } else {
+      log.info("i'm ok, enjoying the ride. (curr bandwidth: " + this.info.bandwidth + ", nextBwNeeded:" + nextBwNeeded)
     }
-    this.changeLevel(this.currentLevel)
   }
 
   changeLevel(newLevel) {

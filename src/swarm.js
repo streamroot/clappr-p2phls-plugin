@@ -107,7 +107,7 @@ class Swarm extends BaseObject {
     } else {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
       // and generated unnecessary traffic. Putting peer on the end of the swarm.
-      log.warn("satisfy error for ", peer.ident)
+      log.warn("satisfy error for " + peer.ident +"!="+this.satisfyElected + " or " + this.currentResource + "!=" + resource)
       this.busyReceived(peer)
     }
   }
