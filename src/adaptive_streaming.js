@@ -33,7 +33,7 @@ class AdaptiveStreaming extends BaseObject {
       this.currentLevel = this.currentLevel - 1
       this.changeLevel(this.currentLevel)
     } else {
-      log.info("i'm ok, enjoying the ride. (curr bandwidth: " + this.info.bandwidth + ", nextBwNeeded:" + nextBwNeeded)
+      log.info("i'm ok, enjoying the ride. (curr bandwidth: " + this.info.bandwidth + ", nextBwNeeded:" + nextBwNeeded + ")")
     }
   }
 
