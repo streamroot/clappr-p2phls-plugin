@@ -5,6 +5,7 @@
 
 var BaseObject = require('base_object')
 var Storage = require('./storage')
+var Settings = require('./settings')
 
 class CDNRequester extends BaseObject {
   get name() { return 'CDNRequester' }
@@ -15,7 +16,7 @@ class CDNRequester extends BaseObject {
   }
 
   getWorkerURL() {
-    var content = 'request=function(e,r,s){var n=new XMLHttpRequest;return n.open("GET",e,r?!0:!1),s&&(n.responseType=s),r?(n.onload=r,void n.send()):(n.send(),200==n.status?n.response:"")},base64ArrayBuffer=function(e){for(var r,s,n,t,a,o="",u="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",d=new Uint8Array(e),f=d.byteLength,i=f%3,c=f-i,p=0;c>p;p+=3)a=d[p]<<16|d[p+1]<<8|d[p+2],r=(16515072&a)>>18,s=(258048&a)>>12,n=(4032&a)>>6,t=63&a,o+=u[r]+u[s]+u[n]+u[t];return 1==i?(a=d[c],r=(252&a)>>2,s=(3&a)<<4,o+=u[r]+u[s]+"=="):2==i&&(a=d[c]<<8|d[c+1],r=(64512&a)>>10,s=(1008&a)>>4,n=(15&a)<<2,o+=u[r]+u[s]+u[n]+"="),o},resourceLoaded=function(e){var r=base64ArrayBuffer(e.currentTarget.response);this.postMessage(r)},this.addEventListener("message",function(e){request(e.data,resourceLoaded.bind(this),"arraybuffer")},!1);'
+    var content = 'request=function(e,r,s,n){var t=new XMLHttpRequest;return r&&(t.withCredentials=!0),t.open("GET",e,s?!0:!1),n&&(t.responseType=n),s?(t.onload=s,void t.send()):(t.send(),200==t.status?t.response:"")},base64ArrayBuffer=function(e){for(var r,s,n,t,a,o="",u="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",d=new Uint8Array(e),i=d.byteLength,f=i%3,l=i-f,p=0;l>p;p+=3)a=d[p]<<16|d[p+1]<<8|d[p+2],r=(16515072&a)>>18,s=(258048&a)>>12,n=(4032&a)>>6,t=63&a,o+=u[r]+u[s]+u[n]+u[t];return 1==f?(a=d[l],r=(252&a)>>2,s=(3&a)<<4,o+=u[r]+u[s]+"=="):2==f&&(a=d[l]<<8|d[l+1],r=(64512&a)>>10,s=(1008&a)>>4,n=(15&a)<<2,o+=u[r]+u[s]+u[n]+"="),o},resourceLoaded=function(e){var r=base64ArrayBuffer(e.currentTarget.response);this.postMessage(r)},this.addEventListener("message",function(e){var r=JSON.parse(e.data);request(r.url,r.allowCredentials,resourceLoaded.bind(this),"arraybuffer")},!1);'
     var blob
     try {
       blob = new Blob([content], {type: 'application/javascript'})
@@ -32,7 +33,8 @@ class CDNRequester extends BaseObject {
   requestResource(resource, callback) {
     this.callback = callback
     this.resource = resource
-    this.utils.postMessage(resource)
+    var message = {'url':resource, 'allowCredentials': Settings.forceAllowCredentials}
+    this.utils.postMessage(JSON.stringify(message))
     this.startRequest = Date.now()
   }
 

@@ -64,4 +64,10 @@ Settings.stunServers = [
   {"url": "stun:stun.stunprotocol.org:3478"},
 ]
 
+/* forceAllowCredentials
+Some HLS servers use cookies to authenticate and create user
+sessions. This option enables BemTV to make requests to CDN
+using the cookies received when getting the master playlist. */
+Settings.forceAllowCredentials = false
+
 module.exports = Settings
