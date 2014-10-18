@@ -38,7 +38,7 @@ Settings.uploadSlotTimeout = 8000
 
 /* tracker
 Place where your rtc-switchboard server is running */
-Settings.tracker = 'http://server.bem.tv:8080'
+Settings.tracker = 'http://tracker.bem.tv'
 
 /* lowBufferLength
 Local buffer threshold in seconds in which the player
