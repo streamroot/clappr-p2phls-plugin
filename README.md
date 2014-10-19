@@ -11,27 +11,23 @@ Visit [BemTV](http://bem.tv) with a [modern browser](http://caniuse.com/#search=
 # How to Use
 
 ```html
-  <head>
-    <script type="text/javascript" src="http://bem.tv/p2phls.js"></script>
-    <script type="text/javascript" src="http://bem.tv/p2phlsstats.js"></script>
-  </head>
-  <body>
-    <div id="player-wrapper"></div>
-    <script>
-      var playerElement = document.getElementById("player-wrapper");
-      var player = new Clappr.Player({
-				sources: ['http://cdn.bem.tv/stream/soccer2sec/playlist.m3u8'],
-				plugins: {
-						playback: [P2PHLS],
-						container: [P2PHLSStats]
-				},
-				width: 640, height: 360,
-				poster: "http://www.bem.tv/assets/poster.png",
-				watermark: "http://bem.tv/assets/watermark3.png"
-			});      
-			player.attachTo(playerElement);
-    </script>
-  </body>
+<head>
+  <script src="http://cdn.clappr.io/bemtv/latest/p2phls.min.js"></script>
+  <script src="http://cdn.clappr.io/bemtv/latest/p2phlsstats.min.js"></script>
+</head>
+<body>
+  <div id="player-wrapper"></div>
+  <script>
+    var playerElement = document.getElementById("player-wrapper");
+    var player = new Clappr.Player({
+        source: 'http://cdn.bem.tv/stream/soccer5/playlist.m3u8',
+        plugins: { playback: [P2PHLS], container: [P2PHLSStats] },
+        poster: "http://cdn2.theinertia.com/wp-content/uploads/2012/05/Medina-Final.jpg",
+        watermark: "http://bem.tv/assets/watermark3.png"
+    });      
+    player.attachTo(playerElement);
+  </script>
+</body>
 ```
 
 # Author
