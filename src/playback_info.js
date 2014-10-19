@@ -79,7 +79,6 @@ class PlaybackInfo extends BaseObject {
   }
 
   triggerStats(metrics) {
-    this.main.trigger('playback:p2phlsstats:add', metrics)
     this.main.trigger('playback:stats:add', metrics)
   }
 }
