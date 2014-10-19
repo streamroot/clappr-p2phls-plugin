@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script src="http://cdn.clappr.io/latest/jquery.js"></script>
+  <script src="http://cdn.clappr.io/latest/underscore.js"></script>
+  <script src="http://cdn.clappr.io/latest/clappr.min.js"></script>
+  <script src="http://cdn.clappr.io/bemtv/latest/p2phlsstats.min.js"></script>
+  <script src="p2phls.js"></script>
+  <title>Test Page</title>
+  <script type="text/javascript" charset="utf-8">
+window.onload = function() {
+  var playerElement = document.getElementById("player-wrapper");
+  player = new Clappr.Player({
+    source: 'http://cdn.bem.tv/stream/soccer5/playlist.m3u8',
+    plugins: {playback: [P2PHLS], container: [P2PHLSStats]},
+    watermark: "http://bem.tv/assets/watermark3.png",
+    poster: 'http://dels-school.com/wp-content/uploads/2011/02/fergal-smith-2-640x360.jpg',
+    bemtv: {
+      logging: true
+    }
+  });
+
+  player.attachTo(playerElement);
+  player.core.containers[0].getPlugin('p2phlsstats').show();
+}
+  </script>
+</head>
+<body>
+  <div align=center style="">
+    <img src="http://bem.tv/static/bemtv_small_logo.png">
+    <div id="player-wrapper"></div>
+  </div>
+</body>
+</html>
