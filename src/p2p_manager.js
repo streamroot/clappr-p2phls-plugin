@@ -13,9 +13,8 @@ var log = require('./log').getInstance()
 class P2PManager extends BaseObject {
   constructor(params) {
     this.connectionSettings = {'room': params.swarm, iceServers: Settings.stunServers, debug: false}
-    var tracker = (params.tracker || params.bemtvTracker) || Settings.tracker
-    log.info("Initializing P2PManager with " + tracker)
-    var connection = QuickConnect(tracker, this.connectionSettings)
+    log.info("Initializing P2PManager with " + Settings.tracker)
+    var connection = QuickConnect(Settings.tracker, this.connectionSettings)
     this.swarm = new Swarm()
     this.dataChannel = connection.createDataChannel('bemtv')
     this.setupListerners()
