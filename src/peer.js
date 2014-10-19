@@ -7,7 +7,7 @@ var BaseObject = require('base_object');
 var Storage = require('./storage');
 var UploadHandler = require('./upload_handler')
 var PlaybackInfo = require('./playback_info')
-var log = require('./log');
+var log = require('./log').getInstance()
 
 class Peer extends BaseObject {
   constructor(params) {

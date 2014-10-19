@@ -3,7 +3,6 @@
 // Use of this source code is governed by Apache
 // license that can be found in the LICENSE file.
 
-var log = require('./log')
 var Settings = require('./settings')
 var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
@@ -26,10 +25,15 @@ class P2PHLS extends HLS {
 
   constructor(options) {
     options.swfPath = "http://cdn.clappr.io/bemtv/latest/assets/P2PHLSPlayer.swf"
+    this.setupSettings(options)
     this.resourceRequester = new ResourceRequester({swarm: btoa(options.src), tracker: options.tracker})
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     super(options)
+  }
+
+  setupSettings(options) {
+    Settings = _.extend(Settings, options.bemtv)
   }
 
   addListeners() {
@@ -78,8 +82,6 @@ class P2PHLS extends HLS {
       this.currentUrl = null
       this.el.resourceLoaded(chunk)
       this.playbackInfo.updateChunkStats(method)
-    } else {
-      log.debug("It seems a deadlock happened with timers on swarm.")
     }
   }
 

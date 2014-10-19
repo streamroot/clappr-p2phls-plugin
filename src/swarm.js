@@ -8,7 +8,7 @@ var BufferedChannel = require('rtc-bufferedchannel')
 var Peer = require('./peer')
 var Settings = require('./settings')
 var _ = require('underscore')
-var log = require('./log')
+var log = require('./log').getInstance()
 var SwarmUtils = require('./swarm_utils')
 var PlaybackInfo = require('./playback_info')
 

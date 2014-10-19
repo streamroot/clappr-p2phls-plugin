@@ -6,7 +6,7 @@
 var BaseObject = require('base_object')
 var Settings = require("./settings")
 var _ = require("underscore")
-var log = require('./log')
+var log = require('./log').getInstance()
 
 class UploadHandler extends BaseObject {
   constructor() {

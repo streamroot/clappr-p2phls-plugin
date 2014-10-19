@@ -7,31 +7,35 @@ var Settings = require('./settings');
 var Logger = require('log-with-style');
 var Mousetrap = require('mousetrap');
 
-class Log {}
+class Log {
+  constructor() {
+    Mousetrap.bind(['command+shift+l', 'ctrl+shift+l'], () => this.onOff())
+  }
 
-Log.info = function(message) {Log.log('info', message)}
-Log.warn = function(message) {Log.log('warn', message)}
-Log.debug = function(message) {Log.log('debug', message)}
+  info(message) {this.log('info', message)}
+  warn(message) {this.log('warn', message)}
+  debug(message) {this.log('debug', message)}
 
-Log.active = Settings.logging
+  onOff() {
+    Settings.logging = !Settings.logging
+    if (Settings.logging) Logger('[c="color: red"][WARNING][c] log enabled')
+    else Logger('[c="color: red"][WARNING][c] log disabled')
+  }
 
-Log.onOff = function() {
-  Log.active = !Log.active
-  if (Log.active) Logger('[c="color: red"][WARNING][c] log enabled')
-  else Logger('[c="color: red"][WARNING][c] log disabled')
-}
-
-Log.log = function(level, message) {
-  if (!Log.active) return
-  if (level === 'warn') {
-    Logger('[c="color: red"][WARNING][c] ' + message)
-  } else if (level === 'info') {
-    Logger('[c="color: green"][INFO] [c] ' + message)
-  } else if (level === 'debug') {
-    Logger('[c="color: blue"][DEBUG] [c] ' + message)
+  log(level, message) {
+    if (!Settings.logging) return
+    if (level === 'warn') { Logger('[c="color: red"][WARNING][c] ' + message) }
+    else if (level === 'info') { Logger('[c="color: green"][INFO] [c] ' + message) }
+    else if (level === 'debug') { Logger('[c="color: blue"][DEBUG] [c] ' + message) }
   }
 }
 
-Mousetrap.bind(['command+shift+l', 'ctrl+shift+l'], () => Log.onOff())
+Log.getInstance = function() {
+  if (this._instance === undefined) {
+    this._instance = new this()
+  }
+  return this._instance
+}
+
 
 module.exports = Log

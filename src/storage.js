@@ -5,7 +5,7 @@
 
 var Settings = require("./settings")
 var _ = require("underscore")
-var log = require('./log');
+var log = require('./log').getInstance()
 var BaseObject = require('base_object')
 
 class Storage extends BaseObject {

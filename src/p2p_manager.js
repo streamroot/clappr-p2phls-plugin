@@ -8,7 +8,7 @@ var BaseObject = require('base_object');
 var QuickConnect = require('rtc-quickconnect');
 var Settings = require("./settings")
 var Swarm = require('./swarm')
-var log = require('./log');
+var log = require('./log').getInstance()
 
 class P2PManager extends BaseObject {
   constructor(params) {
