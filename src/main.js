@@ -54,11 +54,11 @@ class P2PHLS extends HLS {
   }
 
   bootstrap() {
-    super()
     this.playbackInfo.setMain(this)
     this.adaptiveStreaming = new AdaptiveStreaming(this)
     this.el.playerSetminBufferLength(6)
     this.el.playerSetlowBufferLength(Settings.lowBufferLength)
+    super()
   }
 
   setPlaybackState(state) {
