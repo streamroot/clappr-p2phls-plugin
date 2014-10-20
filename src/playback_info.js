@@ -56,7 +56,13 @@ class PlaybackInfo extends BaseObject {
     var bufferLength = this.main.el.globoGetbufferLength()
     bitrate =  !_.isNaN(bitrate) ? bitrate : 'UNKNOWN'
     bufferLength = !_.isNaN(bufferLength) ? bufferLength: 0
-    var data = {state: this.main.currentState, currentBitrate: bitrate, bufferLength: bufferLength.toFixed(2)}
+    var data = {
+      state: this.main.currentState,
+      currentBitrate: bitrate,
+      bufferLength: bufferLength.toFixed(2),
+      segmentSize: this.main.getAverageSegmentSize(),
+      levels: this.main.getLevels()
+    }
     this.updateData(data)
   }
 
