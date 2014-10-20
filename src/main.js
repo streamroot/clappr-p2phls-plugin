@@ -26,7 +26,7 @@ class P2PHLS extends HLS {
   constructor(options) {
     options.swfPath = "http://cdn.clappr.io/bemtv/latest/assets/P2PHLSPlayer.swf"
     this.setupSettings(options)
-    this.resourceRequester = new ResourceRequester({swarm: btoa(options.src), tracker: options.tracker})
+    this.resourceRequester = new ResourceRequester({swarm: btoa(options.src.split("?")[0]), tracker: options.tracker})
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     super(options)
