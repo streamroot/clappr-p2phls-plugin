@@ -130,6 +130,7 @@ class Swarm extends BaseObject {
     this.chokedClients = 0
     this.satisfyCandidates = []
     this.clearRequestFailInterval()
+    this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
   clearRequestFailInterval() {
