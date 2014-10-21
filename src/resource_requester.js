@@ -7,18 +7,24 @@ var BaseObject = require('base_object')
 var CDNRequester = require('./cdn_requester')
 var P2PManager = require('./p2p_manager')
 var Settings = require('./settings')
+var Storage = require('./storage')
+var log = require('./log').getInstance()
 
 class ResourceRequester extends BaseObject {
   constructor(params) {
     this.cdnRequester = new CDNRequester()
     this.p2pManager = new P2PManager(params)
+    this.storage = Storage.getInstance()
     this.isInitialBuffer = true
   }
 
   requestResource(resource, bufferLength, callback) {
     this.resource = resource
     this.callback = callback
-    if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || this.p2pManager.swarm.size() === 0) {
+    if (this.storage.contain(this.resource)) {
+      log.warn("getting chunk directly from storage")
+      this.callback(this.storage.getItem(this.resource))
+    } else if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || this.p2pManager.swarm.size() === 0) {
       this.requestToCDN()
     } else {
       this.requestToP2P()

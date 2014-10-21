@@ -6,9 +6,8 @@
 var Settings = require("./settings")
 var _ = require("underscore")
 var log = require('./log').getInstance()
-var BaseObject = require('base_object')
 
-class Storage extends BaseObject {
+class Storage {
   constructor() {
     this.keys = []
     this.chunks = {}
@@ -21,7 +20,6 @@ class Storage extends BaseObject {
       this.keys.push(key)
       this.chunks[key] = value
       this.updateSize()
-      this.trigger('storage:newitem', key)
     }
   }
 
