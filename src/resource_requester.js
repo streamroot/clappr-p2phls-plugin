@@ -8,6 +8,7 @@ var CDNRequester = require('./cdn_requester')
 var P2PManager = require('./p2p_manager')
 var Settings = require('./settings')
 var Storage = require('./storage')
+var _ = require('underscore')
 
 class ResourceRequester extends BaseObject {
   constructor(params) {
@@ -20,10 +21,7 @@ class ResourceRequester extends BaseObject {
   requestResource(resource, bufferLength, callback) {
     this.resource = resource
     this.callback = callback
-    if (this.storage.contain(resource)) {
-      // it means that something went wrong on flash side. getting from cdn.
-      this.requestToCDN()
-    } else if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || this.p2pManager.swarm.size() === 0) {
+    if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || _.size(this.p2pManager.swarm.utils.contributors) === 0) {
       this.requestToCDN()
     } else {
       this.requestToP2P()
