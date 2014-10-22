@@ -66,22 +66,32 @@ class Swarm extends BaseObject {
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
     this.currentResource = resource
-    this.sendTo('contributors', 'interested', resource)
-    var timeout = this.playbackInfo.timeoutFor('interested')
-    this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
+    if (this.satisfyElected) {
+      //already have a satisfyElected with success, requesting directly
+      log.info("directly requesting to " + this.satisfyElected)
+      this.sendRequest()
+    } else {
+      this.sendTo('contributors', 'interested', resource)
+      var timeout = this.playbackInfo.timeoutFor('interested')
+      this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
+    }
   }
 
   interestedFinished() {
     if (_.size(this.satisfyCandidates) > 0) {
       this.satisfyElected = this.utils.electSender(this.satisfyCandidates).ident
       log.info("round finished, candidates: " + _.size(this.satisfyCandidates) + ', selected: ' + this.satisfyElected)
-      var timeout = this.playbackInfo.timeoutFor('request')
-      this.requestFailID = setTimeout(this.callbackFail.bind(this), timeout)
-      this.sendTo(this.satisfyElected, 'request', this.currentResource)
+      this.sendRequest()
     } else {
       log.info("round finished, no candidates.")
       this.callbackFail()
     }
+  }
+
+  sendRequest() {
+    var timeout = this.playbackInfo.timeoutFor('request')
+    this.requestFailID = setTimeout(this.callbackFail.bind(this), timeout)
+    this.sendTo(this.satisfyElected, 'request', this.currentResource)
   }
 
   chokeReceived(resource) {
@@ -124,12 +134,12 @@ class Swarm extends BaseObject {
   callbackFail() {
     this.utils.decrementScore(this.utils.contributors)
     this.rebootRoundVars()
+    this.satisfyElected = undefined
     this.externalCallbackFail()
   }
 
   rebootRoundVars() {
     this.currentResource = undefined
-    this.satisfyElected = undefined
     this.chokedClients = 0
     this.satisfyCandidates = []
     this.clearRequestFailInterval()
