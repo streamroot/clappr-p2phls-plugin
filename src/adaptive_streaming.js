@@ -12,32 +12,34 @@ class AdaptiveStreaming extends BaseObject {
     this.main = main
     this.info = this.main.playbackInfo.data
     this.currentLevel = 0
-    this.threshold = 1.3
+    this.threshold = 1.2
   }
 
   onFragmentLoaded() {
-    this.maxLevel = this.info.levels.length - 1
     this.adjustLevel()
   }
 
   adjustLevel() {
-    var currentBwNeeded = this.info.currentBitrate * this.threshold / 1000
-    var nextBwNeeded = this.info.levels[this.currentLevel+1].bitrate * this.threshold / 1000
-
-    if (this.info.bandwidth > nextBwNeeded && this.info.lastDownloadType === 'cdn' && this.currentLevel < this.maxLevel) {
-      log.info("increasing level")
-      this.currentLevel = this.currentLevel + 1
-      this.changeLevel(this.currentLevel)
-    } else if (this.info.bandwidth < currentBwNeeded) {
-      log.info("decreasing level")
-      this.currentLevel = this.currentLevel - 1
-      this.changeLevel(this.currentLevel)
-    } else {
-      log.info("i'm ok, enjoying the ride. (curr bandwidth: " + this.info.bandwidth + ", nextBwNeeded:" + nextBwNeeded + ")")
+    var idealLevel = this.calculateIdealLevel()
+    if (this.currentLevel !== idealLevel) {
+      log.info("Changing level: " + this.currentLevel + ' (' + this.info.currentBitrate + "Kbps) -> " + idealLevel + ' (' + this.info.levels[idealLevel].bitrate/1000 + "Kbps)")
+      this.changeLevel(idealLevel)
     }
   }
 
+  calculateIdealLevel() {
+    var idealLevel = 0
+    for (var i = 0; i < this.info.levels.length; i++) {
+      var bwNeeded = this.info.levels[i].bitrate * this.threshold / 1000
+      if (this.info.bandwidth > bwNeeded && this.info.lastDownloadType === 'cdn') {
+        idealLevel = i
+      }
+    }
+    return idealLevel
+  }
+
   changeLevel(newLevel) {
+    this.currentLevel = newLevel
     this.main.el.globoPlayerSmoothSetLevel(newLevel)
   }
 }
