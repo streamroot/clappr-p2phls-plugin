@@ -11,12 +11,10 @@ var _ = require('underscore')
 var log = require('./log').getInstance()
 var SwarmUtils = require('./swarm_utils')
 var PlaybackInfo = require('./playback_info')
-var Storage = require('./storage')
 
 class Swarm extends BaseObject {
   constructor() {
     this.playbackInfo = PlaybackInfo.getInstance()
-    this.storage = Storage.getInstance()
     this.utils = new SwarmUtils(this)
     this.peers = []
     this.satisfyElected = undefined
@@ -115,7 +113,6 @@ class Swarm extends BaseObject {
     if (this.satisfyElected === peer.ident && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       this.updatePeersScore()
-      this.storage.setItem(this.currentResource, chunk)
       this.rebootRoundVars()
     } else {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time

@@ -4,13 +4,11 @@
 // license that can be found in the LICENSE file.
 
 var BaseObject = require('base_object')
-var Storage = require('./storage')
 var Settings = require('./settings')
 
 class CDNRequester extends BaseObject {
   get name() { return 'CDNRequester' }
   constructor() {
-    this.storage = Storage.getInstance()
     this.utils = new Worker(this.getWorkerURL())
     this.utils.onmessage = (e) => this.resourceLoaded(e.data)
   }
@@ -39,7 +37,6 @@ class CDNRequester extends BaseObject {
   }
 
   resourceLoaded(chunk) {
-    this.storage.setItem(this.resource, chunk)
     var downloadTime = Date.now() - this.startRequest
     this.trigger('cdnrequester:downloadtime', {downloadTime: downloadTime, type: 'cdn'})
     this.callback(chunk, "cdn");
