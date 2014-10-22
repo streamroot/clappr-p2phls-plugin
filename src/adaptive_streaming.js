@@ -21,7 +21,7 @@ class AdaptiveStreaming extends BaseObject {
 
   adjustLevel() {
     var idealLevel = this.calculateIdealLevel()
-    if (this.currentLevel !== idealLevel) {
+    if (this.info.lastDownloadType === 'cdn' && this.currentLevel !== idealLevel) {
       log.info("Changing level: " + this.currentLevel + ' (' + this.info.currentBitrate + "Kbps) -> " + idealLevel + ' (' + this.info.levels[idealLevel].bitrate/1000 + "Kbps)")
       this.changeLevel(idealLevel)
     }
@@ -31,7 +31,7 @@ class AdaptiveStreaming extends BaseObject {
     var idealLevel = 0
     for (var i = 0; i < this.info.levels.length; i++) {
       var bwNeeded = this.info.levels[i].bitrate * this.threshold / 1000
-      if (this.info.bandwidth > bwNeeded && this.info.lastDownloadType === 'cdn') {
+      if (this.info.bandwidth > bwNeeded) {
         idealLevel = i
       }
     }
