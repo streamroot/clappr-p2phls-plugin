@@ -7,14 +7,13 @@ var BaseObject = require('base_object')
 var CDNRequester = require('./cdn_requester')
 var P2PManager = require('./p2p_manager')
 var Settings = require('./settings')
-var Storage = require('./storage')
 var _ = require('underscore')
+var log = require('./log').getInstance()
 
 class ResourceRequester extends BaseObject {
   constructor(params) {
     this.cdnRequester = new CDNRequester()
     this.p2pManager = new P2PManager(params)
-    this.storage = Storage.getInstance()
     this.isInitialBuffer = true
   }
 
