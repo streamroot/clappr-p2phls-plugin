@@ -8,7 +8,7 @@ var ResourceRequester = require('./resource_requester')
 var UploadHandler = require('./upload_handler')
 var PlaybackInfo = require('./playback_info')
 var AdaptiveStreaming = require('./adaptive_streaming')
-var Storage = require('storage')
+var Storage = require('./storage')
 
 var JST = require('./jst')
 var HLS = require('./hls')
@@ -77,9 +77,9 @@ class P2PHLS extends HLS {
 
   resourceLoaded(chunk, method) {
     if (this.currentUrl) {
-      this.currentUrl = null
       this.el.resourceLoaded(chunk)
       this.storage.setItem(this.currentUrl, chunk)
+      this.currentUrl = null
       this.playbackInfo.updateChunkStats(method)
     }
   }
