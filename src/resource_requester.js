@@ -15,13 +15,18 @@ class ResourceRequester extends BaseObject {
     this.cdnRequester = new CDNRequester()
     this.p2pManager = new P2PManager(params)
     this.isInitialBuffer = true
+    this.sameSource = 0
   }
 
   requestResource(resource, bufferLength, callback) {
+    if (resource === this.resource) {
+      this.sameSource += 1
+    }
     this.resource = resource
     this.callback = callback
-    if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || _.size(this.p2pManager.swarm.utils.contributors) === 0) {
+    if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || _.size(this.p2pManager.swarm.utils.contributors) === 0 || this.sameSource >= 3) {
       this.requestToCDN()
+      this.sameSource = 0
     } else {
       this.requestToP2P()
     }
