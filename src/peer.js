@@ -19,6 +19,7 @@ class Peer extends BaseObject {
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     this.score = 1000
+    this.late = 0
     this.sendPing()
   }
 

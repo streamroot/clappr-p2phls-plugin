@@ -112,13 +112,21 @@ class Swarm extends BaseObject {
   satisfyReceived(peer, resource, chunk) {
     if (this.satisfyElected === peer.ident && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
+      peer.late = 0
+      this.clearRequestFailInterval()
       this.updatePeersScore()
       this.rebootRoundVars()
     } else {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
       // and generated unnecessary traffic. Putting peer on the end of the swarm.
-      log.warn("satisfy error for " + peer.ident +"!="+this.satisfyElected + " or " + this.currentResource + "!=" + resource)
-      this.busyReceived(peer)
+      if (this.satisfyElected === undefined && this.currentResource === undefined) {
+        log.warn("satisfy error: timeout")
+        peer.late += 1
+      } else if (peer.ident !== this.satisfyElected) {
+        log.warn("satisfy error: wrong satisfy elected (" + peer.ident + "," + this.satisfyElected + ")")
+      } else {
+        log.warn("satisfy error: wrong resource")
+      }
     }
   }
 
@@ -139,7 +147,6 @@ class Swarm extends BaseObject {
     this.currentResource = undefined
     this.chokedClients = 0
     this.satisfyCandidates = []
-    this.clearRequestFailInterval()
     this.trigger('swarm:sizeupdate', {swarmSize: this.size()})
   }
 
