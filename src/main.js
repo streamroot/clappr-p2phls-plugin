@@ -9,6 +9,7 @@ var UploadHandler = require('./upload_handler')
 var PlaybackInfo = require('./playback_info')
 var AdaptiveStreaming = require('./adaptive_streaming')
 var Storage = require('./storage')
+var log = require('./log').getInstance()
 
 var JST = require('./jst')
 var HLS = require('./hls')
@@ -45,6 +46,8 @@ class P2PHLS extends HLS {
     Clappr.Mediator.on(this.uniqueId + ':highdefinition', (isHD) => this.updateHighDefinition(isHD))
     Clappr.Mediator.on(this.uniqueId + ':playbackerror', () => this.flashPlaybackError())
     Clappr.Mediator.on(this.uniqueId + ':requestresource', (url) => this.requestResource(url))
+    Clappr.Mediator.on(this.uniqueId + ':decodeerror', () => this.onDecodeError())
+    Clappr.Mediator.on(this.uniqueId + ':decodesuccess', () => this.onDecodeSuccess())
   }
 
   stopListening() {
@@ -70,6 +73,18 @@ class P2PHLS extends HLS {
     super(state)
   }
 
+  onDecodeError() {
+    log.warn("Error, decode error. Getting from CDN")
+    this.resourceRequester.decodingError = true
+    this.storage.removeItem(this.currentUrl)
+    this.resourceRequester.requestResource(this.currentUrl, 0, (chunk, method) => this.resourceLoaded(chunk, method))
+  }
+
+  onDecodeSuccess() {
+    this.resourceRequester.decodingError = false
+    this.currentUrl = null
+  }
+
   requestResource(url) {
     this.currentUrl = url
     this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
@@ -79,7 +94,6 @@ class P2PHLS extends HLS {
     if (this.currentUrl) {
       this.el.resourceLoaded(chunk)
       this.storage.setItem(this.currentUrl, chunk)
-      this.currentUrl = null
       this.playbackInfo.updateChunkStats(method)
     }
   }
