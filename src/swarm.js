@@ -119,11 +119,9 @@ class Swarm extends BaseObject {
     } else {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
       // and generated unnecessary traffic. Putting peer on the end of the swarm.
-      if (this.satisfyElected === undefined && this.currentResource === undefined) {
+      if (this.satisfyElected === undefined || this.currentResource === undefined) {
         log.warn("satisfy error: timeout")
         peer.late += 1
-      } else if (peer.ident !== this.satisfyElected) {
-        log.warn("satisfy error: wrong satisfy elected (" + peer.ident + "," + this.satisfyElected + ")")
       } else {
         log.warn("satisfy error: wrong resource")
       }
