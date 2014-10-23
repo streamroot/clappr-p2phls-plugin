@@ -34,6 +34,11 @@ class Storage {
     delete this.chunks[key]
   }
 
+  removeItem(key) {
+    this.keys = _.without(this.keys, key)
+    delete this.chunks[key]
+  }
+
   getItem(key) {
     return this.chunks[key];
   }
