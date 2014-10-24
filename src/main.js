@@ -87,8 +87,12 @@ class P2PHLS extends HLS {
   }
 
   requestResource(url) {
-    this.currentUrl = url
-    this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
+    if (this.currentUrl) {
+      log.warn("still processing the other chunk, wait :)")
+    } else {
+      this.currentUrl = url
+      this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
+    }
   }
 
   resourceLoaded(chunk, method) {
@@ -96,6 +100,8 @@ class P2PHLS extends HLS {
       this.el.resourceLoaded(chunk)
       this.currentChunk = chunk
       this.playbackInfo.updateChunkStats(method)
+    } else {
+      log.warn("deadlock on resourceLoaded")
     }
   }
 
