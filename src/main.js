@@ -80,10 +80,12 @@ class P2PHLS extends HLS {
   }
 
   onDecodeSuccess() {
-    this.resourceRequester.decodingError = false
-    this.storage.setItem(this.currentUrl, this.currentChunk)
-    this.currentUrl = null
-    this.currentChunk = null
+    if (this.currentUrl) {
+      this.resourceRequester.decodingError = false
+      this.storage.setItem(this.currentUrl, this.currentChunk)
+      this.currentUrl = null
+      this.currentChunk = null
+    }
   }
 
   requestResource(url) {

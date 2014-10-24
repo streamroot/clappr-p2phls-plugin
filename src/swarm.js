@@ -45,7 +45,6 @@ class Swarm extends BaseObject {
     var successPeer = this.utils.findPeer(this.satisfyElected)
     var goodPeers = _.union([successPeer], this.satisfyCandidates)
     var badPeers = _.difference(this.contributors, goodPeers)
-    log.info("contributors good: " + goodPeers.length)
     this.utils.incrementScore(goodPeers)
     this.utils.incrementScore([successPeer]) //double satisfyElected score gain :)
     this.utils.decrementScore(badPeers)

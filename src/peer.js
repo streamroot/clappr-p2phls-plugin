@@ -24,6 +24,7 @@ class Peer extends BaseObject {
 
   sendSatisfy(resource) {
     if (this.uploadHandler.getSlot(this.ident)) {
+      log.warn("sending chunk")
       this.send('satisfy', resource, this.storage.getItem(resource))
       this.playbackInfo.updateChunkStats('p2psent')
     } else {
@@ -61,7 +62,7 @@ class Peer extends BaseObject {
         break
       case 'satisfy':
         if (content.length > 0) {
-          log.debug('received _satisfy_ ' + content.length)
+          log.debug('received _satisfy_ ')
           this.swarm.satisfyReceived(this, resource, content)
         }
         break
