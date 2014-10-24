@@ -76,13 +76,14 @@ class P2PHLS extends HLS {
   onDecodeError() {
     log.warn("Error, decode error. Getting from CDN")
     this.resourceRequester.decodingError = true
-    this.storage.removeItem(this.currentUrl)
     this.resourceRequester.requestResource(this.currentUrl, 0, (chunk, method) => this.resourceLoaded(chunk, method))
   }
 
   onDecodeSuccess() {
     this.resourceRequester.decodingError = false
+    this.storage.setItem(this.currentUrl, this.currentChunk)
     this.currentUrl = null
+    this.currentChunk = null
   }
 
   requestResource(url) {
@@ -93,7 +94,7 @@ class P2PHLS extends HLS {
   resourceLoaded(chunk, method) {
     if (this.currentUrl) {
       this.el.resourceLoaded(chunk)
-      this.storage.setItem(this.currentUrl, chunk)
+      this.currentChunk = chunk
       this.playbackInfo.updateChunkStats(method)
     }
   }
