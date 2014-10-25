@@ -3,6 +3,9 @@
   "version": "0.1.2",
   "description": "BemTV Peer-to-Peer plugin for HTTP Live Streaming transmissions on Clappr Media Player",
   "main": "dist/p2phls.js",
+  "scripts": {
+    "test": "./node_modules/.bin/karma start --single-run --browsers Firefox"
+  },
   "author": "Flávio Ribeiro",
   "keywords": [
     "p2p",
@@ -32,8 +35,10 @@
   },
   "devDependencies": {
     "s3": "^4.1.1",
-    "browserify": "^4.2.0",
-    "browserify-shim": "^3.6.0",
+    "browserify": "^4.2.3",
+    "browserify-shim": "^3.7.0",
+    "chai": "latest",
+    "dotenv": "^0.4.0",
     "es6ify": "^1.2.0",
     "express": "^4.6.1",
     "glob": "^4.0.4",
@@ -48,7 +53,21 @@
     "mkdirp": "^0.5.0",
     "underscore": "^1.6.0",
     "vinyl-source-stream": "^0.1.1",
-    "yargs": "^1.2.6"
+    "yargs": "latest",
+    "karma": ">=0.3.1",
+    "karma-bro": "^0.6.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-cli": "0.0.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-jasmine": "^0.1.5",
+    "karma-jquery": "^0.1.0",
+    "karma-mocha": "^0.1.4",
+    "karma-sinon": "^1.0.3",
+    "karma-sinon-chai": "^0.2.0",
+    "karma-traceur-preprocessor": "^0.2.2",
+    "sinon": "^1.10.2",
+    "traceur": "0.0.49"
   },
   "dependencies": {
     "clappr": "latest",
