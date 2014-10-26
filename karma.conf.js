@@ -20,6 +20,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'node_modules/clappr/dist/clappr.js',
       'test/**/*spec.js'
     ],
 
@@ -33,8 +34,8 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       './index.js': ['traceur'],
-      'src/*.js': ['traceur'],
-      'test/*.js': ['traceur', 'browserify']
+      'src/**/*.js': ['traceur'],
+      'test/**/*.js': ['traceur', 'browserify']
     },
 
     traceurPreprocessor: {
@@ -44,9 +45,9 @@ module.exports = function(config) {
     },
 
     browserify: {
-      watch: true,
       debug: true,
       transform: ['es6ify'],
+      external: ['base_object']
     },
 
     // test results reporter to use
