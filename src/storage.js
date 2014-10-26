@@ -23,19 +23,18 @@ class Storage {
     }
   }
 
+  get size() {
+    return this.keys.length
+  }
+
   updateSize() {
-    if (this.keys.length > Settings.maxStorageChunks) {
+    if (this.size > Settings.maxStorageChunks) {
       this.removeOlderItem()
     }
   }
 
   removeOlderItem() {
     var key = this.keys.splice(0, 1)[0]
-    delete this.chunks[key]
-  }
-
-  removeItem(key) {
-    this.keys = _.without(this.keys, key)
     delete this.chunks[key]
   }
 

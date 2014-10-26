@@ -21,6 +21,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/clappr/dist/clappr.js',
+      'node_modules/underscore/underscore-min.js',
       'test/**/*spec.js'
     ],
 
@@ -47,7 +48,7 @@ module.exports = function(config) {
     browserify: {
       debug: true,
       transform: ['es6ify'],
-      external: ['base_object']
+      external: ['base_object', 'underscore']
     },
 
     // test results reporter to use
@@ -80,6 +81,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: false
   });
 };
