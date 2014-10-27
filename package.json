@@ -39,7 +39,7 @@
     "browserify-shim": "^3.7.0",
     "chai": "latest",
     "dotenv": "^0.4.0",
-    "es6ify": "1.5.1",
+    "es6ify": "1.4.0",
     "express": "^4.6.1",
     "glob": "^4.0.4",
     "gulp": "^3.8.6",
@@ -62,7 +62,7 @@
     "karma-sinon": "^1.0.3",
     "karma-sinon-chai": "^0.2.0",
     "karma-browserify": "latest",
-    "karma-traceur-preprocessor": "0.3.1",
+    "karma-traceur-preprocessor": "git://github.com/hansl/karma-traceur-preprocessor",
     "sinon": "^1.10.2",
     "traceur": "0.0.72",
     "vinyl-source-stream": "^0.1.1"
