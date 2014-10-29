@@ -20,6 +20,21 @@ class Peer extends BaseObject {
     this.playbackInfo = PlaybackInfo.getInstance()
     this.score = 1000
     this.late = 0
+    this.active = false
+    this.sendPing()
+  }
+
+  sendPing() {
+    this.dataChannel.send("ping$$")
+  }
+
+  sendPong() {
+    this.dataChannel.send("pong$$")
+  }
+
+  pongReceived() {
+    log.info('join: ' + this.ident)
+    this.active = true
   }
 
   sendSatisfy(resource) {
@@ -67,6 +82,12 @@ class Peer extends BaseObject {
         break
       case 'busy':
         this.swarm.busyReceived(this)
+        break
+      case 'ping':
+        this.sendPong()
+        break
+      case 'pong':
+        this.pongReceived(this)
         break
     }
   }

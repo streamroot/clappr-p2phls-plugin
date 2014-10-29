@@ -35,7 +35,8 @@ class SwarmUtils extends BaseObject {
   }
 
   get contributors() {
-    var orderedPeers = _.sortBy(this.swarm.peers, function (p) { return p.score }).reverse()
+    var activePeers = _.filter(this.swarm.peers, function (p) { return p.active })
+    var orderedPeers = _.sortBy(activePeers, function (p) { return p.score }).reverse()
     if (_.size(this.swarm.peers) > Settings.maxContributors) {
       var slice = orderedPeers.slice(0, Settings.maxContributors)
       return slice
