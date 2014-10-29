@@ -24,7 +24,6 @@ class Peer extends BaseObject {
 
   sendSatisfy(resource) {
     if (this.uploadHandler.getSlot(this.ident)) {
-      log.warn("sending chunk")
       this.send('satisfy', resource, this.storage.getItem(resource))
       this.playbackInfo.updateChunkStats('p2psent')
     } else {

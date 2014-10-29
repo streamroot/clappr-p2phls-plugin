@@ -117,10 +117,14 @@ class Swarm extends BaseObject {
       this.rebootRoundVars()
     } else {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
-      // and generated unnecessary traffic. Putting peer on the end of the swarm.
+      // and generated unnecessary traffic.
       if (this.satisfyElected === undefined || this.currentResource === undefined) {
-        log.warn("satisfy error: timeout")
+        log.warn("satisfy error (timeout)")
         peer.late += 1
+        if (peer.late > 3) {
+          this.busyReceived(peer)
+          peer.late = 0
+        }
       } else {
         log.warn("satisfy error: wrong resource")
       }
