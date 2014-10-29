@@ -35,7 +35,11 @@ class PlaybackInfo extends BaseObject {
       var timeout = segmentSize / 3
       return timeout > 2000? 2000: timeout
     } else if (command === 'request') {
-      return segmentSize * 0.6
+      if (this.data.lastDownloadType === 'p2p') {
+        return segmentSize
+      } else {
+        return segmentSize * 0.6
+      }
     }
   }
 
