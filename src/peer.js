@@ -38,12 +38,16 @@ class Peer extends BaseObject {
   }
 
   sendSatisfy(resource) {
-    if (this.uploadHandler.getSlot(this.ident)) {
-      this.send('satisfy', resource, this.storage.getItem(resource))
-      this.playbackInfo.updateChunkStats('p2psent')
+    if (this.storage.contain(resource)) {
+      if (this.uploadHandler.getSlot(this.ident)) {
+        this.send('satisfy', resource, this.storage.getItem(resource))
+        this.playbackInfo.updateChunkStats('p2psent')
+      } else {
+        log.warn("cannot send satisfy, no upload slot available")
+        this.send("busy", resource)
+      }
     } else {
-      log.warn("cannot send satisfy, no upload slot available")
-      this.send("busy", resource)
+      this.send('choke', resource)
     }
   }
 

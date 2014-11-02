@@ -93,8 +93,8 @@ class Swarm extends BaseObject {
     if (this.currentResource === resource) {
       this.chokedClients += 1
     }
-    if (this.chokedClients === _.size(this.utils.contributors)) {
-      log.warn("all contributors choked, getting from cdn")
+    if (this.chokedClients === _.size(this.utils.contributors) || this.satisfyElected !== undefined) {
+      log.warn("choke received, getting from cdn")
       clearInterval(this.interestedTimeoutID)
       this.callbackFail()
     }
