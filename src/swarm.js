@@ -64,7 +64,6 @@ class Swarm extends BaseObject {
     this.currentResource = resource
     if (this.satisfyElected) {
       //already have a satisfyElected with success, requesting directly
-      log.info("directly requesting to " + this.satisfyElected)
       this.sendRequest()
     } else {
       this.sendTo('contributors', 'interested', resource)
@@ -117,15 +116,11 @@ class Swarm extends BaseObject {
     } else {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
       // and generated unnecessary traffic.
-      if (this.satisfyElected === undefined || this.currentResource === undefined) {
-        log.warn("satisfy error (timeout)")
-        peer.late += 1
-        if (peer.late > 3) {
-          this.busyReceived(peer)
-          peer.late = 0
-        }
-      } else {
-        log.warn("satisfy error: wrong resource")
+      peer.late += 1
+      log.warn("satisfy error due timeout, peer late status: " + peer.late)
+      if (peer.late > 3) {
+        this.busyReceived(peer)
+        peer.late = 0
       }
     }
   }
