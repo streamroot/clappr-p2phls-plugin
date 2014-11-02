@@ -25,16 +25,19 @@ class HLS extends Playback {
   constructor(options) {
     super(options)
     this.src = options.src
-    this.swfPath = options.swfPath || "assets/HLSPlayer.swf"
+    this.swfPath = options.swfPath || "http://cdn.clappr.io/latest/assets/HLSPlayer.swf"
+    this.flushLiveURLCache = (options.flushLiveURLCache === undefined)? true: options.flushLiveURLCache
+    this.capLevelToStage = (options.capLevelToStage === undefined)? true: options.capLevelToStage
     this.highDefinition = false
     this.autoPlay = options.autoPlay
     this.defaultSettings = {
       left: ["playstop"],
       default: ['seekbar'],
       right: ["fullscreen", "volume", "hd-indicator"],
-      seekEnabled: true
+      seekEnabled: false
     }
     this.settings = _.extend({}, this.defaultSettings)
+    this.playbackType = 'live'
     this.addListeners()
   }
 
@@ -61,9 +64,14 @@ class HLS extends Playback {
     this.isReady = true
     this.trigger('playback:ready', this.name)
     this.currentState = "IDLE"
-    this.el.globoPlayerSetflushLiveURLCache(true)
-    this.el.globoPlayerSetmaxBufferLength(0)
+    this.setFlashSettings()
     this.autoPlay && this.play()
+  }
+
+  setFlashSettings() {
+    this.el.globoPlayerSetflushLiveURLCache(this.flushLiveURLCache)
+    this.el.globoPlayerCapLeveltoStage(this.capLevelToStage)
+    this.el.globoPlayerSetmaxBufferLength(0)
   }
 
   updateHighDefinition(isHD) {
@@ -164,7 +172,7 @@ class HLS extends Playback {
         this.stopReportingProgress()
       }
     }
-    this.trigger('playback:playbackstate');
+    this.trigger('playback:playbackstate')
   }
 
   startReportingProgress() {
@@ -281,8 +289,10 @@ class HLS extends Playback {
     this.settings = _.extend({}, this.defaultSettings)
     if (this.playbackType === "vod" || this.dvrInUse) {
       this.settings.left = ["playpause", "position", "duration"]
+      this.settings.seekEnabled = true
     } else if (this.dvrEnabled) {
       this.settings.left = ["playpause"]
+      this.settings.seekEnabled = true
     } else {
       this.settings.seekEnabled = false
     }
