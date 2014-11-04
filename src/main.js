@@ -74,7 +74,7 @@ class P2PHLS extends HLS {
   }
 
   onDecodeError() {
-    log.warn("Error, decode error. Getting from CDN")
+    log.warn("Error, decode error (" + this.currentChunk.length + ") Getting from CDN")
     this.resourceRequester.decodingError = true
     this.resourceRequester.requestResource(this.currentUrl, 0, (chunk, method) => this.resourceLoaded(chunk, method))
   }
