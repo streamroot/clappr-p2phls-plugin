@@ -25,7 +25,8 @@ class Peer extends BaseObject {
   }
 
   sendPing() {
-    this.dataChannel.send("ping$$")
+    this.pingSent = Date.now()
+    this.dataChannel.send("ping$$" + (new Array(10*1024)).join("x"))
   }
 
   sendPong() {
@@ -33,8 +34,10 @@ class Peer extends BaseObject {
   }
 
   pongReceived() {
-    log.info('join: ' + this.ident)
+    var rtt = Date.now() - this.pingSent
     this.active = true
+    this.score -= Math.ceil(rtt / 100)
+    log.info('join: ' + this.ident + " (rtt: " + rtt + ")")
   }
 
   sendSatisfy(resource) {
