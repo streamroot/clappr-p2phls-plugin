@@ -27,7 +27,7 @@ class HLS extends Playback {
     this.src = options.src
     this.swfPath = options.swfPath || "http://cdn.clappr.io/latest/assets/HLSPlayer.swf"
     this.flushLiveURLCache = (options.flushLiveURLCache === undefined)? true: options.flushLiveURLCache
-    this.capLevelToStage = (options.capLevelToStage === undefined)? true: options.capLevelToStage
+    this.capLevelToStage = (options.capLevelToStage === undefined)? false: options.capLevelToStage
     this.highDefinition = false
     this.autoPlay = options.autoPlay
     this.defaultSettings = {
@@ -84,7 +84,7 @@ class HLS extends Playback {
     var position = Math.min(Math.max(this.el.globoGetPosition(), 0), duration)
     var previousDVRStatus = this.dvrEnabled
     var livePlayback = (this.playbackType === 'live')
-    this.dvrEnabled = (livePlayback && duration > 240)
+    this.dvrEnabled = false
 
     if (duration === 100 || livePlayback === undefined) {
       return;
@@ -322,7 +322,7 @@ class HLS extends Playback {
 }
 
 HLS.canPlay = function(resource) {
-  return !!resource.match(/^http(.*).m3u8/)
+  return !!resource.match(/^http(.*).m3u8?/)
 }
 
 module.exports = HLS
