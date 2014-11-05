@@ -17,7 +17,7 @@ class Swarm extends BaseObject {
     this.playbackInfo = PlaybackInfo.getInstance()
     this.utils = new SwarmUtils(this)
     this.peers = []
-    this.satisfyElected = undefined
+    this.sender = undefined
     this.satisfyCandidates = []
     this.chokedClients = 0
   }
@@ -41,11 +41,11 @@ class Swarm extends BaseObject {
   }
 
   updatePeersScore() {
-    var successPeer = this.utils.findPeer(this.satisfyElected)
+    var successPeer = this.utils.findPeer(this.sender)
     var goodPeers = _.union([successPeer], this.satisfyCandidates)
     var badPeers = _.difference(this.contributors, goodPeers)
     this.utils.incrementScore(goodPeers)
-    this.utils.incrementScore([successPeer]) //double satisfyElected score gain :)
+    this.utils.incrementScore([successPeer]) //double sender score gain :)
     this.utils.decrementScore(badPeers)
   }
 
@@ -62,8 +62,8 @@ class Swarm extends BaseObject {
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
     this.currentResource = resource
-    if (this.satisfyElected) {
-      //already have a satisfyElected with success, requesting directly
+    if (this.sender) {
+      //already have a sender with success, requesting directly
       this.sendRequest()
     } else {
       this.sendTo('contributors', 'interested', resource)
@@ -74,8 +74,8 @@ class Swarm extends BaseObject {
 
   interestedFinished() {
     if (_.size(this.satisfyCandidates) > 0) {
-      this.satisfyElected = this.utils.electSender(this.satisfyCandidates).ident
-      log.info("round finished, candidates: " + _.size(this.satisfyCandidates) + ', selected: ' + this.satisfyElected)
+      this.sender = this.utils.electSender(this.satisfyCandidates).ident
+      log.info("round finished, candidates: " + _.size(this.satisfyCandidates) + ', selected: ' + this.sender)
       this.sendRequest()
     } else {
       log.info("round finished, no candidates.")
@@ -86,14 +86,14 @@ class Swarm extends BaseObject {
   sendRequest() {
     var timeout = this.playbackInfo.timeoutFor('request')
     this.requestFailID = setTimeout(this.callbackFail.bind(this), timeout)
-    this.sendTo(this.satisfyElected, 'request', this.currentResource)
+    this.sendTo(this.sender, 'request', this.currentResource)
   }
 
   chokeReceived(resource) {
     if (this.currentResource === resource) {
       this.chokedClients += 1
     }
-    if (this.chokedClients === _.size(this.utils.contributors) || this.satisfyElected !== undefined) {
+    if (this.chokedClients === _.size(this.utils.contributors) || this.sender !== undefined) {
       log.warn("choke received, getting from cdn")
       clearInterval(this.interestedTimeoutID)
       this.clearRequestFailInterval()
@@ -108,7 +108,7 @@ class Swarm extends BaseObject {
   }
 
   satisfyReceived(peer, resource, chunk) {
-    if (this.satisfyElected === peer.ident && this.currentResource === resource) {
+    if (this.sender === peer.ident && this.currentResource === resource) {
       this.externalCallbackSuccess(chunk, "p2p")
       peer.late = 0
       this.clearRequestFailInterval()
@@ -135,7 +135,7 @@ class Swarm extends BaseObject {
   callbackFail() {
     this.utils.decrementScore(this.utils.contributors)
     this.rebootRoundVars()
-    this.satisfyElected = undefined
+    this.sender = undefined
     this.externalCallbackFail()
   }
 
