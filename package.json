@@ -1,6 +1,6 @@
 {
   "name": "p2phls",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "BemTV Peer-to-Peer plugin for HTTP Live Streaming transmissions on Clappr Media Player",
   "main": "dist/p2phls.js",
   "scripts": {
