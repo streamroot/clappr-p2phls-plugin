@@ -17,12 +17,12 @@ module.exports = {
   /* maxContributors
   The maximum number of contributors one peer can handle.
   Contributors are used to be requested for video segments. */
-  maxContributors: 5,
+  maxContributors: 10,
 
   /* maxSwarmSize
   Maximum number of peers on our particular swarm view.
   When reach this number, P2PManager will ignore new peers. */
-  maxSwarmSize: 50,
+  maxSwarmSize: 100,
 
   /* maxUploadSlots
   Maximum number of peers one can serve. */
