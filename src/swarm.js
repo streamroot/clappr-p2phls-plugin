@@ -62,12 +62,13 @@ class Swarm extends BaseObject {
     this.externalCallbackFail = callbackFail
     this.externalCallbackSuccess = callbackSuccess
     this.currentResource = resource
+    var timeout = this.playbackInfo.timeoutFor('interested')
     if (this.sender) {
       //already have a sender with success, requesting directly
-      this.sendRequest()
+      log.info("requesting directly to sender")
+      this.interestedTimeoutID = setTimeout(this.sendRequest.bind(this), timeout)
     } else {
       this.sendTo('contributors', 'interested', resource)
-      var timeout = this.playbackInfo.timeoutFor('interested')
       this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
     }
   }
