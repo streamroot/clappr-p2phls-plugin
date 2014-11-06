@@ -65,7 +65,6 @@ class Swarm extends BaseObject {
     var timeout = this.playbackInfo.timeoutFor('interested')
     if (this.sender) {
       //already have a sender with success, requesting directly
-      log.info("requesting directly to sender")
       this.interestedTimeoutID = setTimeout(this.sendRequest.bind(this), timeout)
     } else {
       this.sendTo('contributors', 'interested', resource)
@@ -95,7 +94,7 @@ class Swarm extends BaseObject {
       this.chokedClients += 1
     }
     if (this.chokedClients === _.size(this.utils.contributors) || this.sender !== undefined) {
-      log.warn("choke received, getting from cdn")
+      log.warn("Choked, getting from CDN")
       clearInterval(this.interestedTimeoutID)
       this.clearRequestFailInterval()
       this.callbackFail()
@@ -119,7 +118,7 @@ class Swarm extends BaseObject {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
       // and generated unnecessary traffic.
       peer.late += 1
-      log.warn("satisfy error due timeout, peer late status: " + peer.late)
+      log.warn("satisfy error due timeout, peer late status: " + peer.late + "(" + this.sender + "," + this.currentResource + ")")
       if (peer.late > 3) {
         this.busyReceived(peer)
         peer.late = 0

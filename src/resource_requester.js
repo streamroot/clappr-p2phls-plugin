@@ -31,7 +31,6 @@ class ResourceRequester extends BaseObject {
   }
 
   requestToCDN() {
-    log.info("From CDN: " + this.resource.match(/.*\/(.*.ts)/)[1])
     this.cdnRequester.requestResource(this.resource, this.callback)
   }
 
