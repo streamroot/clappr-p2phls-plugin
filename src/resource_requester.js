@@ -8,7 +8,6 @@ var CDNRequester = require('./cdn_requester')
 var P2PManager = require('./p2p_manager')
 var Settings = require('./settings')
 var _ = require('underscore')
-var log = require('./log').getInstance()
 
 class ResourceRequester extends BaseObject {
   constructor(params) {
@@ -16,18 +15,22 @@ class ResourceRequester extends BaseObject {
     this.p2pManager = new P2PManager(params)
     this.isInitialBuffer = true
     this.decodingError = false
+    this.lowBuffer = Settings.lowBufferLength
+    this.onDVR = false
   }
 
   requestResource(resource, bufferLength, callback) {
     this.resource = resource
     this.callback = callback
-    if (this.decodingError) {
-      this.requestToCDN()
-    } else if (bufferLength < Settings.lowBufferLength || this.isInitialBuffer || _.size(this.p2pManager.swarm.utils.contributors) === 0) {
+    if (this.avoidP2P() || bufferLength < this.lowBuffer || _.size(this.p2pManager.swarm.utils.contributors) === 0) {
       this.requestToCDN()
     } else {
       this.requestToP2P()
     }
+  }
+
+  avoidP2P() {
+    return _.some([this.onDVR, this.decodingError, this.isInitialBuffer])
   }
 
   requestToCDN() {

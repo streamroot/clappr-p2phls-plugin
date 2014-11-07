@@ -93,7 +93,11 @@ class P2PHLS extends HLS {
       log.warn("still processing the other chunk, wait :)")
     } else {
       this.currentUrl = url
-      this.resourceRequester.requestResource(url, this.bufferLength, (chunk, method) => this.resourceLoaded(chunk, method))
+      if (this.storage.contain(this.currentUrl)) {
+        this.resourceLoaded(this.storage.getItem(this.currentUrl), "storage")
+      } else {
+        this.resourceRequester.requestResource(url, this.el.globoGetbufferLength(), (chunk, method) => this.resourceLoaded(chunk, method))
+      }
     }
   }
 
@@ -103,6 +107,11 @@ class P2PHLS extends HLS {
       this.currentChunk = chunk
       this.playbackInfo.updateChunkStats(method)
     }
+  }
+
+  seek(time) {
+    this.resourceRequester.onDVR = time !== -1? true: false
+    super(time)
   }
 
   render() {
