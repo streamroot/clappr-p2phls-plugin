@@ -10,9 +10,10 @@ var PlaybackInfo = require('./playback_info')
 var AdaptiveStreaming = require('./adaptive_streaming')
 var Storage = require('./storage')
 var log = require('./log').getInstance()
-
 var JST = require('./jst')
-var HLS = require('./hls')
+var Browser = require('browser')
+var Styler = require('./styler')
+var HLS = require('hls')
 
 class P2PHLS extends HLS {
   get name() { return 'p2phls' }
@@ -102,6 +103,17 @@ class P2PHLS extends HLS {
       this.currentChunk = chunk
       this.playbackInfo.updateChunkStats(method)
     }
+  }
+
+  render() {
+    this.$el.html(this.template({cid: this.cid, swfPath: this.swfPath, playbackId: this.uniqueId}))
+    if(Browser.isFirefox) {
+      this.setupFirefox()
+    }
+    this.el.id = this.cid
+    var style = Styler.getStyleFor(this.name)
+    this.$el.append(style)
+    return this
   }
 }
 

@@ -37,6 +37,7 @@ gulp.task('build', ['pre-build'], function(b) {
     .external('browser')
     .external('jquery')
     .external('underscore')
+    .external('hls')
     .bundle()
     .pipe(source('main.js'))
     .pipe(rename( 'p2phls' + (isProd ? '.min.js' : '.js')));
