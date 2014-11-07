@@ -64,7 +64,7 @@ class PlaybackInfo extends BaseObject {
       state: this.main.currentState,
       currentBitrate: bitrate,
       bufferLength: bufferLength.toFixed(2),
-      segmentSize: this.main.getAverageSegmentSize(),
+      segmentSize: this.getAverageSegmentSize(),
       levels: this.main.getLevels()
     }
     this.updateData(data)
@@ -91,6 +91,14 @@ class PlaybackInfo extends BaseObject {
   triggerStats(metrics) {
     this.main.trigger('playback:stats:add', metrics)
   }
+
+  getAverageSegmentSize() {
+    if (!this.avgSegmentSize || this.avgSegmentSize === 0 && this.main.getLevels().length > 0) {
+      this.avgSegmentSize = Math.round(this.main.getLevels()[0].averageduration) || 0
+    }
+    return this.avgSegmentSize
+  }
+
 }
 
 PlaybackInfo.getInstance = function() {

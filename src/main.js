@@ -27,16 +27,12 @@ class P2PHLS extends HLS {
 
   constructor(options) {
     options.swfPath = "http://s.videos.globo.com/p3/plugins/assets/P2PHLSPlayer.swf"
-    this.setupSettings(options)
+    Settings = _.extend(Settings, options.bemtv)
     this.resourceRequester = new ResourceRequester({swarm: btoa(options.src.split("?")[0]), tracker: options.tracker})
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     this.storage = Storage.getInstance()
     super(options)
-  }
-
-  setupSettings(options) {
-    Settings = _.extend(Settings, options.bemtv)
   }
 
   addListeners() {
@@ -56,6 +52,9 @@ class P2PHLS extends HLS {
     Clappr.Mediator.off(this.uniqueId + ':playbackstate')
     Clappr.Mediator.off(this.uniqueId + ':highdefinition')
     Clappr.Mediator.off(this.uniqueId + ':playbackerror')
+    Clappr.Mediator.off(this.uniqueId + ':requestresource')
+    Clappr.Mediator.off(this.uniqueId + ':decodeerror')
+    Clappr.Mediator.off(this.uniqueId + ':decodesuccess')
   }
 
   bootstrap() {
@@ -103,13 +102,6 @@ class P2PHLS extends HLS {
       this.currentChunk = chunk
       this.playbackInfo.updateChunkStats(method)
     }
-  }
-
-  getAverageSegmentSize() {
-    if (!this.avgSegmentSize || this.avgSegmentSize === 0 && this.getLevels().length > 0) {
-      this.avgSegmentSize = Math.round(this.getLevels()[0].averageduration) || 0
-    }
-    return this.avgSegmentSize
   }
 }
 
