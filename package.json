@@ -71,8 +71,6 @@
     "clappr": "latest",
     "rtc-bufferedchannel": "latest",
     "rtc-quickconnect": "2.0.0",
-    "jquery": "2.1.1",
-    "underscore": "1.7.0",
     "log-with-style": "0.1.5",
     "mousetrap": "0.0.1"
   }
