@@ -4,7 +4,6 @@
 // license that can be found in the LICENSE file.
 
 var Settings = require('./settings');
-var Logger = require('log-with-style');
 var Mousetrap = require('mousetrap');
 
 class Log {
@@ -15,18 +14,24 @@ class Log {
   info(message) {this.log('info', message)}
   warn(message) {this.log('warn', message)}
   debug(message) {this.log('debug', message)}
+  good(message) {this.log('good', message)}
+  bad(message) {this.log('bad', message)}
 
   onOff() {
     Settings.logging = !Settings.logging
-    if (Settings.logging) Logger('[c="color: red"][WARNING][c] log enabled')
-    else Logger('[c="color: red"][WARNING][c] log disabled')
+    if (Settings.logging) console.log('%c [WARNING] log enabled', 'color: red')
+    else console.log('%c [WARNING] log disabled', 'color: red')
   }
 
   log(level, message) {
     if (!Settings.logging) return
-    if (level === 'warn') { Logger('[c="color: red"][WARNING][c] ' + message) }
-    else if (level === 'info') { Logger('[c="color: green"][INFO] [c] ' + message) }
-    else if (level === 'debug') { Logger('[c="color: blue"][DEBUG] [c] ' + message) }
+    var color, prefix
+    if (level === 'warn') { [color, prefix] = ['red', 'WARN'] }
+    if (level === 'info') { [color, prefix] = ['green', 'INFO'] }
+    if (level === 'debug') { [color, prefix] = ['blue', 'DEBUG'] }
+    if (level === 'good') { [color, prefix] = ['green', 'GOOD'] }
+    if (level === 'bad') { [color, prefix] = ['red', 'GOOD'] }
+    console.log('%c [' + prefix + '] ' + message, 'color:' + color)
   }
 }
 
