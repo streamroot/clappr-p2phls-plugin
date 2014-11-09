@@ -30,7 +30,7 @@ class Log {
     if (level === 'info') { [color, prefix] = ['green', 'INFO'] }
     if (level === 'debug') { [color, prefix] = ['blue', 'DEBUG'] }
     if (level === 'good') { [color, prefix] = ['green', 'GOOD'] }
-    if (level === 'bad') { [color, prefix] = ['red', 'GOOD'] }
+    if (level === 'bad') { [color, prefix] = ['red', 'BAD'] }
     console.log('%c [' + prefix + '] ' + message, 'color:' + color)
   }
 }

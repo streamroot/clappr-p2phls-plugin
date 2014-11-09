@@ -43,7 +43,7 @@ class Swarm extends BaseObject {
   updatePeersScore() {
     var successPeer = this.utils.findPeer(this.sender)
     var goodPeers = _.union([successPeer], this.satisfyCandidates)
-    var badPeers = _.difference(this.contributors, goodPeers)
+    var badPeers = _.difference(this.utils.contributors, goodPeers)
     this.utils.incrementScore(goodPeers)
     this.utils.incrementScore([successPeer]) //double sender score gain :)
     this.utils.decrementScore(badPeers)
@@ -118,7 +118,7 @@ class Swarm extends BaseObject {
       // nothing could be worse than this. Someont sent you the entire chunk, but missed the time
       // and generated unnecessary traffic.
       peer.late += 1
-      log.warn("satisfy error due timeout, peer late status: " + peer.late + "(" + this.sender + "," + this.currentResource + ")")
+      log.warn("satisfy error due timeout")
       if (peer.late > 3) {
         this.busyReceived(peer)
         peer.late = 0
