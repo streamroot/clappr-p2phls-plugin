@@ -33,6 +33,7 @@ class P2PHLS extends HLS {
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     this.storage = Storage.getInstance()
+    this.CHUNK_SIZE = 65536
     super(options)
   }
 
@@ -103,10 +104,33 @@ class P2PHLS extends HLS {
 
   resourceLoaded(chunk, method) {
     if (this.currentUrl) {
-      this.el.resourceLoaded(chunk)
       this.currentChunk = chunk
+      this.readPosition = 0
+      this.endPosition = 0
+      this.currentChunkLength = this.currentChunk.length
+      this.sendID = setInterval(function() { this.sendChunk() }.bind(this), 0);
       this.playbackInfo.updateChunkStats(method)
     }
+  }
+
+  sendChunk() {
+    if (this.currentChunkLength <= this.CHUNK_SIZE) {
+      this.el.resourceLoaded(this.currentChunk)
+      this.startDecoding()
+    } else if (this.endPosition >= this.currentChunkLength) {
+      this.startDecoding()
+    } else {
+      this.endPosition += this.CHUNK_SIZE
+      this.el.resourceLoaded(this.currentChunk.slice(this.readPosition, this.endPosition))
+      this.readPosition = this.endPosition
+    }
+  }
+
+  startDecoding() {
+    this.readPosition = 0
+    this.endPosition = 0
+    clearInterval(this.sendID)
+    this.el.startDecoding()
   }
 
   seek(time) {
