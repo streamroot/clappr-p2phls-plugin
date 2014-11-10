@@ -83,6 +83,7 @@ class Peer extends BaseObject {
         break
       case 'satisfy':
         if (content.length > 0) {
+          log.info("received satisfy")
           this.swarm.satisfyReceived(this, resource, content)
         }
         break
