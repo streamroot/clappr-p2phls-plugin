@@ -19,8 +19,8 @@ class Log {
 
   onOff() {
     Settings.logging = !Settings.logging
-    if (Settings.logging) console.log('%c [WARNING] log enabled', 'color: red')
-    else console.log('%c [WARNING] log disabled', 'color: red')
+    if (Settings.logging) console.log('%c [INFO] log enabled', 'color: blue')
+    else console.log('%c [INFO] log disabled', 'color: blue')
   }
 
   log(level, message) {

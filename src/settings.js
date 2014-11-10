@@ -8,7 +8,7 @@ module.exports = {
   Turn on/off logging on browser's console on
   initialization. You can always turn on/off
   by pressing ctrl+shift+l on your browser tab. */
-  logging: true,
+  logging: false,
 
   /* maxStorageChunks
   Maximum size of the storage in number of chunks. */
