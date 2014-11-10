@@ -63,13 +63,19 @@ class Swarm extends BaseObject {
     this.externalCallbackSuccess = callbackSuccess
     this.currentResource = resource
     var timeout = this.playbackInfo.timeoutFor('interested')
-    this.sendTo('contributors', 'interested', resource)
-    this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
+    if (this.sender) {
+      //already have a sender with success, requesting directly
+      this.interestedTimeoutID = setTimeout(this.sendRequest.bind(this), timeout)
+    } else {
+      this.sendTo('contributors', 'interested', resource)
+      this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
+    }
   }
 
   interestedFinished() {
     if (_.size(this.satisfyCandidates) > 0) {
       this.sender = this.utils.electSender(this.satisfyCandidates).ident
+      log.info("round finished, candidates: " + _.size(this.satisfyCandidates) + ', selected: ' + this.sender)
       this.sendRequest()
     } else {
       log.info("round finished, no candidates.")
@@ -87,7 +93,7 @@ class Swarm extends BaseObject {
     if (this.currentResource === resource) {
       this.chokedClients += 1
     }
-    if (this.chokedClients === _.size(this.utils.contributors)) {
+    if (this.chokedClients === _.size(this.utils.contributors) || this.sender !== undefined) {
       log.warn("Choked, getting from CDN")
       clearInterval(this.interestedTimeoutID)
       this.clearRequestFailInterval()
