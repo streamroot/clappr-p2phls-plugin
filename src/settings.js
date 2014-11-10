@@ -12,7 +12,7 @@ module.exports = {
 
   /* maxStorageChunks
   Maximum size of the storage in number of chunks. */
-  maxStorageChunks: 10,
+  maxStorageChunks: 6,
 
   /* maxContributors
   The maximum number of contributors one peer can handle.
