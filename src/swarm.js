@@ -65,7 +65,7 @@ class Swarm extends BaseObject {
     var timeout = this.playbackInfo.timeoutFor('interested')
     if (this.sender) {
       //already have a sender with success, requesting directly
-      this.interestedTimeoutID = setTimeout(this.sendRequest.bind(this), timeout)
+      this.interestedTimeoutID = setTimeout(this.sendRequest.bind(this), timeout + 1000)
     } else {
       this.sendTo('contributors', 'interested', resource)
       this.interestedTimeoutID = setTimeout(this.interestedFinished.bind(this), timeout)
