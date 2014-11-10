@@ -26,7 +26,7 @@ class Peer extends BaseObject {
 
   sendPing() {
     this.pingSent = Date.now()
-    this.dataChannel.send("ping$$" + (new Array(10*1024)).join("x"))
+    this.dataChannel.send("ping$$" + (new Array(300*1024)).join("x"))
   }
 
   sendPong() {
