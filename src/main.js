@@ -114,7 +114,9 @@ class P2PHLS extends HLS {
   }
 
   sendChunk() {
-    if (this.currentChunkLength <= this.CHUNK_SIZE) {
+    if (this.currentChunk === null) {
+      clearInterval(this.sendID)
+    } else if (this.currentChunkLength <= this.CHUNK_SIZE) {
       this.el.resourceLoaded(this.currentChunk)
       this.startDecoding()
     } else if (this.endPosition >= this.currentChunkLength) {
