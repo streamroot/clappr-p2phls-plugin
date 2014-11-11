@@ -1,386 +1,50 @@
-var compress = function (uncompressed) {
-  if (uncompressed == null) return "";
-  var i, value,
-      context_dictionary= {},
-      context_dictionaryToCreate= {},
-      context_c="",
-      context_wc="",
-      context_w="",
-      context_enlargeIn= 2, // Compensate for the first entry which should not count
-      context_dictSize= 3,
-      context_numBits= 2,
-      context_data_string="",
-      context_data_val=0,
-      context_data_position=0,
-      ii,
-      f=String.fromCharCode;
+// Copyright 2014 Flávio Ribeiro <flavio@bem.tv>.
+// All rights reserved.
+// Use of this source code is governed by Apache
+// license that can be found in the LICENSE file.
 
-  for (ii = 0; ii < uncompressed.length; ii += 1) {
-    context_c = uncompressed.charAt(ii);
-    if (!Object.prototype.hasOwnProperty.call(context_dictionary,context_c)) {
-      context_dictionary[context_c] = context_dictSize++;
-      context_dictionaryToCreate[context_c] = true;
-    }
+var BaseObject = require('base_object')
 
-    context_wc = context_w + context_c;
-    if (Object.prototype.hasOwnProperty.call(context_dictionary,context_wc)) {
-      context_w = context_wc;
-    } else {
-      if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate,context_w)) {
-        if (context_w.charCodeAt(0)<256) {
-          for (i=0 ; i<context_numBits ; i++) {
-            context_data_val = (context_data_val << 1);
-            if (context_data_position == 15) {
-              context_data_position = 0;
-              context_data_string += f(context_data_val);
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-          }
-          value = context_w.charCodeAt(0);
-          for (i=0 ; i<8 ; i++) {
-            context_data_val = (context_data_val << 1) | (value&1);
-            if (context_data_position == 15) {
-              context_data_position = 0;
-              context_data_string += f(context_data_val);
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = value >> 1;
-          }
-        } else {
-          value = 1;
-          for (i=0 ; i<context_numBits ; i++) {
-            context_data_val = (context_data_val << 1) | value;
-            if (context_data_position == 15) {
-              context_data_position = 0;
-              context_data_string += f(context_data_val);
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = 0;
-          }
-          value = context_w.charCodeAt(0);
-          for (i=0 ; i<16 ; i++) {
-            context_data_val = (context_data_val << 1) | (value&1);
-            if (context_data_position == 15) {
-              context_data_position = 0;
-              context_data_string += f(context_data_val);
-              context_data_val = 0;
-            } else {
-              context_data_position++;
-            }
-            value = value >> 1;
-          }
-        }
-        context_enlargeIn--;
-        if (context_enlargeIn == 0) {
-          context_enlargeIn = Math.pow(2, context_numBits);
-          context_numBits++;
-        }
-        delete context_dictionaryToCreate[context_w];
-      } else {
-        value = context_dictionary[context_w];
-        for (i=0 ; i<context_numBits ; i++) {
-          context_data_val = (context_data_val << 1) | (value&1);
-          if (context_data_position == 15) {
-            context_data_position = 0;
-            context_data_string += f(context_data_val);
-            context_data_val = 0;
-          } else {
-            context_data_position++;
-          }
-          value = value >> 1;
-        }
-
-
-      }
-      context_enlargeIn--;
-      if (context_enlargeIn == 0) {
-        context_enlargeIn = Math.pow(2, context_numBits);
-        context_numBits++;
-      }
-      // Add wc to the dictionary.
-      context_dictionary[context_wc] = context_dictSize++;
-      context_w = String(context_c);
-    }
+class LZString extends BaseObject {
+  get name() { return 'LZString' }
+  constructor() {
+    this.compressor = new Worker(this.getWorkerURL())
+    this.compressor.onmessage = (e) => this.chunkReceived(e.data)
   }
 
-  // Output the code for w.
-  if (context_w !== "") {
-    if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate,context_w)) {
-      if (context_w.charCodeAt(0)<256) {
-        for (i=0 ; i<context_numBits ; i++) {
-          context_data_val = (context_data_val << 1);
-          if (context_data_position == 15) {
-            context_data_position = 0;
-            context_data_string += f(context_data_val);
-            context_data_val = 0;
-          } else {
-            context_data_position++;
-          }
-        }
-        value = context_w.charCodeAt(0);
-        for (i=0 ; i<8 ; i++) {
-          context_data_val = (context_data_val << 1) | (value&1);
-          if (context_data_position == 15) {
-            context_data_position = 0;
-            context_data_string += f(context_data_val);
-            context_data_val = 0;
-          } else {
-            context_data_position++;
-          }
-          value = value >> 1;
-        }
-      } else {
-        value = 1;
-        for (i=0 ; i<context_numBits ; i++) {
-          context_data_val = (context_data_val << 1) | value;
-          if (context_data_position == 15) {
-            context_data_position = 0;
-            context_data_string += f(context_data_val);
-            context_data_val = 0;
-          } else {
-            context_data_position++;
-          }
-          value = 0;
-        }
-        value = context_w.charCodeAt(0);
-        for (i=0 ; i<16 ; i++) {
-          context_data_val = (context_data_val << 1) | (value&1);
-          if (context_data_position == 15) {
-            context_data_position = 0;
-            context_data_string += f(context_data_val);
-            context_data_val = 0;
-          } else {
-            context_data_position++;
-          }
-          value = value >> 1;
-        }
-      }
-      context_enlargeIn--;
-      if (context_enlargeIn == 0) {
-        context_enlargeIn = Math.pow(2, context_numBits);
-        context_numBits++;
-      }
-      delete context_dictionaryToCreate[context_w];
-    } else {
-      value = context_dictionary[context_w];
-      for (i=0 ; i<context_numBits ; i++) {
-        context_data_val = (context_data_val << 1) | (value&1);
-        if (context_data_position == 15) {
-          context_data_position = 0;
-          context_data_string += f(context_data_val);
-          context_data_val = 0;
-        } else {
-          context_data_position++;
-        }
-        value = value >> 1;
-      }
-
-
+  getWorkerURL() {
+    var content = 'var compress=function(o){if(null==o)return"";var t,r,e,i={},a={},s="",n="",p="",c=2,h=3,f=2,l="",d=0,w=0,u=String.fromCharCode;for(e=0;e<o.length;e+=1)if(s=o.charAt(e),Object.prototype.hasOwnProperty.call(i,s)||(i[s]=h++,a[s]=!0),n=p+s,Object.prototype.hasOwnProperty.call(i,n))p=n;else{if(Object.prototype.hasOwnProperty.call(a,p)){if(p.charCodeAt(0)<256){for(t=0;f>t;t++)d<<=1,15==w?(w=0,l+=u(d),d=0):w++;for(r=p.charCodeAt(0),t=0;8>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1}else{for(r=1,t=0;f>t;t++)d=d<<1|r,15==w?(w=0,l+=u(d),d=0):w++,r=0;for(r=p.charCodeAt(0),t=0;16>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1}c--,0==c&&(c=Math.pow(2,f),f++),delete a[p]}else for(r=i[p],t=0;f>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1;c--,0==c&&(c=Math.pow(2,f),f++),i[n]=h++,p=String(s)}if(""!==p){if(Object.prototype.hasOwnProperty.call(a,p)){if(p.charCodeAt(0)<256){for(t=0;f>t;t++)d<<=1,15==w?(w=0,l+=u(d),d=0):w++;for(r=p.charCodeAt(0),t=0;8>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1}else{for(r=1,t=0;f>t;t++)d=d<<1|r,15==w?(w=0,l+=u(d),d=0):w++,r=0;for(r=p.charCodeAt(0),t=0;16>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1}c--,0==c&&(c=Math.pow(2,f),f++),delete a[p]}else for(r=i[p],t=0;f>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1;c--,0==c&&(c=Math.pow(2,f),f++)}for(r=2,t=0;f>t;t++)d=d<<1|1&r,15==w?(w=0,l+=u(d),d=0):w++,r>>=1;for(;;){if(d<<=1,15==w){l+=u(d);break}w++}return l},decompress=function(o){if(null==o)return"";if(""==o)return null;var t,r,e,i,a,s,n,p,c=[],h=4,f=4,l=3,d="",w="",u=String.fromCharCode,v={string:o,val:o.charCodeAt(0),position:32768,index:1};for(r=0;3>r;r+=1)c[r]=r;for(i=0,s=Math.pow(2,2),n=1;n!=s;)a=v.val&v.position,v.position>>=1,0==v.position&&(v.position=32768,v.val=v.string.charCodeAt(v.index++)),i|=(a>0?1:0)*n,n<<=1;switch(t=i){case 0:for(i=0,s=Math.pow(2,8),n=1;n!=s;)a=v.val&v.position,v.position>>=1,0==v.position&&(v.position=32768,v.val=v.string.charCodeAt(v.index++)),i|=(a>0?1:0)*n,n<<=1;p=u(i);break;case 1:for(i=0,s=Math.pow(2,16),n=1;n!=s;)a=v.val&v.position,v.position>>=1,0==v.position&&(v.position=32768,v.val=v.string.charCodeAt(v.index++)),i|=(a>0?1:0)*n,n<<=1;p=u(i);break;case 2:return""}for(c[3]=p,e=w=p;;){if(v.index>v.string.length)return"";for(i=0,s=Math.pow(2,l),n=1;n!=s;)a=v.val&v.position,v.position>>=1,0==v.position&&(v.position=32768,v.val=v.string.charCodeAt(v.index++)),i|=(a>0?1:0)*n,n<<=1;switch(p=i){case 0:for(i=0,s=Math.pow(2,8),n=1;n!=s;)a=v.val&v.position,v.position>>=1,0==v.position&&(v.position=32768,v.val=v.string.charCodeAt(v.index++)),i|=(a>0?1:0)*n,n<<=1;c[f++]=u(i),p=f-1,h--;break;case 1:for(i=0,s=Math.pow(2,16),n=1;n!=s;)a=v.val&v.position,v.position>>=1,0==v.position&&(v.position=32768,v.val=v.string.charCodeAt(v.index++)),i|=(a>0?1:0)*n,n<<=1;c[f++]=u(i),p=f-1,h--;break;case 2:return w}if(0==h&&(h=Math.pow(2,l),l++),c[p])d=c[p];else{if(p!==f)return null;d=e+e.charAt(0)}w+=d,c[f++]=e+d.charAt(0),h--,e=d,0==h&&(h=Math.pow(2,l),l++)}};this.addEventListener("message",function(o){"compress"===o.data.type?postMessage(compress(o.data.chunk)):"decompress"===o.data.type&&postMessage(decompress(o.data.chunk))},!1);'
+    var blob
+    try {
+      blob = new Blob([content], {type: 'application/javascript'})
+    } catch (e) {
+      window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder
+      blob = new BlobBuilder()
+      blob.append(content)
+      blob = blob.getBlob()
     }
-    context_enlargeIn--;
-    if (context_enlargeIn == 0) {
-      context_enlargeIn = Math.pow(2, context_numBits);
-      context_numBits++;
-    }
+
+    return URL.createObjectURL(blob)
   }
 
-  // Mark the end of the stream
-  value = 2;
-  for (i=0 ; i<context_numBits ; i++) {
-    context_data_val = (context_data_val << 1) | (value&1);
-    if (context_data_position == 15) {
-      context_data_position = 0;
-      context_data_string += f(context_data_val);
-      context_data_val = 0;
-    } else {
-      context_data_position++;
-    }
-    value = value >> 1;
+  compress(chunk, callback) {
+    this.postMessage('compress', chunk, callback)
   }
 
-  // Flush the last char
-  while (true) {
-    context_data_val = (context_data_val << 1);
-    if (context_data_position == 15) {
-      context_data_string += f(context_data_val);
-      break;
-    }
-    else context_data_position++;
-  }
-  return context_data_string;
-}
-
-var decompress = function (compressed) {
-  if (compressed == null) return "";
-  if (compressed == "") return null;
-  var dictionary = [],
-      next,
-      enlargeIn = 4,
-      dictSize = 4,
-      numBits = 3,
-      entry = "",
-      result = "",
-      i,
-      w,
-      bits, resb, maxpower, power,
-      c,
-      f = String.fromCharCode,
-      data = {string:compressed, val:compressed.charCodeAt(0), position:32768, index:1};
-
-  for (i = 0; i < 3; i += 1) {
-    dictionary[i] = i;
+  decompress(chunk, callback) {
+    this.postMessage('decompress', chunk, callback)
   }
 
-  bits = 0;
-  maxpower = Math.pow(2,2);
-  power=1;
-  while (power!=maxpower) {
-    resb = data.val & data.position;
-    data.position >>= 1;
-    if (data.position == 0) {
-      data.position = 32768;
-      data.val = data.string.charCodeAt(data.index++);
-    }
-    bits |= (resb>0 ? 1 : 0) * power;
-    power <<= 1;
+  postMessage(type, chunk, callback) {
+    this.callback = callback
+    var message = {'type': type, 'chunk': chunk}
+    this.compressor.postMessage(message)
   }
 
-  switch (next = bits) {
-    case 0:
-        bits = 0;
-        maxpower = Math.pow(2,8);
-        power=1;
-        while (power!=maxpower) {
-          resb = data.val & data.position;
-          data.position >>= 1;
-          if (data.position == 0) {
-            data.position = 32768;
-            data.val = data.string.charCodeAt(data.index++);
-          }
-          bits |= (resb>0 ? 1 : 0) * power;
-          power <<= 1;
-        }
-      c = f(bits);
-      break;
-    case 1:
-        bits = 0;
-        maxpower = Math.pow(2,16);
-        power=1;
-        while (power!=maxpower) {
-          resb = data.val & data.position;
-          data.position >>= 1;
-          if (data.position == 0) {
-            data.position = 32768;
-            data.val = data.string.charCodeAt(data.index++);
-          }
-          bits |= (resb>0 ? 1 : 0) * power;
-          power <<= 1;
-        }
-      c = f(bits);
-      break;
-    case 2:
-      return "";
-  }
-  dictionary[3] = c;
-  w = result = c;
-  while (true) {
-    if (data.index > data.string.length) {
-      return "";
-    }
-
-    bits = 0;
-    maxpower = Math.pow(2,numBits);
-    power=1;
-    while (power!=maxpower) {
-      resb = data.val & data.position;
-      data.position >>= 1;
-      if (data.position == 0) {
-        data.position = 32768;
-        data.val = data.string.charCodeAt(data.index++);
-      }
-      bits |= (resb>0 ? 1 : 0) * power;
-      power <<= 1;
-    }
-
-    switch (c = bits) {
-      case 0:
-        bits = 0;
-        maxpower = Math.pow(2,8);
-        power=1;
-        while (power!=maxpower) {
-          resb = data.val & data.position;
-          data.position >>= 1;
-          if (data.position == 0) {
-            data.position = 32768;
-            data.val = data.string.charCodeAt(data.index++);
-          }
-          bits |= (resb>0 ? 1 : 0) * power;
-          power <<= 1;
-        }
-
-        dictionary[dictSize++] = f(bits);
-        c = dictSize-1;
-        enlargeIn--;
-        break;
-      case 1:
-        bits = 0;
-        maxpower = Math.pow(2,16);
-        power=1;
-        while (power!=maxpower) {
-          resb = data.val & data.position;
-          data.position >>= 1;
-          if (data.position == 0) {
-            data.position = 32768;
-            data.val = data.string.charCodeAt(data.index++);
-          }
-          bits |= (resb>0 ? 1 : 0) * power;
-          power <<= 1;
-        }
-        dictionary[dictSize++] = f(bits);
-        c = dictSize-1;
-        enlargeIn--;
-        break;
-      case 2:
-        return result;
-    }
-
-    if (enlargeIn == 0) {
-      enlargeIn = Math.pow(2, numBits);
-      numBits++;
-    }
-
-    if (dictionary[c]) {
-      entry = dictionary[c];
-    } else {
-      if (c === dictSize) {
-        entry = w + w.charAt(0);
-      } else {
-        return null;
-      }
-    }
-    result += entry;
-
-    // Add w+entry[0] to the dictionary.
-    dictionary[dictSize++] = w + entry.charAt(0);
-    enlargeIn--;
-
-    w = entry;
-
-    if (enlargeIn == 0) {
-      enlargeIn = Math.pow(2, numBits);
-      numBits++;
-    }
-
+  chunkReceived(chunk) {
+    this.callback(chunk)
   }
 }
 
-module.exports = {
-  compress: compress,
-  decompress: decompress
-}
+module.exports = LZString;
+
