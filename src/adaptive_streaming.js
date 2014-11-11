@@ -32,7 +32,7 @@ class AdaptiveStreaming extends BaseObject {
     for (var i = 0; i < this.info.levels.length; i++) {
       var bitrate = this.info.levels[i].bitrate
       var bwNeeded = bitrate * this.threshold / 1000
-      if (this.info.bandwidth > bwNeeded && bitrate < 800000) {
+      if (this.info.bandwidth > bwNeeded && bitrate < 1500000) {
         idealLevel = i
       }
     }
