@@ -26,13 +26,11 @@ class Peer extends BaseObject {
 
   sendPing() {
     this.pingSent = Date.now()
-    var msg = this.mountMessage("ping", "", (new Array(300*1024)).join("x"))
-    this.dataChannel.send(msg)
+    this.dataChannel.send("ping$$" + (new Array(300*1024)).join("x"))
   }
 
   sendPong() {
-    var msg = this.mountMessage("pong", "", "")
-    this.dataChannel.send(msg)
+    this.dataChannel.send("pong$$")
   }
 
   pongReceived() {
@@ -68,25 +66,25 @@ class Peer extends BaseObject {
     }
   }
 
-  messageReceived(bundle) {
-    var data = JSON.parse(bundle)
-    switch (data.command) {
+  messageReceived(data) {
+    var [command, resource, content] = data.split("$")
+    switch (command) {
       case 'interested':
-        this.interestedReceived(data.resource)
+        this.interestedReceived(resource)
         break
       case 'contain':
-        this.swarm.containReceived(this, data.resource)
+        this.swarm.containReceived(this, resource)
         break
       case 'request':
-        this.sendSatisfy(data.resource)
+        this.sendSatisfy(resource)
         break
       case 'choke':
-        this.swarm.chokeReceived(data.resource)
+        this.swarm.chokeReceived(resource)
         break
       case 'satisfy':
-        if (data.content.length > 0) {
+        if (content.length > 0) {
           log.info("received satisfy")
-          this.swarm.satisfyReceived(this, data.resource, data.content)
+          this.swarm.satisfyReceived(this, resource, content)
         }
         break
       case 'busy':
@@ -107,7 +105,11 @@ class Peer extends BaseObject {
   }
 
   mountMessage(command, resource, content) {
-    return JSON.stringify({"command": command, "resource": resource, "content": content || null})
+    var msg = command + "$" + resource + "$"
+    if (content) {
+      msg = msg + content
+    }
+    return msg
   }
 }
 
