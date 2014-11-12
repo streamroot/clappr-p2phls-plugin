@@ -12,7 +12,6 @@ var Storage = require('./storage')
 var log = require('./log').getInstance()
 var JST = require('./jst')
 var Browser = require('browser')
-var LZString = require('./lz-string')
 var Styler = require('./styler')
 var HLS = require('hls')
 
@@ -34,7 +33,6 @@ class P2PHLS extends HLS {
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     this.storage = Storage.getInstance()
-    this.lzString = new LZString()
     this.CHUNK_SIZE = 65536
     super(options)
   }
@@ -84,44 +82,35 @@ class P2PHLS extends HLS {
 
   onDecodeSuccess() {
     if (this.currentUrl) {
-      if (this.method === 'cdn') {
-        this.lzString.compress(this.currentUrl, this.currentChunk, (url, chunk) => this.storage.setItem(url, chunk))
-      } else if (this.method === 'p2p') {
-        this.storage.setItem(url, chunk)
-      }
       this.resourceRequester.decodingError = false
+      this.storage.setItem(this.currentUrl, this.currentChunk)
       this.currentUrl = null
       this.currentChunk = null
     }
   }
 
   requestResource(url) {
-    this.currentUrl = url
-    if (this.storage.contain(this.currentUrl)) {
-      this.resourceLoaded(this.storage.getItem(this.currentUrl), "storage")
+    if (this.currentUrl) {
+      log.warn("still processing the other chunk, wait :)")
     } else {
-      this.resourceRequester.requestResource(url, this.el.globoGetbufferLength(), (chunk, method) => this.resourceLoaded(chunk, method))
+      this.currentUrl = url
+      if (this.storage.contain(this.currentUrl)) {
+        this.resourceLoaded(this.storage.getItem(this.currentUrl), "storage")
+      } else {
+        this.resourceRequester.requestResource(url, this.el.globoGetbufferLength(), (chunk, method) => this.resourceLoaded(chunk, method))
+      }
     }
   }
 
   resourceLoaded(chunk, method) {
     if (this.currentUrl) {
-      this.method = method
-      if (this.method === 'cdn') {
-        this.startSendChunktoPlayer(chunk)
-      } else if (this.method === 'p2p') {
-        this.lzString.decompress(this.currentUrl, chunk, (url, chunk) => this.startSendChunktoPlayer(chunk))
-      }
+      this.currentChunk = chunk
+      this.readPosition = 0
+      this.endPosition = 0
+      this.currentChunkLength = this.currentChunk.length
+      this.sendID = setInterval(function() { this.sendChunk() }.bind(this), 0);
+      this.playbackInfo.updateChunkStats(method)
     }
-  }
-
-  startSendChunktoPlayer(chunk) {
-    this.currentChunk = chunk
-    this.readPosition = 0
-    this.endPosition = 0
-    this.currentChunkLength = this.currentChunk.length
-    this.sendID = setInterval(function() { this.sendChunk() }.bind(this), 0);
-    this.playbackInfo.updateChunkStats(this.method)
   }
 
   sendChunk() {
