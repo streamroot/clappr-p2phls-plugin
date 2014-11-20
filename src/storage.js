@@ -14,11 +14,12 @@ class Storage {
   }
 
   setItem(key, value) {
-    if (_.has(this.chunks, key)) {
-      log.warn("already have this chunk on storage: " + key)
+    var normalizedKey = key.match(/(.*.ts)\??.*?/)[1]
+    if (_.has(this.chunks, normalizedKey)) {
+      log.warn("already have this chunk on storage: " + normalizedKey)
     } else {
-      this.keys.push(key)
-      this.chunks[key] = value
+      this.keys.push(normalizedKey)
+      this.chunks[normalizedKey] = value
       this.updateSize()
     }
   }
@@ -39,11 +40,13 @@ class Storage {
   }
 
   getItem(key) {
-    return this.chunks[key];
+    var normalizedKey = key.match(/(.*.ts)\??.*?/)[1]
+    return this.chunks[normalizedKey];
   }
 
   contain(key) {
-    return _.contains(this.keys, key)
+    var normalizedKey = key.match(/(.*.ts)\??.*?/)[1]
+    return _.contains(this.keys, normalizedKey)
   }
 }
 
