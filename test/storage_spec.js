@@ -39,7 +39,7 @@ describe('Storage', function() {
   });
 
   it('should store big segments', () => {
-    var bigSegment = (new Array(100*1024*1024)).join("x");
+    var bigSegment = (new Array(10*1024*1024)).join("x");
     for (var i = 0; i <= Settings.maxStorageChunks; i++) {
       this.storage.setItem("segment" + i, bigSegment);
     }

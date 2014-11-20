@@ -4,7 +4,7 @@
   "description": "BemTV Peer-to-Peer plugin for HTTP Live Streaming transmissions on Clappr Media Player",
   "main": "dist/p2phls.js",
   "scripts": {
-    "test": "./node_modules/.bin/karma start"
+    "test": "./node_modules/.bin/gulp build && ./node_modules/.bin/gulp build --env=prod && ./node_modules/.bin/karma start --single-run --browsers Firefox"
   },
   "author": "Flávio Ribeiro",
   "keywords": [
