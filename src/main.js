@@ -9,6 +9,7 @@ var UploadHandler = require('./upload_handler')
 var PlaybackInfo = require('./playback_info')
 var AdaptiveStreaming = require('./adaptive_streaming')
 var Storage = require('./storage')
+var FlashUploader = require('./flash_uploader')
 var log = require('./log').getInstance()
 var JST = require('./jst')
 var Browser = require('browser')
@@ -33,7 +34,6 @@ class P2PHLS extends HLS {
     this.uploadHandler = UploadHandler.getInstance()
     this.playbackInfo = PlaybackInfo.getInstance()
     this.storage = Storage.getInstance()
-    this.CHUNK_SIZE = 65536
     super(options)
   }
 
@@ -105,34 +105,12 @@ class P2PHLS extends HLS {
   resourceLoaded(chunk, method) {
     if (this.currentUrl) {
       this.currentChunk = chunk
-      this.readPosition = 0
-      this.endPosition = 0
-      this.currentChunkLength = this.currentChunk.length
-      this.sendID = setInterval(function() { this.sendChunk() }.bind(this), 0);
+      this.flashUploader = new FlashUploader()
+      var sendPartCallback = function(part) { this.el.resourceLoaded(part) }.bind(this)
+      var finishSendingCallback = function() { this.el.startDecoding() }.bind(this)
+      this.flashUploader.send(sendPartCallback, chunk, finishSendingCallback)
       this.playbackInfo.updateChunkStats(method)
     }
-  }
-
-  sendChunk() {
-    if (this.currentChunk === null) {
-      clearInterval(this.sendID)
-    } else if (this.currentChunkLength <= this.CHUNK_SIZE) {
-      this.el.resourceLoaded(this.currentChunk)
-      this.startDecoding()
-    } else if (this.endPosition >= this.currentChunkLength) {
-      this.startDecoding()
-    } else {
-      this.endPosition += this.CHUNK_SIZE
-      this.el.resourceLoaded(this.currentChunk.slice(this.readPosition, this.endPosition))
-      this.readPosition = this.endPosition
-    }
-  }
-
-  startDecoding() {
-    this.readPosition = 0
-    this.endPosition = 0
-    clearInterval(this.sendID)
-    this.el.startDecoding()
   }
 
   seek(time) {
