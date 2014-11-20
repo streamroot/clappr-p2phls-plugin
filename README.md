@@ -32,6 +32,10 @@ Visit [BemTV](http://bem.tv) with a [modern browser](http://caniuse.com/#search=
 </body>
 ```
 
+# Questions/Support?
+
+Post your question at our Google Groups discussion list: https://groups.google.com/d/forum/bemtv
+
 # Author
 
 [Flávio Ribeiro](https://www.linkedin.com/in/flavioribeiro) (flavio@bem.tv)
