@@ -4,7 +4,7 @@
 // license that can be found in the LICENSE file.
 
 // This module is responsible for sending subsegments
-// of the same chunk in order to avoid overhead or stucks
+// of a given chunk in order to avoid overhead or stucks
 // on javascript interpreter.
 
 class FlashUploader {
@@ -19,13 +19,12 @@ class FlashUploader {
     this.currentChunkLength = chunk.length
     this.sendPartCallback = sendPartCallback
     this.finishCallback = finishSendingCallback
-    window.uploader = this
     this.sendID = setInterval(this.sendChunk.bind(this), 0);
   }
 
   sendChunk() {
     if (this.currentChunkLength <= this.MAX_SIZE) {
-      this.sendPartCallback(this.currentChunk)
+      this.sendPartCallback(this.chunk)
       this.startDecoding()
     } else if (this.endPosition >= this.currentChunkLength) {
       this.startDecoding()
