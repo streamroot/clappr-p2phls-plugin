@@ -1,8 +1,10 @@
 # BemTV Plugin for Clappr Media Player
 
+[![Build Status](https://travis-ci.org/bemtv/clappr-p2phls-plugin.svg?branch=master)](https://travis-ci.org/bemtv/clappr-p2phls-plugin)
+
 This plugin adds peer-to-peer powers for HTTP Live Streaming (HLS) transmissions on [Clappr Player](http://github.com/globocom/clappr).
 
-![BemTV P2PHLS](http://bem.tv/static/bemtv_live_preview.png)
+![BemTV P2PHLS](https://cloud.githubusercontent.com/assets/244265/4802042/33f02800-5e3d-11e4-8a82-50bd3af76526.png)
 
 # Try it now!
 
