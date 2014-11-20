@@ -8,42 +8,42 @@ describe('Storage', function() {
   })
 
   it('should store segment', () => {
-    this.storage.setItem("segmentName", "segmentContent");
-    expect(this.storage.contain("segmentName")).to.be.true;
-    expect(this.storage.getItem("segmentName")).to.be.equal('segmentContent');
+    this.storage.setItem("segmentName.ts", "segmentContent");
+    expect(this.storage.contain("segmentName.ts")).to.be.true;
+    expect(this.storage.getItem("segmentName.ts")).to.be.equal('segmentContent');
   });
 
   it('should not store equal segments', () => {
-    this.storage.setItem("segmentName", "segmentContent");
-    this.storage.setItem("segmentName", "segmentContent");
+    this.storage.setItem("segmentName.ts", "segmentContent");
+    this.storage.setItem("segmentName.ts", "segmentContent");
     expect(this.storage.size).to.be.equal(1);
   });
 
   it('should respect maxStorageChunks', () => {
     Settings.maxStorageChunks = 3
-    this.storage.setItem("segment1", "segmentContent1");
-    this.storage.setItem("segment2", "segmentContent2");
-    this.storage.setItem("segment3", "segmentContent3");
-    this.storage.setItem("segment4", "segmentContent4");
-    this.storage.setItem("segment5", "segmentContent5");
+    this.storage.setItem("segment1.ts", "segmentContent1");
+    this.storage.setItem("segment2.ts", "segmentContent2");
+    this.storage.setItem("segment3.ts", "segmentContent3");
+    this.storage.setItem("segment4.ts", "segmentContent4");
+    this.storage.setItem("segment5.ts", "segmentContent5");
     expect(this.storage.size).to.be.equal(3);
   });
 
   it('should remove older chunks when reach maxStorageChunks', () => {
     Settings.maxStorageChunks = 3
-    this.storage.setItem("segment1", "segmentContent1");
-    this.storage.setItem("segment2", "segmentContent2");
-    this.storage.setItem("segment3", "segmentContent3");
-    this.storage.setItem("segment4", "segmentContent4");
-    expect(this.storage.contain("segment1")).to.be.false;
+    this.storage.setItem("segment1.ts", "segmentContent1");
+    this.storage.setItem("segment2.ts", "segmentContent2");
+    this.storage.setItem("segment3.ts", "segmentContent3");
+    this.storage.setItem("segment4.ts", "segmentContent4");
+    expect(this.storage.contain("segment1.ts")).to.be.false;
   });
 
   it('should store big segments', () => {
     var bigSegment = (new Array(10*1024*1024)).join("x");
     for (var i = 0; i <= Settings.maxStorageChunks; i++) {
-      this.storage.setItem("segment" + i, bigSegment);
+      this.storage.setItem("segment" + i + ".ts", bigSegment);
     }
-    expect(this.storage.getItem('segment1')).to.be.equal(bigSegment);
+    expect(this.storage.getItem('segment1.ts')).to.be.equal(bigSegment);
   });
 
 });
