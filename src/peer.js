@@ -8,6 +8,7 @@ var Storage = require('./storage');
 var UploadHandler = require('./upload_handler')
 var PlaybackInfo = require('./playback_info')
 var log = require('./log').getInstance()
+var md5 = require('./md5')
 
 class Peer extends BaseObject {
   constructor(params) {
@@ -26,7 +27,7 @@ class Peer extends BaseObject {
 
   sendPing() {
     this.pingSent = Date.now()
-    this.dataChannel.send("ping$$" + (new Array(300*1024)).join("x"))
+    this.dataChannel.send("ping$$" + (new Array(2 * 1024)).join("x"))
   }
 
   sendPong() {
@@ -43,7 +44,9 @@ class Peer extends BaseObject {
   sendSatisfy(resource) {
     if (this.storage.contain(resource)) {
       if (this.uploadHandler.getSlot(this.ident)) {
-        this.send('satisfy', resource, this.storage.getItem(resource))
+        var content = this.storage.getItem(resource)
+        content = md5(content) + content
+        this.send('satisfy', resource, content)
         this.playbackInfo.updateChunkStats('p2psent')
       } else {
         log.warn("cannot send satisfy, no upload slot available")
@@ -82,9 +85,13 @@ class Peer extends BaseObject {
         this.swarm.chokeReceived(resource)
         break
       case 'satisfy':
-        if (content.length > 0) {
-          log.info("received satisfy")
-          this.swarm.satisfyReceived(this, resource, content)
+        var md5Header = content.slice(0, 32)
+        var realContent = content.slice(32)
+        if (content.length > 0 && md5Header === md5(realContent)) {
+          log.info("received satisfy, md5 ok")
+          this.swarm.satisfyReceived(this, resource, realContent)
+        } else {
+          log.warn("error receiving segment")
         }
         break
       case 'busy':
