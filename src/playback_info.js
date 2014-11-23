@@ -14,6 +14,7 @@ class PlaybackInfo extends BaseObject {
       'bufferLength': 0,
       'bandwidth': 0,
     }
+    this.bwHistory = []
   }
 
   setMain(main) {
@@ -51,8 +52,25 @@ class PlaybackInfo extends BaseObject {
   }
 
   updateBandwidth(event) {
+    if (!this.data.currentBitrate || !this.data.segmentSize) return
     var currentBw = this.data.currentBitrate * this.data.segmentSize / (event.downloadTime/1000)
-    this.data.bandwidth = this.data.bandwidth? (this.data.bandwidth + currentBw) / 2: currentBw
+    // nearest rank method, 80th percentile (#101)
+    this.data.bandwidth = this.calculateBandwidth(currentBw)
+    }
+
+  calculateBandwidth(currentBw) {
+    this.updateBwHistory(currentBw)
+    var sortedBwHistory = this.bwHistory
+    sortedBwHistory.sort(function(a,b) { return a-b })
+    var position = Math.round(0.8 * sortedBwHistory.length)
+    return sortedBwHistory[position] || sortedBwHistory[0]
+  }
+
+  updateBwHistory(currentBw) {
+    this.bwHistory.push(currentBw)
+    if (this.bwHistory.length > 10) {
+      this.bwHistory = _.rest(this.bwHistory)
+    }
   }
 
   onFragmentLoaded() {
