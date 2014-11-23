@@ -56,7 +56,7 @@ class PlaybackInfo extends BaseObject {
     var currentBw = this.data.currentBitrate * this.data.segmentSize / (event.downloadTime/1000)
     // nearest rank method, 80th percentile (#101)
     this.data.bandwidth = this.calculateBandwidth(currentBw)
-    }
+  }
 
   calculateBandwidth(currentBw) {
     this.updateBwHistory(currentBw)

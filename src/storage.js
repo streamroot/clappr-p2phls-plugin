@@ -41,7 +41,7 @@ class Storage {
 
   getItem(key) {
     var normalizedKey = key.match(/(.*.ts)\??.*?/)[1]
-    return this.chunks[normalizedKey];
+    return this.chunks[normalizedKey]
   }
 
   contain(key) {
