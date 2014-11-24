@@ -45,7 +45,6 @@ class Peer extends BaseObject {
     if (this.storage.contain(resource)) {
       if (this.uploadHandler.getSlot(this.ident)) {
         var content = this.storage.getItem(resource)
-        content = md5(content) + content
         this.send('satisfy', resource, content)
         this.playbackInfo.updateChunkStats('p2psent')
       } else {
@@ -88,10 +87,10 @@ class Peer extends BaseObject {
         var md5Header = content.slice(0, 32)
         var realContent = content.slice(32)
         if (content.length > 0 && md5Header === md5(realContent)) {
-          log.info("received satisfy, md5 ok")
+          log.info("received valid chunk on peer-to-peer overlay")
           this.swarm.satisfyReceived(this, resource, realContent)
         } else {
-          log.warn("error receiving segment")
+          log.warn("error receiving segment, wrong md5")
         }
         break
       case 'busy':
