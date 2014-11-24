@@ -7,14 +7,16 @@ var Settings = require("./settings")
 var _ = require("underscore")
 var log = require('./log').getInstance()
 
+
 class Storage {
   constructor() {
     this.keys = []
     this.chunks = {}
+    this.CHUNK_REGEX = /(.*.ts|.*.aac).*?/
   }
 
   setItem(key, value) {
-    var normalizedKey = key.match(/(.*.[ts|aac])\??.*?/)[1]
+    var normalizedKey = key.match(this.CHUNK_REGEX)[1]
     if (_.has(this.chunks, normalizedKey)) {
       log.warn("already have this chunk on storage: " + normalizedKey)
     } else {
@@ -40,12 +42,12 @@ class Storage {
   }
 
   getItem(key) {
-    var normalizedKey = key.match(/(.*.[ts|aac])\??.*?/)[1]
+    var normalizedKey = key.match(this.CHUNK_REGEX)[1]
     return this.chunks[normalizedKey]
   }
 
   contain(key) {
-    var normalizedKey = key.match(/(.*.[ts|aac])\??.*?/)[1]
+    var normalizedKey = key.match(this.CHUNK_REGEX)[1]
     return _.contains(this.keys, normalizedKey)
   }
 }
