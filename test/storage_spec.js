@@ -41,10 +41,17 @@ describe('Storage', function() {
   it('should discard querystrings', () => {
     Settings.maxStorageChunks = 3
     this.storage.setItem("segment1.ts?query=string", "segmentContent1");
-    console.log(this.storage.keys)
     expect(this.storage.contain("segment1.ts")).to.be.true;
     expect(this.storage.contain("segment1.ts?query=string")).to.be.true;
   });
+
+  it('should consider audio only segments', () => {
+    Settings.maxStorageChunks = 3
+    this.storage.setItem("segment1.aac?query=string", "segmentContent1");
+    expect(this.storage.contain("segment1.aac")).to.be.true;
+    expect(this.storage.contain("segment1.aac?query=string")).to.be.true;
+  });
+
 
   it('should store big segments', () => {
     var bigSegment = (new Array(10*1024*1024)).join("x");
