@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/bemtv/clappr-p2phls-plugin.svg?branch=master)](https://travis-ci.org/bemtv/clappr-p2phls-plugin)
 [![Coverage Status](https://img.shields.io/coveralls/bemtv/clappr-p2phls-plugin.svg)](https://coveralls.io/r/bemtv/clappr-p2phls-plugin)
 [![bemtv google group](http://img.shields.io/badge/discuss-bemtv-blue.svg)](https://groups.google.com/forum/#!forum/bemtv)
+[![Issue Stats](http://issuestats.com/github/bemtv/clappr-p2phls-plugin/badge/issue)](http://issuestats.com/github/bemtv/clappr-p2phls-plugin)
 
 This plugin adds peer-to-peer powers for HTTP Live Streaming (HLS) transmissions on [Clappr Player](http://github.com/globocom/clappr).
 
