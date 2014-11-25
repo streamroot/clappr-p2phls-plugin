@@ -20,8 +20,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'node_modules/clappr/dist/clappr.js',
       'node_modules/underscore/underscore-min.js',
+      'node_modules/clappr/dist/clappr.js',
       'test/**/*spec.js'
     ],
 
@@ -48,7 +48,10 @@ module.exports = function(config) {
     browserify: {
       debug: true,
       transform: ['es6ify'],
-      external: ['base_object', 'underscore']
+      prebundle: function(bundle) {
+        bundle.external('base_object');
+        bundle.external('underscore');
+      },
     },
 
     // test results reporter to use
