@@ -15,15 +15,11 @@ class FlashUploader {
   }
 
   send(sendPartCallback, chunk, finishSendingCallback) {
-    this.chunk = this.removeHeader(chunk)
-    this.currentChunkLength = this.chunk.length
+    this.chunk = chunk
+    this.currentChunkLength = chunk.length
     this.sendPartCallback = sendPartCallback
     this.finishCallback = finishSendingCallback
     this.sendID = setInterval(this.sendChunk.bind(this), 0);
-  }
-
-  removeHeader(chunk) {
-    return chunk.slice(32)
   }
 
   sendChunk() {
