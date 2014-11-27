@@ -67,7 +67,8 @@
     "karma-sinon-chai": "^0.2.0",
     "sinon": "^1.10.2",
     "traceur": "0.0.72",
-    "vinyl-source-stream": "^0.1.1"
+    "vinyl-source-stream": "^0.1.1",
+    "karma-traceur-preprocessor": "0.4.0"
   },
   "dependencies": {
     "clappr": "latest",
