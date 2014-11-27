@@ -36,7 +36,7 @@
   "devDependencies": {
     "underscore": "1.7.0",
     "s3": "^4.1.1",
-    "browserify": "^4.2.3",
+    "browserify": "^6.3.2",
     "browserify-shim": "^3.7.0",
     "chai": "latest",
     "dotenv": "^0.4.0",
@@ -65,7 +65,6 @@
     "karma-safari-launcher": "^0.1.1",
     "karma-sinon": "^1.0.3",
     "karma-sinon-chai": "^0.2.0",
-    "karma-traceur-preprocessor": "git://github.com/hansl/karma-traceur-preprocessor",
     "sinon": "^1.10.2",
     "traceur": "0.0.72",
     "vinyl-source-stream": "^0.1.1"
