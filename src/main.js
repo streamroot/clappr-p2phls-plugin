@@ -15,6 +15,7 @@ var JST = require('./jst')
 var Browser = require('browser')
 var Styler = require('./styler')
 var HLS = require('hls')
+var version = require('../package.json').version
 
 class P2PHLS extends HLS {
   get name() { return 'p2phls' }
@@ -115,6 +116,7 @@ class P2PHLS extends HLS {
 
   seek(time) {
     this.resourceRequester.onDVR = time !== -1? true: false
+    console.log("onDVR", this.resourceRequester.onDVR)
     super(time)
   }
 
@@ -133,5 +135,7 @@ class P2PHLS extends HLS {
 P2PHLS.canPlay = function(resource) {
   return !!(window.webkitRTCPeerConnection || window.mozRTCPeerConnection) && !!resource.match(/^http(.*).m3u8/)
 }
+
+P2PHLS.version = version
 
 module.exports = window.P2PHLS = P2PHLS;
