@@ -35,7 +35,7 @@ gulp.task('build', ['pre-build'], function(b) {
     .external('base_object')
     .external('playback')
     .external('browser')
-    .external('jquery')
+    .external('zepto')
     .external('underscore')
     .external('hls')
     .bundle()

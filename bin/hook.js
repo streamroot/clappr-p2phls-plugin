@@ -10,7 +10,7 @@ var _ = require('underscore');
 
 var codeTemplate = _.template(fs.readFileSync('bin/.hook_template').toString());
 
-var jstFile = './jst.js';
+var jstFile = './src/jst.js';
 
 function format(filePath) {
   var content = fs.readFileSync(filePath).toString().replace(/\r?\n|\r/g, '');
