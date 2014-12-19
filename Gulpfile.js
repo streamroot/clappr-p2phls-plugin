@@ -40,7 +40,7 @@ gulp.task('build', ['pre-build'], function(b) {
     .external('hls')
     .bundle()
     .pipe(source('main.js'))
-    .pipe(rename( 'p2phls' + (isProd ? '.min.js' : '.js')));
+    .pipe(rename('p2phls' + (isProd ? '.min.js' : '.js')));
 
   if(isProd) {
     stream.pipe(streamify(uglify()));

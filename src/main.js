@@ -16,6 +16,7 @@ var Browser = require('browser')
 var Styler = require('./styler')
 var HLS = require('hls')
 var version = require('../package.json').version
+var _ = require('underscore')
 
 class P2PHLS extends HLS {
   get name() { return 'p2phls' }

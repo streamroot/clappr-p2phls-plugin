@@ -24,20 +24,10 @@
     "type": "git",
     "url": "git@github.com:bemtv/clappr-p2phls-plugin.git"
   },
-  "browserify-shim": {
-    "zepto": "global:$",
-    "underscore": "global:_"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
   "devDependencies": {
-    "underscore": "1.7.0",
+    "underscore" : "1.7.0",
     "s3": "^4.1.1",
     "browserify": "^6.3.2",
-    "browserify-shim": "^3.7.0",
     "chai": "latest",
     "dotenv": "^0.4.0",
     "es6ify": "1.4.0",
