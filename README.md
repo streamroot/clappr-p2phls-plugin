@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/bemtv/clappr-p2phls-plugin.png?label=ready&title=Ready)](https://waffle.io/bemtv/clappr-p2phls-plugin)
 # BemTV Plugin for Clappr Media Player
 
 [![Build Status](https://travis-ci.org/bemtv/clappr-p2phls-plugin.svg?branch=master)](https://travis-ci.org/bemtv/clappr-p2phls-plugin)
